@@ -2,11 +2,12 @@
 #define SYMTABLE
 
 #include "TType.hpp"
+#include "Token.hpp"
 
 class Symtable {
     public:
         char* insert(char* lexem, TType type);
-        lookup(char* key);
+        Token* lookup(char* key);
 };
 
 #endif
