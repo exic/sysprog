@@ -7,3 +7,4 @@ Automat::Automat(Buffer* pBuffer) {
 Token* Automat::readChar() {
     return 0;
 }
+
