@@ -9,9 +9,9 @@
 class Scanner {
     public:
         Scanner(char* filename);
+        ~Scanner();
         Token* nextToken();
     private:
-        Buffer* buffer;
         Automat* automat;
         Symtable* symtable;
 };

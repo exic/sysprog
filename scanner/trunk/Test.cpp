@@ -15,5 +15,6 @@ int main(int argc, char* argv[]) {
     while ((t  = s->nextToken())) {
         cout << "Token " << t->getType().getName() << ": Line " << t->getLine() << ", Column " << t->getColumn() << endl;
     }
+    delete s;
     return 0;
 }

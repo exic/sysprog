@@ -4,6 +4,8 @@
 #include <fstream>
 #include <iostream>
 
+using std::ifstream;
+
 class Buffer {
     public:
         Buffer(char* filename);
@@ -12,7 +14,8 @@ class Buffer {
         void ungetchar();
     private:
         int i;
-        //fstream* file;
+        //int linecounter;
+        ifstream file;
 };
 
 #endif
