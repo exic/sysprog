@@ -6,7 +6,11 @@ using std::cout;
 using std::endl;
 
 int main(int argc, char* argv[]) {
-    const char* ttype_str[] =  { "integer", "identifier", "print", "read", "addititon", "subtraction", "division", "multiplication", "lt", "gt", "eq", "ne", "exclamation", "ampersand", "semicolon", "leftBracket", "rightBracket", "leftAngleBracket", "rightAngleBracket", "leftSquareBracket", "rightSquareBracket" };
+    const char* ttype_str[] =  { "integer", "identifier", "print", "read",
+        "addititon", "subtraction", "division", "multiplication", "lt", "gt",
+        "eq", "ne", "exclamation", "ampersand", "semicolon", "leftBracket",
+        "rightBracket", "leftAngleBracket", "rightAngleBracket",
+        "leftSquareBracket", "rightSquareBracket" };
     if (argc <= 1) {
         cout << "No file given" << endl;
         return 1;

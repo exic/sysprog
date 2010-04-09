@@ -13,8 +13,6 @@ class Buffer {
         char getchar();
         void ungetchar();
     private:
-        int i;
-        //int linecounter;
         ifstream file;
 };
 

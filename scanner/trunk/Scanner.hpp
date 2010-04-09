@@ -13,6 +13,7 @@ class Scanner {
         Token* nextToken();
     private:
         Automat* automat;
+        Buffer* buffer;
         Symtable* symtable;
         int state;
 };

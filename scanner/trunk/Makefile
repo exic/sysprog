@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -g -Wall
 
-objects = $(patsubst %.cpp, %.o, $(wildcard *.cpp ttypes/*.cpp))
+objects = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 
 test: $(objects)
 	$(CXX) $(CXXFLAGS) -o test $(objects)

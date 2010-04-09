@@ -2,6 +2,7 @@
 #define TOKEN
 
 #include "TType.hpp"
+#include "string.h"
 
 
 class Token {
@@ -12,6 +13,9 @@ class Token {
         int getColumn();
         char* getLexem() {
             return lexem;
+        }
+        void setLexem(char* lexem) {
+            strcpy(lexem, this->lexem);
         }
     private:
         TType type;

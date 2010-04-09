@@ -2,15 +2,22 @@
 #define AUTOMAT
 
 #include "Token.hpp"
-#include "Buffer.hpp"
 
 class Automat {
     public:
-        Automat(Buffer* buffer);
+        Automat();
         ~Automat();
-        Token* readChar();
+        void readChar(char c);
+        bool isFinal();
+        bool isError();
+        bool isEof();
+        Token* getToken();
     private:
-        Buffer* buffer;
+        bool final;
+        bool error;
+        bool eof;
+        int line;
+        int column;
 };
 
 #endif
