@@ -2,9 +2,9 @@
 #define SCANNER
 
 #include "Token.hpp"
-#include "Buffer.hpp"
 #include "Automat.hpp"
 #include "Symtable.hpp"
+#include "TType.hpp"
 
 class Scanner {
     public:
@@ -14,6 +14,7 @@ class Scanner {
     private:
         Automat* automat;
         Symtable* symtable;
+        int state;
 };
 
 #endif

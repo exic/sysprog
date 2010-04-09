@@ -1,7 +1,0 @@
-#/usr/bin/perl -w
-
-@names = ("integer", "identifier", "print", "read");
-@signnames = ("addititon", "subtraction", "division", "multiplication", "lt", "gt", "eq", "ne", "exclamation", "ampersand", "semicolon", "leftBracket", "rightBracket", "leftAngleBracket", "rightAngleBracket", "leftSquareBracket", "rightSquareBracket");
-
-foreach (@names) {
-open 

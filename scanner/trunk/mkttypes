@@ -1,0 +1,19 @@
+#!/usr/bin/perl -w
+
+@names = ("integer", "identifier", "print", "read");
+@signnames = ("addititon", "subtraction", "division", "multiplication", "lt", "gt", "eq", "ne", "exclamation", "ampersand", "semicolon", "leftBracket", "rightBracket", "leftAngleBracket", "rightAngleBracket", "leftSquareBracket", "rightSquareBracket");
+
+open FILE, ">TType.hpp";
+print FILE "#ifndef TTYPE\n#define TTYPE\n\nenum TType { ";
+
+print FILE join(", ", split(" ", "\U@names"));
+print FILE ", ";
+print FILE join(", SIGN_", split(" ", "\USIGN_@signnames"));
+print FILE " };\n\n";
+
+print FILE '//const char* ttype_str[] =  { "';
+print FILE join('", "', (@names, @signnames));
+print FILE '" };';
+
+print FILE "\n\n#endif";
+print "\n";
