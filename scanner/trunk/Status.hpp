@@ -2,10 +2,21 @@
 #define STATUS
 
 enum Status {
+    FINAL,
+    ERROR,
+
     NONE,
-    FINAL, ERROR,
-    READING_INT, READING_ID,
-    NEWLINE, TOKEN_READ
+
+    READING_INT,
+    READING_ID,
+    READING_SIGN,
+
+    READ_INT,
+    READ_ID,
+    READ_SIGN,
+    TOKEN_READ,
+
+    NEWLINE,
 };
 
 #endif

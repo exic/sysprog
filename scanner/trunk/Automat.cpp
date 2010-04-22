@@ -12,26 +12,76 @@ Automat::~Automat() {
 
 void Automat::readChar(char c) {
     column++;
-    if (c == '\n') {
-        status = NEWLINE;
-    } else if (c == -1) { // eof
-        status = FINAL;
-    } else if (c == ' ') {
-        status = TOKEN_READ;
-    } else {
-        lastchar = c;
+
+    switch (status) {
+        case READING_INT:
+            status = statusINT(c);
+            break;
+        case READING_ID:
+            status = statusID(c);
+            break;
+        case READING_SIGN:
+            status = statusSIGN(c);
+            break;
+        case NONE:
+        default:
+            status = statusNONE(c);
+            break;
     }
+
+    lastchar = c;
     return;
+}
+
+Status Automat::statusNONE(char c) {
+    if (isDigit(c)) {
+        return READING_INT;
+    } else if (isLetter(c)) {
+        return READING_ID;
+    } else {
+        switch (c) {
+            case '\n':
+                return NEWLINE;
+            case -1: // eof
+                return FINAL;
+            case ' ':
+                return status;
+        }
+    }
+    return READING_SIGN;
+}
+
+Status Automat::statusINT(char c) {
+    if (!isDigit(c)) {
+        return READ_INT;
+    }
+    return READING_INT;
+}
+
+Status Automat::statusID(char c) {
+    if (!isDigit(c) && !isLetter(c)) {
+        return READ_ID;
+    }
+    return READING_ID;
+}
+
+Status Automat::statusSIGN(char c) {
+    if (!isSign(c)) {
+        sign[0] = lastchar;
+        return READ_SIGN;
+    }
+    return READING_SIGN;
 }
 
 bool Automat::isTokenRead() {
     return (
-            status == TOKEN_READ
-            ||
-            status == NEWLINE
-            ||
-            status == FINAL
-           );
+        status == TOKEN_READ
+        || status == READ_INT
+        || status == READ_ID
+        || status == READ_SIGN
+        || status == NEWLINE
+        || status == FINAL
+   );
 }
 
 bool Automat::isError() {
@@ -46,13 +96,20 @@ Token* Automat::getToken() {
     if (!isTokenRead() || isError() || isEof()) {
         return 0;
     }
-    Token* newToken;
-    if (lastchar == '=') {
-        newToken = new Token(SIGN_EQ, line, column);
-    } else if (lastchar == ';') {
-        newToken = new Token(SIGN_SEMICOLON, line, column);
+    Token* newToken = 0;
+    if (status == READ_SIGN) {
+        if (sign[0] == '=') {
+            newToken = new Token(SIGN_EQ, line, column);
+        } else if (sign[0] == ';') {
+            newToken = new Token(SIGN_SEMICOLON, line, column);
+        }
+    } else if (status == READ_INT) {
+        newToken = new Token(INTEGER, line, column-1);
+    } else if (status == READ_ID) {
+        newToken = new Token(IDENTIFIER, line, column-1);
+    } else {
+        newToken = new Token(PRINT, line, column-1);
     }
-    newToken = new Token(PRINT, line, column-1);
 
     if (status == NEWLINE) {
         line++;
@@ -61,4 +118,37 @@ Token* Automat::getToken() {
 
     status = NONE;
     return newToken;
+}
+
+bool Automat::isDigit(char c) {
+    return c >= '0' && c <= '9';
+}
+
+bool Automat::isLetter(char c) {
+    return (c >= 'a' && c <= 'z')
+        || (c >= 'A' && c <= 'Z');
+}
+
+bool Automat::isSign(char c) {
+    switch (c) {
+        case '+':
+        case '-':
+        case '/':
+        case '*':
+        case '<':
+        case '>':
+        case '=':
+        case '!':
+        case '&':
+        case ';':
+        case '(':
+        case ')':
+        case '{':
+        case '}':
+        case '[':
+        case ']':
+            return true;
+        default:
+            return false;
+    }
 }
