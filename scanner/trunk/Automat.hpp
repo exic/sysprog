@@ -2,22 +2,25 @@
 #define AUTOMAT
 
 #include "Token.hpp"
+#include "Status.hpp"
 
 class Automat {
     public:
         Automat();
         ~Automat();
         void readChar(char c);
-        bool isFinal();
+        bool isTokenRead();
         bool isError();
         bool isEof();
         Token* getToken();
+        Status getStatus() {
+            return status;
+        }
     private:
-        bool final;
-        bool error;
-        bool eof;
         int line;
         int column;
+        char lastchar;
+        Status status;
 };
 
 #endif

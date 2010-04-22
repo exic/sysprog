@@ -1,10 +1,12 @@
 #include "Scanner.hpp"
 
+#include <iostream>
+using namespace std;
+
 Scanner::Scanner(char* filename) {
     automat = new Automat();
     buffer = new Buffer(filename);
     symtable = new Symtable();
-    state = 0;
 }
 
 Scanner::~Scanner() {
@@ -14,17 +16,12 @@ Scanner::~Scanner() {
 }
 
 Token* Scanner::nextToken() {
-    if (state == 0) {
-        state = 1;
-        return new Token(PRINT, 1, 2);
-    }
-    while (!automat->isFinal()) {
+    Token* token;
+    while (!(token = automat->getToken()) && !automat->isEof()) {
+        cout << "Lese Zeichen" << endl;
         automat->readChar(buffer->getchar());
-        if (automat->isError()) {
-            return 0;
-        }
+        cout << "Automat-Status: " << automat->getStatus() << endl;
     }
-    Token* token = automat->getToken();
     //symtable->insert(token->getLexem(), token->getType());
     return token;
 }

@@ -15,7 +15,6 @@ class Scanner {
         Automat* automat;
         Buffer* buffer;
         Symtable* symtable;
-        int state;
 };
 
 #endif

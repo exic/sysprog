@@ -3,43 +3,62 @@
 Automat::Automat() {
     line = 1;
     column = 0;
-    eof = false;
-    error = false;
-    final = true;
+    lastchar = '\0';
+    status = NONE;
 }
 
 Automat::~Automat() {
 }
 
-// todo
 void Automat::readChar(char c) {
     column++;
-    if (c == 10) { // newline
-        line++;
-        column = 0;
-    } else if (c == -1) {
-        eof = true;
+    if (c == '\n') {
+        status = NEWLINE;
+    } else if (c == -1) { // eof
+        status = FINAL;
+    } else if (c == ' ') {
+        status = TOKEN_READ;
+    } else {
+        lastchar = c;
     }
-    final = true;
     return;
 }
 
-bool Automat::isFinal() {
-    return final;
+bool Automat::isTokenRead() {
+    return (
+            status == TOKEN_READ
+            ||
+            status == NEWLINE
+            ||
+            status == FINAL
+           );
 }
 
 bool Automat::isError() {
-    return error;
+    return status == ERROR;
 }
 
 bool Automat::isEof() {
-    return eof;
+    return status == FINAL;
 }
 
 Token* Automat::getToken() {
-    final = false;
-    if (eof) {
+    if (!isTokenRead() || isError() || isEof()) {
         return 0;
     }
-    return new Token(SIGN_AMPERSAND, line, column);
+    Token* newToken;
+    if (lastchar == '=') {
+        newToken = new Token(SIGN_EQ, line, column);
+    } else if (lastchar == ';') {
+        newToken = new Token(SIGN_SEMICOLON, line, column);
+    }
+    newToken = new Token(PRINT, line, column-1);
+
+    if (status == NEWLINE) {
+        line++;
+        column = 0;
+    }
+
+    status = NONE;
+    return newToken;
 }
