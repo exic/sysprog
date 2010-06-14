@@ -99,7 +99,7 @@ Token* Automat::getToken() {
     Token* newToken = 0;
     if (status == READ_SIGN) {
         if (sign[0] == '=') {
-            newToken = new Token(SIGN_EQ, line, column);
+            newToken = new Token(SIGN_ASSIGN, line, column);
         } else if (sign[0] == ';') {
             newToken = new Token(SIGN_SEMICOLON, line, column);
         }
