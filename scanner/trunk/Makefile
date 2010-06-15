@@ -13,5 +13,9 @@ Buffer.o: Buffer.hpp
 Symtable.o: Symtable.hpp
 Automat.o: Automat.hpp Status.hpp
 
+run: test
+	./test Scanner-test.txt out.txt && cat out.txt
+
+
 clean:
 	rm -f $(objects) a.out test

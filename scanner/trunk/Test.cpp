@@ -12,14 +12,32 @@ int main(int argc, char* argv[]) {
         "RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET",
         "LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
     if (argc <= 1) {
-        cout << "No file given" << endl;
+        cerr << "No input file given." << endl;
         return 1;
     }
     Scanner* s = new Scanner(argv[1]);
     Token* t;
-    while ((t  = s->nextToken())) {
-        cout << "Token " << ttype_str[t->getType()] << ": Line " << t->getLine() << ", Column " << t->getColumn() << endl;
+    ofstream outfile;
+
+    if (argc <= 2) {
+        cerr << "No output file given." << endl;
+        return 1;
     }
+
+    if (std::remove(argv[2]) == 0) {
+        cout << "Deleted outfile for new run." <<endl;
+    }
+
+    outfile.open(argv[2]);
+    if (!outfile.is_open()) {
+        cerr << "Problem opening file " << argv[2] << endl;
+        return 1;
+    }
+
+    while ((t  = s->nextToken())) {
+        outfile << "Token " << ttype_str[t->getType()] << ":\tLine " << t->getLine() << ", Column " << t->getColumn() << endl;
+    }
+    outfile.close();
     delete s;
     return 0;
 }

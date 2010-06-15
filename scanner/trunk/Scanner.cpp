@@ -19,9 +19,9 @@ Token* Scanner::nextToken() {
     Token* token;
     while (!(token = automat->getToken()) && !automat->isEof()) {
         char c = buffer->getchar();
-        cout << "Lese Zeichen \"" << c << "\"" << endl;
+        // cout << "Lese Zeichen \"" << c << "\"" << endl;
         automat->readChar(c);
-        cout << "Automat-Status: " << automat->getStatus() << endl;
+        // cout << "Automat-Status: " << automat->getStatus() << endl;
     }
     //symtable->insert(token->getLexem(), token->getType());
     return token;
