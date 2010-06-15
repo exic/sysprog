@@ -15,6 +15,8 @@ class Automat {
         bool isTokenRead();
         bool isError();
         bool isEof();
+        int getLine();
+        int getColumn();
         Token* getToken();
         Status getStatus() {
             return status;
@@ -25,12 +27,14 @@ class Automat {
         bool isSign(char c);
         Status statusNONE(char c);
         Status statusINT(char c);
-        Status statusID(char c);
+        Status statusIDENTIFIER(char c);
         Status statusSIGN(char c);
         int line;
         int column;
         char lastchar;
         char sign[3];
+        int lexem_index;
+        char lexem[128];
         Status status;
 };
 

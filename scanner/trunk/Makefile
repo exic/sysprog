@@ -11,7 +11,7 @@ Token.o: Token.hpp
 TType.o: TType.hpp
 Buffer.o: Buffer.hpp
 Symtable.o: Symtable.hpp
-Automat.o: Automat.hpp Status.hpp
+Automat.o: Automat.hpp Status.hpp TType.hpp
 
 run: test
 	./test Scanner-test.txt out.txt && cat out.txt

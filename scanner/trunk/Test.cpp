@@ -1,16 +1,13 @@
 #include "Scanner.hpp"
 #include "Token.hpp"
+#include "TType.hpp"
 #include <iostream>
 
 using std::cout;
 using std::endl;
 
 int main(int argc, char* argv[]) {
-    const char* ttype_str[] = { "INTEGER", "IDENTIFIER", "PRINT", "READ",
-        "ADDITITON", "SUBTRACTION", "DIVISION", "MULTIPLICATION", "LT", "GT",
-        "ASSIGN", "NE", "EXCLAMATION", "AMPERSAND", "SEMICOLON", "LEFTBRACKET",
-        "RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET",
-        "LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
+const char* ttype_str[] = { "INTEGER", "IDENTIFIER", "PRINT", "READ", "ADDITITON", "SUBTRACTION", "DIVISION", "MULTIPLICATION", "LT", "GT", "ASSIGN", "NE", "EXCLAMATION", "AMPERSAND", "SEMICOLON", "LEFTBRACKET", "RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET", "LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
     if (argc <= 1) {
         cerr << "No input file given." << endl;
         return 1;
@@ -35,7 +32,13 @@ int main(int argc, char* argv[]) {
     }
 
     while ((t  = s->nextToken())) {
-        outfile << "Token " << ttype_str[t->getType()] << ":\tLine " << t->getLine() << ", Column " << t->getColumn() << endl;
+        outfile << "Token " << ttype_str[t->getType()] << " Line: " << t->getLine() << ", Column " << t->getColumn();
+        if (t->getType() == IDENTIFIER) {
+            outfile << ", Lexem: " << t->getLexem();
+        } else if (t->getType() == INTEGER) {
+            outfile << ", Value: " << t->getLexem();
+        }
+        outfile << endl;
     }
     outfile.close();
     delete s;

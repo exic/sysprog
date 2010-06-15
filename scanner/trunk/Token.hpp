@@ -11,17 +11,13 @@ class Token {
         TType getType();
         int getLine();
         int getColumn();
-        char* getLexem() {
-            return lexem;
-        }
-        void setLexem(char* lexem) {
-            strcpy(lexem, this->lexem);
-        }
+        char* getLexem();
+        void setLexem(char* lexem);
     private:
         TType type;
         int line;
         int column;
-        char* lexem;
+        char lexem[128];
 };
 
 #endif

@@ -4,6 +4,7 @@ Automat::Automat() {
     line = 1;
     column = 0;
     lastchar = '\0';
+    lexem_index = 0;
     status = NONE;
 }
 
@@ -17,8 +18,8 @@ void Automat::readChar(char c) {
         case READING_INT:
             status = statusINT(c);
             break;
-        case READING_ID:
-            status = statusID(c);
+        case READING_IDENTIFIER:
+            status = statusIDENTIFIER(c);
             break;
         case READING_SIGN:
             status = statusSIGN(c);
@@ -35,9 +36,11 @@ void Automat::readChar(char c) {
 
 Status Automat::statusNONE(char c) {
     if (isDigit(c)) {
-        return READING_INT;
+        return statusINT(c);
     } else if (isLetter(c)) {
-        return READING_ID;
+        return statusIDENTIFIER(c);
+    } else if (isSign(c)) {
+        return statusSIGN(c);
     } else {
         switch (c) {
             case '\n':
@@ -48,7 +51,7 @@ Status Automat::statusNONE(char c) {
                 return status;
         }
     }
-    return READING_SIGN;
+    return ERROR;
 }
 
 Status Automat::statusINT(char c) {
@@ -58,11 +61,15 @@ Status Automat::statusINT(char c) {
     return READING_INT;
 }
 
-Status Automat::statusID(char c) {
+Status Automat::statusIDENTIFIER(char c) {
+    // cout << "index: " << lexem_index <<endl;
     if (!isDigit(c) && !isLetter(c)) {
-        return READ_ID;
+        lexem[lexem_index] = '\0';
+        lexem_index = 0;
+        return READ_IDENTIFIER;
     }
-    return READING_ID;
+    lexem[lexem_index++] = c;
+    return READING_IDENTIFIER;
 }
 
 Status Automat::statusSIGN(char c) {
@@ -77,7 +84,7 @@ bool Automat::isTokenRead() {
     return (
         status == TOKEN_READ
         || status == READ_INT
-        || status == READ_ID
+        || status == READ_IDENTIFIER
         || status == READ_SIGN
         || status == NEWLINE
         || status == FINAL
@@ -93,27 +100,57 @@ bool Automat::isEof() {
 }
 
 Token* Automat::getToken() {
+const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_INT", "READING_IDENTIFIER", "READING_SIGN", "READ_INT", "READ_IDENTIFIER", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
     if (!isTokenRead() || isError() || isEof()) {
         return 0;
+    } else {
+        column--;
     }
     Token* newToken = 0;
     if (status == READ_SIGN) {
-        if (sign[0] == '=') {
+        if (sign[0] == '+') {
+            newToken = new Token(SIGN_ADDITITON, line, column);
+        } else if (sign[0] == '-') {
+            newToken = new Token(SIGN_SUBTRACTION, line, column);
+        } else if (sign[0] == '*') {
+            newToken = new Token(SIGN_MULTIPLICATION, line, column);
+        } else if (sign[0] == '<') {
+            newToken = new Token(SIGN_LT, line, column);
+        } else if (sign[0] == '>') {
+            newToken = new Token(SIGN_GT, line, column);
+        } else if (sign[0] == '=') {
             newToken = new Token(SIGN_ASSIGN, line, column);
+        } else if (sign[0] == '!') {
+            newToken = new Token(SIGN_EXCLAMATION, line, column);
+        } else if (sign[0] == '&') {
+            newToken = new Token(SIGN_AMPERSAND, line, column);
         } else if (sign[0] == ';') {
             newToken = new Token(SIGN_SEMICOLON, line, column);
+        } else if (sign[0] == '(') {
+            newToken = new Token(SIGN_LEFTBRACKET, line, column);
+        } else if (sign[0] == ')') {
+            newToken = new Token(SIGN_RIGHTBRACKET, line, column);
+        } else if (sign[0] == '{') {
+            newToken = new Token(SIGN_LEFTANGLEBRACKET, line, column);
+        } else if (sign[0] == '}') {
+            newToken = new Token(SIGN_RIGHTANGLEBRACKET, line, column);
+        } else if (sign[0] == '[') {
+            newToken = new Token(SIGN_LEFTSQUAREBRACKET, line, column);
+        } else if (sign[0] == ']') {
+            newToken = new Token(SIGN_RIGHTSQUAREBRACKET, line, column);
         }
     } else if (status == READ_INT) {
-        newToken = new Token(INTEGER, line, column-1);
-    } else if (status == READ_ID) {
-        newToken = new Token(IDENTIFIER, line, column-1);
-    } else {
-        newToken = new Token(PRINT, line, column-1);
-    }
-
-    if (status == NEWLINE) {
+        newToken = new Token(INTEGER, line, column);
+    } else if (status == READ_IDENTIFIER) {
+        newToken = new Token(IDENTIFIER, line, column);
+        //cout << "lexem: " << lexem << endl;
+        newToken->setLexem(lexem);
+    } else if (status == NEWLINE) {
         line++;
         column = 0;
+    } else {
+        cout << "Status: " << status_str[status] << endl;
+        newToken = new Token(PRINT, line, column);
     }
 
     status = NONE;
@@ -151,4 +188,10 @@ bool Automat::isSign(char c) {
         default:
             return false;
     }
+}
+int Automat::getLine() {
+    return line;
+}
+int Automat::getColumn() {
+    return column;
 }

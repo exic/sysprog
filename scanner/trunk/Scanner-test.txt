@@ -1,1 +1,5 @@
-abc = 012 ;
+X = 3 + 4;
+Äy=X / (X - 4);
+Z = ((3 + 4 - 6));
+(* eine einfache Aufgabe !! *)
+Resultat = X * y

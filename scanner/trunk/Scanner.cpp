@@ -21,8 +21,13 @@ Token* Scanner::nextToken() {
         char c = buffer->getchar();
         // cout << "Lese Zeichen \"" << c << "\"" << endl;
         automat->readChar(c);
-        // cout << "Automat-Status: " << automat->getStatus() << endl;
+const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_INT", "READING_IDENTIFIER", "READING_SIGN", "READ_INT", "READ_IDENTIFIER", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
+        if (automat->getStatus() == ERROR) {
+            cerr << "Unknown sign at line " << automat->getLine() << ", column " << automat->getColumn() << endl;
+        }
+        //cout << "Automat-Status: " << status_str[automat->getStatus()] << endl;
     }
+    buffer->ungetchar();
     //symtable->insert(token->getLexem(), token->getType());
     return token;
 }

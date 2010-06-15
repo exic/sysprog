@@ -13,6 +13,10 @@ class Buffer {
         char getchar();
         void ungetchar();
     private:
+        int i;
+        int current;
+        int bufferIndex;
+        char buffer[2][128];
         ifstream file;
 };
 
