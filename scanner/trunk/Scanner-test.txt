@@ -1,5 +1,5 @@
-X = 3 + 4;
+Z =?= ((3 +++ 4 - 6));
 Äy=X / (X - 4);
-Z = ((3 + 4 - 6));
+printo read a <=>*b;
 (* eine einfache Aufgabe !! *)
-Resultat = X * y
+m = n <=/ o;

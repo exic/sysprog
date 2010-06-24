@@ -21,6 +21,15 @@ int Token::getColumn() {
 char* Token::getLexem() {
     return lexem;
 }
+
 void Token::setLexem(char* lexem) {
     strcpy(this->lexem, lexem);
+}
+
+int Token::getValue() {
+    return value;
+}
+
+void Token::setValue(int value) {
+    this->value = value;
 }

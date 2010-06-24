@@ -17,6 +17,9 @@ class Automat {
         bool isEof();
         int getLine();
         int getColumn();
+        int getUnget() {
+            return unget;
+        }
         Token* getToken();
         Status getStatus() {
             return status;
@@ -26,15 +29,19 @@ class Automat {
         bool isLetter(char c);
         bool isSign(char c);
         Status statusNONE(char c);
-        Status statusINT(char c);
+        Status statusCOMMENT(char c);
         Status statusIDENTIFIER(char c);
+        Status statusINT(char c);
         Status statusSIGN(char c);
         int line;
         int column;
         char lastchar;
-        char sign[3];
+        int sign_index;
+        char sign[4];
         int lexem_index;
         char lexem[128];
+        int value;
+        int unget;
         Status status;
 };
 

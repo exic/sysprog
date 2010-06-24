@@ -36,12 +36,13 @@ $name = "Status";
 
     "NONE",
 
-    "READING_INT",
+    "READING_COMMENT",
     "READING_IDENTIFIER",
+    "READING_INT",
     "READING_SIGN",
 
-    "READ_INT",
     "READ_IDENTIFIER",
+    "READ_INT",
     "READ_SIGN",
     "TOKEN_READ",
 
@@ -63,7 +64,7 @@ sub makeit {
     $low = "\L$name";
 
     open HFILE, ">$name.hpp";
-    open CFILE, ">$name.cpp";
+    #open CFILE, ">$name.cpp";
     print HFILE "#ifndef $def\n#define $def\n\nenum $name { ";
 
     print HFILE join(", ", split(" ", "\U@names"));

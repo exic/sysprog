@@ -18,16 +18,23 @@ Scanner::~Scanner() {
 Token* Scanner::nextToken() {
     Token* token;
     while (!(token = automat->getToken()) && !automat->isEof()) {
-        char c = buffer->getchar();
-        // cout << "Lese Zeichen \"" << c << "\"" << endl;
-        automat->readChar(c);
-const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_INT", "READING_IDENTIFIER", "READING_SIGN", "READ_INT", "READ_IDENTIFIER", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
-        if (automat->getStatus() == ERROR) {
-            cerr << "Unknown sign at line " << automat->getLine() << ", column " << automat->getColumn() << endl;
+
+        int unget = automat->getUnget();
+        while (unget-- > 0) {
+//            cout << "unget" << endl;
+            buffer->ungetchar();
         }
-        //cout << "Automat-Status: " << status_str[automat->getStatus()] << endl;
+
+        char c = buffer->getchar();
+//        cout << "Lese Zeichen \"" << c << "\"" << endl;
+        automat->readChar(c);
+
+//const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT", "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER", "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
+        if (automat->getStatus() == ERROR) {
+            cerr << "Unknown character at line " << automat->getLine() << ", column " << automat->getColumn() << endl;
+        }
+//        cout << "Automat-Status: " << status_str[automat->getStatus()] << endl;
     }
-    buffer->ungetchar();
     //symtable->insert(token->getLexem(), token->getType());
     return token;
 }
