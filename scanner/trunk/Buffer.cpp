@@ -31,3 +31,7 @@ char Buffer::getchar() {
 void Buffer::ungetchar() {
     current--;
 }
+
+bool Buffer::isOpen() {
+    return file.is_open();
+}

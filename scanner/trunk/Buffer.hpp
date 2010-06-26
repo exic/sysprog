@@ -12,6 +12,7 @@ class Buffer {
         ~Buffer();
         char getchar();
         void ungetchar();
+        bool isOpen();
     private:
         int i;
         int current;
