@@ -62,11 +62,18 @@ Status Automat::statusNONE(char c) {
 Status Automat::statusCOMMENT(char c) {
     if (c == '*') {
         // shameless abuse of sign[] array
+//        cout << "sign[0] is: " << (int) sign[0] << endl;
         sign[0] = '*';
     } else if (sign[0] == '*' && c == ')') {
+        // reset?
+        sign[0] = ' ';
         return NONE;
     } else {
         sign[0] = 0;
+    }
+
+    if (c == '\n') {
+        newline();
     }
     return READING_COMMENT;
 }
@@ -139,13 +146,19 @@ bool Automat::isEof() {
     return status == FINAL;
 }
 
+void Automat::newline() {
+    line++;
+    column = 0;
+}
+
 Token* Automat::getToken() {
 
-const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT", "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_INT", "READ_IDENTIFIER", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
+    const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT",
+        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_INT",
+        "READ_IDENTIFIER", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
 
     if (status == NEWLINE) {
-        line++;
-        column = 0;
+        newline();
         return 0;
     }
     if (!isTokenRead() || isError() || isEof()) {
@@ -158,6 +171,8 @@ const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT", "READI
     if (status == READ_IDENTIFIER) {
         lexem[lexem_index] = '\0';
         lexem_index = 0;
+
+        column -= strlen(lexem) - 1;
         if (strcmp("print", lexem) == 0) {
             newToken = new Token(PRINT, line, column);
         } else if (strcmp("read", lexem) == 0) {
@@ -174,42 +189,49 @@ const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT", "READI
         sign[sign_index] = '\0';
         sign_index = 0;
         //cout << "Read sign: " << sign << endl;
+        TType ttype;
+
         if (strcmp("+", sign) == 0) {
-            newToken = new Token(SIGN_ADDITITON, line, column);
+            ttype = SIGN_ADDITITON;
         } else if (strcmp("-", sign) == 0) {
-            newToken = new Token(SIGN_SUBTRACTION, line, column);
+            ttype = SIGN_SUBTRACTION;
         } else if (strcmp("/", sign) == 0) {
-            newToken = new Token(SIGN_DIVISION, line, column);
+            ttype = SIGN_DIVISION;
         } else if (strcmp("*", sign) == 0) {
-            newToken = new Token(SIGN_MULTIPLICATION, line, column);
+            ttype = SIGN_MULTIPLICATION;
         } else if (strcmp("<", sign) == 0) {
-            newToken = new Token(SIGN_LT, line, column);
+            ttype = SIGN_LT;
         } else if (strcmp("<=>", sign) == 0) {
-            newToken = new Token(SIGN_NE, line, column);
+            ttype = SIGN_NE;
         } else if (strcmp(">", sign) == 0) {
-            newToken = new Token(SIGN_GT, line, column);
+            ttype = SIGN_GT;
         } else if (strcmp("=", sign) == 0) {
-            newToken = new Token(SIGN_ASSIGN, line, column);
+            ttype = SIGN_ASSIGN;
         } else if (strcmp("!", sign) == 0) {
-            newToken = new Token(SIGN_EXCLAMATION, line, column);
+            ttype = SIGN_EXCLAMATION;
         } else if (strcmp("&", sign) == 0) {
-            newToken = new Token(SIGN_AMPERSAND, line, column);
+            ttype = SIGN_AMPERSAND;
         } else if (strcmp(";", sign) == 0) {
-            newToken = new Token(SIGN_SEMICOLON, line, column);
+            ttype = SIGN_SEMICOLON;
         } else if (strcmp("(", sign) == 0) {
-            newToken = new Token(SIGN_LEFTBRACKET, line, column);
+            ttype = SIGN_LEFTBRACKET;
         } else if (strcmp(")", sign) == 0) {
-            newToken = new Token(SIGN_RIGHTBRACKET, line, column);
+            ttype = SIGN_RIGHTBRACKET;
         } else if (strcmp("{", sign) == 0) {
-            newToken = new Token(SIGN_LEFTANGLEBRACKET, line, column);
+            ttype = SIGN_LEFTANGLEBRACKET;
         } else if (strcmp("}", sign) == 0) {
-            newToken = new Token(SIGN_RIGHTANGLEBRACKET, line, column);
+            ttype = SIGN_RIGHTANGLEBRACKET;
         } else if (strcmp("[", sign) == 0) {
-            newToken = new Token(SIGN_LEFTSQUAREBRACKET, line, column);
+            ttype = SIGN_LEFTSQUAREBRACKET;
         } else if (strcmp("]", sign) == 0) {
-            newToken = new Token(SIGN_RIGHTSQUAREBRACKET, line, column);
+            ttype = SIGN_RIGHTSQUAREBRACKET;
         } else {
             cout << "Sign token \"" << sign << "\" not found" << endl;
+        }
+
+        if (ttype != NULL) {
+//            cout << "newtoken" << endl;
+            newToken = new Token(ttype, line, column);
         }
     } else {
         cout << "Status: " << status_str[status] << endl;

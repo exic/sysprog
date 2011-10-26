@@ -3,7 +3,7 @@ CXXFLAGS = -g -Wall
 
 objects = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 
-all: test run
+all: test program
 
 Scanner.o: Scanner.hpp
 Token.o: Token.hpp

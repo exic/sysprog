@@ -28,6 +28,7 @@ class Automat {
         bool isDigit(char c);
         bool isLetter(char c);
         bool isSign(char c);
+        void newline();
         Status statusNONE(char c);
         Status statusCOMMENT(char c);
         Status statusIDENTIFIER(char c);

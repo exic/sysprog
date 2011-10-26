@@ -1,5 +1,7 @@
 Z =?= ((3 +++ 4 - 6));
-Äy=X / (X - 4);
+y=X / (X - 4);
+hiho
 printo read a <=>*b;
-(* eine einfache Aufgabe !! *)
+(* eine einfache 
+Aufgabe !! *)
 m = n <=/ o;
