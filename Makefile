@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -g -Wall
 
-objects = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
+OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 
 all: test program
 
@@ -12,17 +12,17 @@ Buffer.o: Buffer.hpp
 Symtable.o: Symtable.hpp
 Automat.o: Automat.hpp Status.hpp TType.hpp
 
-program: $(objects) $(wildcard *.hpp)
-	$(CXX) $(CXXFLAGS) -o program $(objects)
+program: $(OBJS) $(wildcard *.hpp)
+	$(CXX) $(CXXFLAGS) -o program $(OBJS)
 
 run: program
 	./program Scanner-test.txt out.txt
 
-test: $(objects)
+test: $(OBJS)
 	cd tests && make
 
 clean:
-	rm -f $(objects) a.out test tags program
+	rm -f $(OBJS) a.out test tags program
 	cd tests && make clean
 
 tags: *.cpp */*.cpp *.hpp */*.hpp

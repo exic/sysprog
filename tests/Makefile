@@ -1,16 +1,19 @@
 CXX = g++
-INCLUDES = -I/usr/include/cppunit
-LIBS = -lcppunit
-CXXFLAGS = -g -Wall $(INCLUDES) $(LIBS)
+LIBS = -lgtest -lpthread
+CXXFLAGS = -g -Wall $(LIBS)
 
 run-test: test
 	./test
 
-test: BufferTest.o
-	$(CXX) $(CXXFLAGS) -o test TestResult.cpp BufferTest.o ../Buffer.o
+OBJS = BufferTest.o TestRunner.o
 
-BufferTest.o: BufferTest.cpp BufferTest.hpp
-	$(CXX) $(CXXFLAGS) -c BufferTest.cpp
+%.o: %.cpp
+	echo CC $<
+	${CXX} -c ${CXXFLAGS} $<
+
+test: $(OBJS) ../Buffer.o
+	$(CXX) $(OBJS) $(CXXFLAGS) -o test $(LIBS) ../Buffer.o
+
 
 clean:
-	rm *.o test
+	rm -f *.o test
