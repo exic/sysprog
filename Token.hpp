@@ -2,6 +2,7 @@
 #define TOKEN
 
 #include "TType.hpp"
+#include "Constants.hpp"
 #include "string.h"
 
 
@@ -19,7 +20,7 @@ class Token {
         TType type;
         int line;
         int column;
-        char lexem[128];
+        char lexem[MAX_LEXEM_LENGTH];
         int value;
 };
 

@@ -3,6 +3,7 @@
 
 #include "Token.hpp"
 #include "Status.hpp"
+#include "Constants.hpp"
 
 #include <iostream>
 using namespace std;
@@ -38,9 +39,9 @@ class Automat {
         int column;
         char lastchar;
         int sign_index;
-        char sign[4];
+        char sign[MAX_SIGN_LENGTH];
         int lexem_index;
-        char lexem[128];
+        char lexem[MAX_LEXEM_LENGTH];
         int value;
         int unget;
         Status status;

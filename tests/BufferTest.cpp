@@ -1,6 +1,7 @@
 
 #include "../Buffer.hpp"
 #include "gtest/gtest.h"
+#include "string.h"
 #include <iostream>
 
 using namespace std;
@@ -24,11 +25,16 @@ TEST_F(BufferTest, Open) {
     EXPECT_TRUE(b->isOpen());
 }
 
+
+
+
 TEST_F(BufferTest, Read) {
-    cout << endl << endl << endl << endl;
-    for (int i=0; i<500; i++) {
+	char expected[] = "babaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nZ =?= ((3 +++ 4 - 6));\nÄy=X / (X - 4);\nprinto read a <=>*b;\n(* eine einfache Aufgabe !! *)\nm = n <=/ o;\n";
+    int len = strlen(expected);
+    for (int i=0; i < len; i++) {
         char c = b->getchar();
-        cout << c;
+		EXPECT_EQ(expected[i], c);
+        //cout << c << endl;
     }
     cout << endl;
 }

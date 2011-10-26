@@ -1,6 +1,7 @@
 #ifndef BUFFER
 #define BUFFER
 
+#include "Constants.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -14,10 +15,11 @@ class Buffer {
         void ungetchar();
         bool isOpen();
     private:
+        void fillBlock();
         int i;
         int current;
-        int bufferIndex;
-        char buffer[2][128];
+        int blockIndex;
+        char buffer[BUFFER__BLOCKS][BUFFER__CHARS_PER_BLOCK];
         ifstream file;
 };
 

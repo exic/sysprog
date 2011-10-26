@@ -8,9 +8,9 @@ all: test program
 Scanner.o: Scanner.hpp
 Token.o: Token.hpp
 TType.o: TType.hpp
-Buffer.o: Buffer.hpp
+Buffer.o: Buffer.hpp Constants.hpp
 Symtable.o: Symtable.hpp
-Automat.o: Automat.hpp Status.hpp TType.hpp
+Automat.o: Automat.hpp Status.hpp TType.hpp Constants.hpp
 
 program: $(OBJS) $(wildcard *.hpp)
 	$(CXX) $(CXXFLAGS) -o program $(OBJS)
