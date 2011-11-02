@@ -35,8 +35,8 @@ const char* ttype_str[] = { "INTEGER", "IDENTIFIER", "PRINT", "READ", "ADDITITON
         outfile << "Token " << ttype_str[t->getType()] << " Line: " << t->getLine() << ", Column " << t->getColumn();
         cout << "Token " << ttype_str[t->getType()] << " Line: " << t->getLine() << ", Column " << t->getColumn();
         if (t->getType() == IDENTIFIER) {
-            outfile << ", Lexem: " << t->getLexem();
-            cout << ", Lexem: " << t->getLexem();
+            outfile << ", Lexem: " << t->getEntry()->getLexem();
+            cout << ", Lexem: " << t->getEntry()->getLexem();
         } else if (t->getType() == INTEGER) {
             outfile << ", Value: " << t->getValue();
             cout << ", Value: " << t->getValue();

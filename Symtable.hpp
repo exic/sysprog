@@ -4,13 +4,19 @@
 #include "TType.hpp"
 #include "Token.hpp"
 #include "Buffer.hpp"
+#include "SymtabEntry.hpp"
+#include "StringTab.hpp"
+#include "Constants.hpp"
 
 class Symtable {
     public:
         Symtable();
         ~Symtable();
-        char* insert(char* lexem, TType type);
-        Token* lookup(char* key);
+        SymtabEntry* insert(char* lexem, TType type);
+    private:
+        StringTab* stringTab;
+        int hash(char* lexem);
+        SymtabEntry* hashTable[SYMTABLE_HASHTABLESIZE];
 };
 
 #endif

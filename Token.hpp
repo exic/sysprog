@@ -4,6 +4,7 @@
 #include "TType.hpp"
 #include "Constants.hpp"
 #include "string.h"
+#include "SymtabEntry.hpp"
 
 
 class Token {
@@ -12,15 +13,15 @@ class Token {
         TType getType();
         int getLine();
         int getColumn();
-        char* getLexem();
-        void setLexem(char* lexem);
         int getValue();
         void setValue(int value);
+        SymtabEntry* getEntry() { return entry; };
+        void setEntry(SymtabEntry* entry) { this->entry = entry; };
     private:
         TType type;
+        SymtabEntry* entry;
         int line;
         int column;
-        char lexem[MAX_LEXEM_LENGTH];
         int value;
 };
 

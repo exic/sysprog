@@ -179,7 +179,6 @@ Token* Automat::getToken() {
             newToken = new Token(READ, line, column);
         } else {
             newToken = new Token(IDENTIFIER, line, column);
-            newToken->setLexem(lexem);
         }
     } else if (status == READ_INT) {
         newToken = new Token(INTEGER, line, column);

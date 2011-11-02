@@ -35,6 +35,11 @@ Token* Scanner::nextToken() {
         }
 //        cout << "Automat-Status: " << status_str[automat->getStatus()] << endl;
     }
-    //symtable->insert(token->getLexem(), token->getType());
+    
+    if (token && token->getType() == IDENTIFIER) {
+        SymtabEntry* entry = symtable->insert(automat->getLexem(), token->getType());
+        token->setEntry(entry);        
+    }
+    
     return token;
 }

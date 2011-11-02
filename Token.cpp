@@ -18,14 +18,6 @@ int Token::getColumn() {
     return column;
 }
 
-char* Token::getLexem() {
-    return lexem;
-}
-
-void Token::setLexem(char* lexem) {
-    strcpy(this->lexem, lexem);
-}
-
 int Token::getValue() {
     return value;
 }
