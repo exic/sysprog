@@ -1,5 +1,5 @@
 #ifndef SYMTABENTRY_HPP
-#define	SYMTABENTRY_HPP
+#define    SYMTABENTRY_HPP
 
 #include "TType.hpp"
 
@@ -17,5 +17,5 @@ private:
     SymtabEntry* next;
 };
 
-#endif	/* SYMTABENTRY_HPP */
+#endif    /* SYMTABENTRY_HPP */
 

@@ -1,5 +1,5 @@
 #ifndef STRINGTABNODE_HPP
-#define	STRINGTABNODE_HPP
+#define    STRINGTABNODE_HPP
 
 #include "Constants.hpp"
 
@@ -14,5 +14,5 @@ private:
     StringTabNode* next;
 };
 
-#endif	/* STRINGTABNODE_HPP */
+#endif    /* STRINGTABNODE_HPP */
 

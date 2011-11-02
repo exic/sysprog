@@ -3,7 +3,9 @@ CXXFLAGS = -g -Wall
 
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 
-all: test program
+EXE = scanner
+
+all: test $(EXE)
 
 Scanner.o: Scanner.hpp
 Token.o: Token.hpp
@@ -12,17 +14,17 @@ Buffer.o: Buffer.hpp Constants.hpp
 Symtable.o: Symtable.hpp
 Automat.o: Automat.hpp Status.hpp TType.hpp Constants.hpp
 
-program: $(OBJS) $(wildcard *.hpp)
-	$(CXX) $(CXXFLAGS) -o program $(OBJS)
+$(EXE): $(OBJS) $(wildcard *.hpp)
+	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJS)
 
-run: program
-	./program Scanner-test.txt out.txt
+run: $(EXE)
+	./$(EXE) Scanner-test.txt out.txt
 
 test: $(OBJS)
 	cd tests && make
 
 clean:
-	rm -f $(OBJS) a.out test tags program
+	rm -f $(OBJS) a.out test tags $(EXE)
 	cd tests && make clean
 
 tags: *.cpp */*.cpp *.hpp */*.hpp
