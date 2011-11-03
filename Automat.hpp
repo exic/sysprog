@@ -24,7 +24,7 @@ class Automat {
         Token* getToken();
         Status getStatus() {
             return status;
-        }        
+        }
         char* getLexem() { return lexem; }
     private:
         bool isDigit(char c);

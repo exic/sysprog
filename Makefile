@@ -5,7 +5,7 @@ OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 
 EXE = scanner
 
-all: test $(EXE)
+all: test run
 
 Scanner.o: Scanner.hpp
 Token.o: Token.hpp

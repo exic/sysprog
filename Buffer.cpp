@@ -3,7 +3,7 @@
 using namespace std;
 
 Buffer::Buffer(char* filename) {
-    file.open(filename);
+    fd = open(filename, O_DIRECT | O_RDONLY);
     blockIndex = 0;
     current = 0;
     fillBlock();
@@ -12,7 +12,7 @@ Buffer::Buffer(char* filename) {
 
 
 Buffer::~Buffer() {
-    file.close();
+    close(fd);
 }
 
 char Buffer::getchar() {
@@ -29,17 +29,23 @@ void Buffer::ungetchar() {
 }
 
 bool Buffer::isOpen() {
-    return file.is_open();
+    cout << "hi, this is my fd: " << fd << endl;
+    return true;
 }
 
 void Buffer::fillBlock() {
-    if (file.eof()) {
-        return;
-    }
+//    if (file.eof()) {
+//        return;
+//    }
     int i = 0;
-    //cout << "running fillBlock\n";
-    while (!file.eof() && i < BUFFER__CHARS_PER_BLOCK) {
-        buffer[blockIndex][i++] = file.get();
+//    char *buf = buffer[blockIndex];
+    char buf[26];
+    char *s= buf;
+    cout << "running fillBlock\n";
+    while (i < BUFFER__CHARS_PER_BLOCK) {
+        cout << s << endl;
+        cout << read(fd, s, 25) << endl;
+        cout << s << endl;
       //  cout << "put at " << (i-1) << ": " << buffer[blockIndex][i-1] << endl;
     }
 }
