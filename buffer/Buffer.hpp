@@ -1,11 +1,22 @@
+#define _GNU_SOURCE 1
+
 #ifndef BUFFER
 #define BUFFER
 
-#include "Constants.hpp"
-#include <fstream>
-#include <iostream>
+#include "../Constants.hpp"
 
-using std::ifstream;
+// remove me
+#include <iostream>
+using namespace std;
+
+// as said in man 2 open
+#include "sys/types.h"
+#include "sys/stat.h"
+
+#include <unistd.h>
+#include <fcntl.h>
+// man 2 close
+#include "unistd.h"
 
 class Buffer {
     public:
@@ -20,7 +31,7 @@ class Buffer {
         int current;
         int blockIndex;
         char buffer[BUFFER__BLOCKS][BUFFER__CHARS_PER_BLOCK];
-        ifstream file;
+        int fd;
 };
 
 #endif

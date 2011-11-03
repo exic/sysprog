@@ -1,16 +1,15 @@
-CXX = g++
-CXXFLAGS = -g -Wall
+include Makefile.inc
 
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 
 EXE = scanner
 
-all: test $(EXE)
+all: test run
 
 Scanner.o: Scanner.hpp
 Token.o: Token.hpp
 TType.o: TType.hpp
-Buffer.o: Buffer.hpp Constants.hpp
+#Buffer.o: Buffer.hpp Constants.hpp
 Symtable.o: Symtable.hpp
 Automat.o: Automat.hpp Status.hpp TType.hpp Constants.hpp
 
@@ -20,12 +19,11 @@ $(EXE): $(OBJS) $(wildcard *.hpp)
 run: $(EXE)
 	./$(EXE) Scanner-test.txt out.txt
 
-test: $(OBJS)
-	cd tests && make
-
 clean:
-	rm -f $(OBJS) a.out test tags $(EXE)
-	cd tests && make clean
+	rm -rf *.o
+	rm -f $(EXE)
+#$(OBJS) a.out test tags $(EXE)
+	cd tests && make clean 2>/dev/null || true
 
 tags: *.cpp */*.cpp *.hpp */*.hpp
 	ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .

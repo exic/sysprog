@@ -229,6 +229,7 @@ Token* Automat::getToken() {
         }
 
         if (ttype != NULL) {
+// FIXME: pointer + null vs. enum...
 //            cout << "newtoken" << endl;
             newToken = new Token(ttype, line, column);
         }

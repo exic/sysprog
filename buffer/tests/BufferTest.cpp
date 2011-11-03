@@ -1,8 +1,7 @@
 
 #include "../Buffer.hpp"
-#include "gtest/gtest.h"
-#include "string.h"
-#include <iostream>
+#include <gtest/gtest.h>
+#include <string.h>
 
 using namespace std;
 
@@ -27,7 +26,7 @@ TEST_F(BufferTest, Open) {
 
 
 
-
+/*
 TEST_F(BufferTest, Read) {
     char expected[] = "babaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nZ =?= ((3 +++ 4 - 6));\nÄy=X / (X - 4);\nprinto read a <=>*b;\n(* eine einfache Aufgabe !! *)\nm = n <=/ o;\n";
     int len = strlen(expected);
@@ -36,5 +35,6 @@ TEST_F(BufferTest, Read) {
         EXPECT_EQ(expected[i], c);
         //cout << c << endl;
     }
-    cout << endl;
+    //cout << endl;
 }
+*/
