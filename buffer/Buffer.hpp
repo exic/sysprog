@@ -3,20 +3,21 @@
 #ifndef BUFFER
 #define BUFFER
 
-#include "../Constants.hpp"
+#include "Constants.hpp"
 
 // remove me
 #include <iostream>
 using namespace std;
 
-// as said in man 2 open
+// open(2)
 #include "sys/types.h"
 #include "sys/stat.h"
 
 #include <unistd.h>
 #include <fcntl.h>
-// man 2 close
-#include "unistd.h"
+
+// posix_memalign(3)
+#include <stdlib.h>
 
 class Buffer {
     public:
@@ -30,7 +31,7 @@ class Buffer {
         int i;
         int current;
         int blockIndex;
-        char buffer[BUFFER__BLOCKS][BUFFER__CHARS_PER_BLOCK];
+        char* buffer[BLOCKS];
         int fd;
 };
 

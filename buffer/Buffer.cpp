@@ -7,6 +7,8 @@ Buffer::Buffer(char* filename) {
     blockIndex = 0;
     current = 0;
     fillBlock();
+    cout << "read that.\n";
+//    cout << buffer[blockIndex] << endl;
 }
 
 
@@ -16,10 +18,14 @@ Buffer::~Buffer() {
 }
 
 char Buffer::getchar() {
-    if (current >= BUFFER__CHARS_PER_BLOCK) {
-        blockIndex = (blockIndex + 1) % BUFFER__BLOCKS;
+    if (current >= BUFSIZE) {
+        blockIndex = (blockIndex + 1) % BLOCKS;
         current = 0;
         fillBlock();
+    }
+    if (buffer[blockIndex][current] == '\0') {
+        current++;
+        return getchar();
     }
     return (char) buffer[blockIndex][current++];
 }
@@ -34,20 +40,18 @@ bool Buffer::isOpen() {
 }
 
 void Buffer::fillBlock() {
-//    if (file.eof()) {
-//        return;
-//    }
-    int i = 0;
 //    char *buf = buffer[blockIndex];
-    char buf[26];
-    char *s= buf;
-    cout << "running fillBlock\n";
-    while (i < BUFFER__CHARS_PER_BLOCK) {
-        cout << s << endl;
-        cout << read(fd, s, 25) << endl;
-        cout << s << endl;
-      //  cout << "put at " << (i-1) << ": " << buffer[blockIndex][i-1] << endl;
-    }
+    cout << "running fillBlock, "
+        << "blockIndex: " << blockIndex
+        << ", alignment: " << ALIGNMENT 
+        << ", bufsize: " << BUFSIZE << "\n";
+//    char *s= buffer[blockIndex];
+    char *buf;
+    posix_memalign((void**)&buf, ALIGNMENT, BUFSIZE);
+    int read_chars = read(fd, buf, BUFSIZE);
+    cout << "chars: " << read_chars << endl;
+    buffer[blockIndex] = buf;
+    buffer[blockIndex][read_chars] = '\0';
 }
 
 

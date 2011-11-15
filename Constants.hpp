@@ -8,8 +8,6 @@
 #ifndef CONSTANTS
 #define CONSTANTS
 
-#define BUFFER__CHARS_PER_BLOCK     130
-#define BUFFER__BLOCKS              2
 #define MAX_LEXEM_LENGTH            128
 #define MAX_SIGN_LENGTH             4
 

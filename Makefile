@@ -20,7 +20,7 @@ run: $(EXE)
 	./$(EXE) Scanner-test.txt out.txt
 
 clean:
-	rm -rf *.o
+	find -name '*.o' | xargs rm -f
 	rm -f $(EXE)
 #$(OBJS) a.out test tags $(EXE)
 	cd tests && make clean 2>/dev/null || true
