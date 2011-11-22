@@ -155,9 +155,9 @@ void Automat::newline() {
 
 Token* Automat::getToken() {
 
-    const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT",
-        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_INT",
-        "READ_IDENTIFIER", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
+    const char* status_str[] = { "NONE", "FINAL", "ERROR", "READING_COMMENT",
+        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER",
+        "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
 
     if (status == NEWLINE) {
         newline();
@@ -169,7 +169,7 @@ Token* Automat::getToken() {
 
     column--;
     Token* newToken = 0;
-    TType ttype;
+    TType ttype = NO_TYPE;
 
     int token_length = 1;
     if (status == READ_IDENTIFIER) {
@@ -236,13 +236,13 @@ Token* Automat::getToken() {
 //        newToken = new Token(PRINT, line, column);
     }
 
-    if (ttype != NULL) {
+    if (ttype != NO_TYPE) {
         // FIXME: pointer + null vs. enum...
-        //            cout << "newtoken" << endl;
+//        cout << "newtoken " << ttype << endl;
         newToken = new Token(ttype, line, column - (token_length - 1));
     }
 
-    if (status == READ_INT) {
+    if (status == READ_INT && newToken != NULL) {
         newToken->setValue(value);
         value = 0;
     }

@@ -2,7 +2,7 @@ test: $(OBJS)
 	[ -d tests ] && cd tests && make || true
 
 clean:
-	find -name '*.o' -or -name '*.a' | xargs rm -f
+	find -name '*.o' -or -name '*.a' -or -name 'test-exec' | xargs rm -f
 	rm -f $(EXE) $(OBJS) $(OUT) $(OUTLIB)
 	[ -d tests ] && ( cd tests && make clean ) || true
 
