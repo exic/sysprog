@@ -4,6 +4,6 @@ OUTLIB = ../libsymtab.a
 
 all: $(OBJS) test $(OUTLIB)
 
-# Symtable.o: Symtable.hpp
+SymtabEntry.o: SymtabEntry.cpp SymtabEntry.hpp
 
 include ../Makefile.stdrules

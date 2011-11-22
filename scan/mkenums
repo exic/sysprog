@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 $name = "TType";
-@names = ("integer", "identifier", "print", "read");
+@names = ("no_type", "integer", "identifier", "print", "read");
 @signnames = (
     "addititon",
     "subtraction",
@@ -31,10 +31,10 @@ $name = "TType";
 
 $name = "Status";
 @names = (
+    "NONE",
+
     "FINAL",
     "ERROR",
-
-    "NONE",
 
     "READING_COMMENT",
     "READING_IDENTIFIER",
@@ -53,6 +53,7 @@ undef(@signnames);
 &makeit;
 
 
+print ">>>>>>>>>>> Remember to change the _str-strings wherevere used to avoid confusion! <<<<<<<<<<<<\n";
 
 
 
@@ -79,5 +80,5 @@ sub makeit {
     print HFILE '" };';
 
     print HFILE "\n\n#endif";
-    print "\n";
+    print HFILE "\n";
 }

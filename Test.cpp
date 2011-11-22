@@ -5,10 +5,11 @@
 
 using std::cout;
 using std::endl;
+using std::cerr;
 
 int main(int argc, char* argv[]) {
 
-const char* ttype_str[] = { "INTEGER", "IDENTIFIER", "PRINT", "READ", "ADDITITON", "SUBTRACTION", "DIVISION", "MULTIPLICATION", "LT", "GT", "ASSIGN", "NE", "EXCLAMATION", "AMPERSAND", "SEMICOLON", "LEFTBRACKET", "RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET", "LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
+const char* ttype_str[] = { "NO_TYPE", "INTEGER", "IDENTIFIER", "PRINT", "READ", "ADDITITON", "SUBTRACTION", "DIVISION", "MULTIPLICATION", "LT", "GT", "ASSIGN", "NE", "EXCLAMATION", "AMPERSAND", "SEMICOLON", "LEFTBRACKET", "RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET", "LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
 
     if (argc <= 1) {
         cerr << "No input file given." << endl;

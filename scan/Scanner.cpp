@@ -29,7 +29,7 @@ Token* Scanner::nextToken() {
 //        cerr << "Lese Zeichen \"" << c << "\"" << endl;
         automat->readChar(c);
 
-//const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT", "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER", "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
+//const char* status_str[] = { "NONE", "FINAL", "ERROR", "READING_COMMENT", "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER", "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
         if (automat->getStatus() == ERROR) {
             cerr << "Unknown character at line " << automat->getLine() << ", column " << automat->getColumn() << endl;
         }

@@ -14,6 +14,7 @@ Automat::~Automat() {
 
 void Automat::readChar(char c) {
     column++;
+//    cout << "char: " << c << ", col: " << column << endl;
     unget = 0;
 
     switch (status) {
@@ -66,10 +67,11 @@ Status Automat::statusCOMMENT(char c) {
         sign[0] = '*';
     } else if (sign[0] == '*' && c == ')') {
         // reset?
-        sign[0] = ' ';
+        sign[0] = '\0';
+        sign_index = 0;
         return NONE;
     } else {
-        sign[0] = 0;
+        sign[0] = '\0';
     }
 
     if (c == '\n') {
@@ -153,9 +155,9 @@ void Automat::newline() {
 
 Token* Automat::getToken() {
 
-    const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT",
-        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_INT",
-        "READ_IDENTIFIER", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
+    const char* status_str[] = { "NONE", "FINAL", "ERROR", "READING_COMMENT",
+        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER",
+        "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
 
     if (status == NEWLINE) {
         newline();
@@ -167,28 +169,29 @@ Token* Automat::getToken() {
 
     column--;
     Token* newToken = 0;
+    TType ttype = NO_TYPE;
 
+    int token_length = 1;
     if (status == READ_IDENTIFIER) {
         lexem[lexem_index] = '\0';
         lexem_index = 0;
 
-        column -= strlen(lexem) - 1;
+        token_length = strlen(lexem);
+
         if (strcmp("print", lexem) == 0) {
-            newToken = new Token(PRINT, line, column);
+            ttype = PRINT;
         } else if (strcmp("read", lexem) == 0) {
-            newToken = new Token(READ, line, column);
+            ttype = READ;
         } else {
-            newToken = new Token(IDENTIFIER, line, column);
+            ttype = IDENTIFIER;
         }
     } else if (status == READ_INT) {
-        newToken = new Token(INTEGER, line, column);
-        newToken->setValue(value);
-        value = 0;
+        // TODO: token_length
+        ttype = INTEGER;
     } else if (status == READ_SIGN) {
         sign[sign_index] = '\0';
         sign_index = 0;
-        //cout << "Read sign: " << sign << endl;
-        TType ttype;
+        // cout << "Read sign: " << sign << endl;
 
         if (strcmp("+", sign) == 0) {
             ttype = SIGN_ADDITITON;
@@ -202,6 +205,7 @@ Token* Automat::getToken() {
             ttype = SIGN_LT;
         } else if (strcmp("<=>", sign) == 0) {
             ttype = SIGN_NE;
+            token_length = 3;
         } else if (strcmp(">", sign) == 0) {
             ttype = SIGN_GT;
         } else if (strcmp("=", sign) == 0) {
@@ -225,17 +229,22 @@ Token* Automat::getToken() {
         } else if (strcmp("]", sign) == 0) {
             ttype = SIGN_RIGHTSQUAREBRACKET;
         } else {
-            cout << "Sign token \"" << sign << "\" not found" << endl;
-        }
-
-        if (ttype != NULL) {
-// FIXME: pointer + null vs. enum...
-//            cout << "newtoken" << endl;
-            newToken = new Token(ttype, line, column);
+            cout << "Sign token \"" << sign << "\" not found, line " << line << ", column " << column << endl;
         }
     } else {
-        cout << "Status: " << status_str[status] << endl;
-        newToken = new Token(PRINT, line, column);
+        cerr << "Not a valid status: " << status_str[status] << endl;
+//        newToken = new Token(PRINT, line, column);
+    }
+
+    if (ttype != NO_TYPE) {
+        // FIXME: pointer + null vs. enum...
+//        cout << "newtoken " << ttype << endl;
+        newToken = new Token(ttype, line, column - (token_length - 1));
+    }
+
+    if (status == READ_INT && newToken != NULL) {
+        newToken->setValue(value);
+        value = 0;
     }
 
     status = NONE;
