@@ -1,7 +1,7 @@
 #ifndef SYMTABENTRY_HPP
 #define    SYMTABENTRY_HPP
 
-#include "TType.hpp"
+#include "../scan/TType.hpp"
 
 class SymtabEntry {
 public:

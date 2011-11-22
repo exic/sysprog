@@ -7,7 +7,7 @@ Buffer::Buffer(char* filename) {
     blockIndex = 0;
     current = 0;
     fillBlock();
-    cout << "read that.\n";
+//    cout << "read that.\n";
 //    cout << buffer[blockIndex] << endl;
 }
 
@@ -52,6 +52,9 @@ void Buffer::fillBlock() {
     cout << "chars: " << read_chars << endl;
     buffer[blockIndex] = buf;
     buffer[blockIndex][read_chars] = '\0';
+    if (read_chars < BUFSIZE) {
+        buffer[blockIndex][read_chars] = -1;
+    }
 }
 
 

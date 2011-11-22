@@ -2,11 +2,15 @@ test: $(OBJS)
 	[ -d tests ] && cd tests && make || true
 
 clean:
-	rm -f $(OBJS) $(OUT)
+	rm -f $(OBJS) $(OUT) $(OUTLIB)
 	[ -d tests ] && ( cd tests && make clean ) || true
 
 %.o: %.cpp
 	echo CC $<
 	${CXX} -c ${CXXFLAGS} $<
+
+$(OUTLIB): $(OBJS)
+	$(AR) $(ARFLAGS) rv $(OUTLIB) $?
+	$(RANLIB) $(OUTLIB)
 
 # vim: set filetype=make : #

@@ -4,7 +4,7 @@
 #include "TType.hpp"
 #include "Constants.hpp"
 #include "string.h"
-#include "SymtabEntry.hpp"
+#include "../symtab/SymtabEntry.hpp"
 
 
 class Token {
