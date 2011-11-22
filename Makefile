@@ -8,12 +8,12 @@ CXXFLAGS += $(LIBS)
 
 EXE = scanner
 
-all: modules run
+all: run
 
 $(EXE): $(OBJS) $(wildcard *.hpp) $(LIBS)
 	$(CXX) $(OBJS) $(CXXFLAGS) -o $(EXE)
 
-run: $(EXE)
+run: modules $(EXE)
 	./$(EXE) Scanner-test.txt out.txt
 
 modules:
@@ -22,12 +22,13 @@ modules:
 		cd $$module && make all && cd -;\
 	done );
 
-clean:
-	find -name '*.o' -or -name '*.a' | xargs rm -f
-	rm -f $(EXE)
+#clean:
+#	find -name '*.o' -or -name '*.a' | xargs rm -f
+#	rm -f $(EXE)
 #$(OBJS) a.out test tags $(EXE)
-	cd tests && make clean 2>/dev/null || true
+#	cd tests && make clean 2>/dev/null || true
 
+include Makefile.stdrules
 
 
 
