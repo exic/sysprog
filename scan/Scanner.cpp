@@ -26,7 +26,7 @@ Token* Scanner::nextToken() {
         }
 
         char c = buffer->getchar();
-//        cout << "Lese Zeichen \"" << c << "\"" << endl;
+//        cerr << "Lese Zeichen \"" << c << "\"" << endl;
         automat->readChar(c);
 
 //const char* status_str[] = { "FINAL", "ERROR", "NONE", "READING_COMMENT", "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER", "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };

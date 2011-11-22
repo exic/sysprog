@@ -1,10 +1,9 @@
 include ../Makefile.inc
 
-OBJS = Buffer.o
-OUTLIB = ../libbuffer.a
+OUTLIB = ../libsymtab.a
 
 all: $(OBJS) test $(OUTLIB)
 
-Buffer.o: Buffer.hpp Constants.hpp
+# Symtable.o: Symtable.hpp
 
 include ../Makefile.stdrules

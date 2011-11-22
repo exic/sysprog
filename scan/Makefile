@@ -1,10 +1,9 @@
 include ../Makefile.inc
 
-OBJS = Buffer.o
-OUTLIB = ../libbuffer.a
+OUTLIB = ../libscan.a
 
 all: $(OBJS) test $(OUTLIB)
 
-Buffer.o: Buffer.hpp Constants.hpp
+Automat.o: Automat.hpp Status.hpp TType.hpp Constants.hpp
 
 include ../Makefile.stdrules

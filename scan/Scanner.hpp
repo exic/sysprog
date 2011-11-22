@@ -1,10 +1,11 @@
 #ifndef SCANNER
 #define SCANNER
 
-#include "Token.hpp"
 #include "Automat.hpp"
-#include "Symtable.hpp"
+#include "../buffer/Buffer.hpp"
+#include "Token.hpp"
 #include "TType.hpp"
+#include "../symtab/Symtable.hpp"
 
 class Scanner {
     public:

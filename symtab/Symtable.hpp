@@ -1,9 +1,9 @@
 #ifndef SYMTABLE
 #define SYMTABLE
 
-#include "TType.hpp"
-#include "Token.hpp"
-#include "Buffer.hpp"
+#include "../scan/TType.hpp"
+// #include "Token.hpp"
+// #include "Buffer.hpp"
 #include "SymtabEntry.hpp"
 #include "StringTab.hpp"
 #include "Constants.hpp"

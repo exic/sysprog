@@ -52,6 +52,9 @@ void Buffer::fillBlock() {
     cout << "chars: " << read_chars << endl;
     buffer[blockIndex] = buf;
     buffer[blockIndex][read_chars] = '\0';
+    if (read_chars < BUFSIZE) {
+        buffer[blockIndex][read_chars] = -1;
+    }
 }
 
 
