@@ -17,14 +17,16 @@ SymtabEntry* Symtable::insert(char* lexem, TType type) {
         return hashTable[iHash];
     } else {
         SymtabEntry* current = hashTable[iHash];
+        SymtabEntry* tmp;
         while (current != 0) {
+        	tmp = current;
             if (!strcmp(current->getLexem(), lexem)) {
                 return current;
             }
             current = current->getNext();
         }
-        current->setNext(new SymtabEntry(type, stringTab->insert(lexem, strlen(lexem))));
-        return current->getNext();
+        tmp->setNext(new SymtabEntry(type, stringTab->insert(lexem, strlen(lexem))));
+        return tmp->getNext();
     }
 }
 
