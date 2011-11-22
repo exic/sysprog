@@ -34,22 +34,11 @@ void Buffer::ungetchar() {
     current--;
 }
 
-bool Buffer::isOpen() {
-    cout << "hi, this is my fd: " << fd << endl;
-    return true;
-}
-
 void Buffer::fillBlock() {
-//    char *buf = buffer[blockIndex];
-    cout << "running fillBlock, "
-        << "blockIndex: " << blockIndex
-        << ", alignment: " << ALIGNMENT 
-        << ", bufsize: " << BUFSIZE << "\n";
-//    char *s= buffer[blockIndex];
     char *buf;
     posix_memalign((void**)&buf, ALIGNMENT, BUFSIZE);
     int read_chars = read(fd, buf, BUFSIZE);
-    cout << "chars: " << read_chars << endl;
+
     buffer[blockIndex] = buf;
     buffer[blockIndex][read_chars] = '\0';
     if (read_chars < BUFSIZE) {

@@ -20,11 +20,6 @@ protected:
     Buffer *b;
 };
 
-TEST_F(BufferTest, Open) {
-    EXPECT_TRUE(b->isOpen());
-}
-
-
 
 TEST_F(BufferTest, Read) {
     char expected[] = "babaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nZ =?= ((3 +++ 4 - 6));\nÄy=X / (X - 4);\nprinto read a <=>*b;\n(* eine einfache Aufgabe !! *)\nm = n <=/ o;\n";
