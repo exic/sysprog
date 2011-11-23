@@ -6,6 +6,10 @@
 #include "Constants.hpp"
 
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <error.h>
 using namespace std;
 
 class Automat {
@@ -43,7 +47,8 @@ class Automat {
         char sign[MAX_SIGN_LENGTH];
         int lexem_index;
         char lexem[MAX_LEXEM_LENGTH];
-        int value;
+        char value_str[MAX_LEXEM_LENGTH];
+        int value_str_index;
         int unget;
         Status status;
 };

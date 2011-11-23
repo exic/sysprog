@@ -13,8 +13,8 @@ class Token {
         TType getType();
         int getLine();
         int getColumn();
-        int getValue();
-        void setValue(int value);
+        long int getValue();
+        void setValue(long int value);
         SymtabEntry* getEntry() { return entry; };
         void setEntry(SymtabEntry* entry) { this->entry = entry; };
     private:
@@ -22,7 +22,7 @@ class Token {
         SymtabEntry* entry;
         int line;
         int column;
-        int value;
+        long int value;
 };
 
 #endif

@@ -5,6 +5,7 @@ Automat::Automat() {
     column = 0;
     sign_index = 0;
     lexem_index = 0;
+    value_str_index = 0;
     unget = 0;
     status = NONE;
 }
@@ -94,7 +95,7 @@ Status Automat::statusINT(char c) {
     if (!isDigit(c)) {
         return READ_INT;
     }
-    value = value * 10 + ((int) c - '0');
+    value_str[value_str_index++] = c;
     return READING_INT;
 }
 
@@ -189,7 +190,9 @@ Token* Automat::getToken() {
             ttype = IDENTIFIER;
         }
     } else if (status == READ_INT) {
-        // TODO: token_length
+        value_str[value_str_index] = '\0';
+        value_str_index = 0;
+        token_length = strlen(value_str);
         ttype = INTEGER;
     } else if (status == READ_SIGN) {
         sign[sign_index] = '\0';
@@ -246,8 +249,12 @@ Token* Automat::getToken() {
     }
 
     if (status == READ_INT && newToken != NULL) {
+    	char* pEnd;
+    	long int value = strtol(value_str, &pEnd, 10);
+    	if (errno == ERANGE) {
+    		 cerr << "Integer out of Range" << endl;
+    	}
         newToken->setValue(value);
-        value = 0;
     }
 
     status = NONE;

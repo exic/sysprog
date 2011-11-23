@@ -18,10 +18,10 @@ int Token::getColumn() {
     return column;
 }
 
-int Token::getValue() {
+long int Token::getValue() {
     return value;
 }
 
-void Token::setValue(int value) {
+void Token::setValue(long int value) {
     this->value = value;
 }
