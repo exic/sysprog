@@ -34,6 +34,7 @@ $name = "Status";
     "NONE",
 
     "FINAL",
+    "FINAL_COMMENT_NOT_CLOSED_ERROR",
     "ERROR",
 
     "READING_COMMENT",

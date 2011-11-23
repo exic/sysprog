@@ -1,4 +1,4 @@
-#define _GNU_SOURCE 1
+#define _GNU_SOURCE
 
 #ifndef BUFFER
 #define BUFFER
@@ -19,14 +19,23 @@ using namespace std;
 // posix_memalign(3)
 #include <stdlib.h>
 
+// perror(3)
+#include <stdio.h>
+
+// strcpy(3)
+#include <string.h>
+
 class Buffer {
     public:
-        Buffer(char* filename);
+        Buffer(char* filename, bool read);
         ~Buffer();
         char getchar();
+        void addchars(char* c);
         void ungetchar();
     private:
-        void fillBlock();
+        bool is_read;
+        void readBlock();
+        void writeBlock();
         int i;
         int current;
         int blockIndex;

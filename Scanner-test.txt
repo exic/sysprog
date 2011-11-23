@@ -1,7 +1,8 @@
+print2
 Z =?= ((3 +++ 4 - 6));
 y=X / (X - 4);
 hiho
 printo read a <=>*b;
 (* eine einfache 
-Aufgabe !! *)
+Aufgabe !! *
 m = n <=/ o;

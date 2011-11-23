@@ -10,7 +10,7 @@ protected:
 
     virtual void SetUp() {
         char buffertestfile[] = "buffertestfile";
-        b = new Buffer(buffertestfile);
+        b = new Buffer(buffertestfile, true);
     }
 
     virtual void TearDown() {

@@ -76,6 +76,8 @@ Status Automat::statusCOMMENT(char c) {
 
     if (c == '\n') {
         newline();
+    } else if (c == -1) {
+        return FINAL_COMMENT_NOT_CLOSED_ERROR;
     }
     return READING_COMMENT;
 }
@@ -145,7 +147,7 @@ bool Automat::isError() {
 }
 
 bool Automat::isEof() {
-    return status == FINAL;
+    return status == FINAL || status == FINAL_COMMENT_NOT_CLOSED_ERROR;
 }
 
 void Automat::newline() {
@@ -155,7 +157,8 @@ void Automat::newline() {
 
 Token* Automat::getToken() {
 
-    const char* status_str[] = { "NONE", "FINAL", "ERROR", "READING_COMMENT",
+    const char* status_str[] = { "NONE", "FINAL",
+        "FINAL_COMMENT_NOT_CLOSED_ERROR", "ERROR", "READING_COMMENT",
         "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER",
         "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
 

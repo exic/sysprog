@@ -4,7 +4,7 @@ Symtable::Symtable() {
     stringTab = new StringTab();
     for (int i = 0; i < SYMTABLE_HASHTABLESIZE; i++) {
         hashTable[i] = 0;
-    }   
+    }
 }
 
 Symtable::~Symtable() {
@@ -19,7 +19,7 @@ SymtabEntry* Symtable::insert(char* lexem, TType type) {
         SymtabEntry* current = hashTable[iHash];
         SymtabEntry* tmp;
         while (current != 0) {
-        	tmp = current;
+            tmp = current;
             if (!strcmp(current->getLexem(), lexem)) {
                 return current;
             }
@@ -37,6 +37,6 @@ int Symtable::hash(char* lexem) {
         counter++;
     }
     int lastChar = *(lexem + (counter - 1));
-    
-    return (16 * firstChar + 8 * lastChar + counter) % SYMTABLE_HASHTABLESIZE;
+
+    return (50 * firstChar + 25 * lastChar + counter) % SYMTABLE_HASHTABLESIZE;
 }

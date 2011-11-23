@@ -5,7 +5,7 @@ using namespace std;
 
 Scanner::Scanner(char* filename) {
     automat = new Automat();
-    buffer = new Buffer(filename);
+    buffer = new Buffer(filename, true);
     symtable = new Symtable();
 }
 
@@ -29,9 +29,15 @@ Token* Scanner::nextToken() {
 //        cerr << "Lese Zeichen \"" << c << "\"" << endl;
         automat->readChar(c);
 
-//const char* status_str[] = { "NONE", "FINAL", "ERROR", "READING_COMMENT", "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER", "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
+
+//    const char* status_str[] = { "NONE", "FINAL",
+//        "FINAL_COMMENT_NOT_CLOSED_ERROR", "ERROR", "READING_COMMENT",
+//        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER",
+//        "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
         if (automat->getStatus() == ERROR) {
             cerr << "Unknown character at line " << automat->getLine() << ", column " << automat->getColumn() << endl;
+        } else if (automat->getStatus() == FINAL_COMMENT_NOT_CLOSED_ERROR) {
+            cerr << "Comment was not closed!" << endl;
         }
 //        cout << "Automat-Status: " << status_str[automat->getStatus()] << endl;
     }

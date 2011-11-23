@@ -14,7 +14,8 @@ $(EXE): $(OBJS) $(wildcard *.hpp) $(LIBS)
 	$(CXX) $(OBJS) $(CXXFLAGS) -o $(EXE)
 
 run: modules $(EXE)
-	./$(EXE) Scanner-test.txt out.txt
+	cp Scanner-test.txt /tmp/test67.txt
+	./$(EXE) /tmp/test67.txt /tmp/out67.txt
 
 modules:
 	( for module in $(MODULES); do\

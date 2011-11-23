@@ -12,18 +12,19 @@ main()
         int BUFSIZE = 4096;
         char *buf;
         int ps = getpagesize();
+        printf("pagesize: %i\n", ps);
         posix_memalign((void**)&buf, ps, BUFSIZE);
-        memset(buf, -1, 512);
+        memset(buf, ' ', ps);
         strcpy(buf, "hallo welt");
 
         int fd;
-        if ( (fd = open("herenewfile", O_WRONLY | O_CREAT | O_DIRECT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) < 0) {
+        if ( (fd = open("/tmp/herenewfile", O_WRONLY | O_CREAT | O_DIRECT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) < 0) {
             perror("Open failed");
             exit(1);
         }
 
         int returncode;
-        if ( (returncode = write(fd, buf, 512)) < 0) {
+        if ( (returncode = write(fd, buf, BUFSIZE)) < 0) {
             perror("Write failed");
         }
 //        buf[returncode] = '\0';

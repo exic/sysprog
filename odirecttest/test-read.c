@@ -9,12 +9,18 @@
 main()
 {
         printf("got: %i\n", BLKSSZGET);
-        int BUFSIZE = 4096;
+        int ps = BLKSSZGET; // getpagesize();
+//        int ps = getpagesize();
+        int BUFSIZE = ps;
         char *buf;
 
-        posix_memalign((void**)&buf, 1024, BUFSIZE+1);
+        posix_memalign((void**)&buf, ps, BUFSIZE);
 
-        int fd = open("buffer/tests/buffertestfile", O_RDONLY | O_DIRECT);
+        int fd;
+        if ( (fd = open("../buffer/tests/buffertestfile", O_RDONLY | O_DIRECT)) < 0) {
+            perror("Error opening");
+            exit(1);
+        }
 
         int last_char = read(fd, buf, BUFSIZE);
         buf[last_char] = '\0';

@@ -2,11 +2,29 @@
 
 using namespace std;
 
-Buffer::Buffer(char* filename) {
-    fd = open(filename, O_DIRECT | O_RDONLY);
+Buffer::Buffer(char* filename, bool read) {
+    this->is_read = read;
+
+    if (read) {
+        if ( (fd = open(filename, O_DIRECT | O_RDONLY)) < 0) {
+            perror("Opening file for read failed");
+            exit(1);
+        }
+    } else {
+        if ( (fd = open(filename,
+                    O_WRONLY | O_CREAT | O_DIRECT,
+                    00644)) < 0) {
+            perror("Opening file for write failed");
+            exit(1);
+        }
+    }
+
     blockIndex = 0;
     current = 0;
-    fillBlock();
+
+    if (read) {
+        readBlock();
+    }
 //    cout << "read that.\n";
 //    cout << buffer[blockIndex] << endl;
 }
@@ -14,6 +32,10 @@ Buffer::Buffer(char* filename) {
 
 
 Buffer::~Buffer() {
+    if (! this->is_read) {
+        memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
+        writeBlock();
+    }
     close(fd);
 }
 
@@ -21,7 +43,7 @@ char Buffer::getchar() {
     if (current >= BUFSIZE) {
         blockIndex = (blockIndex + 1) % BLOCKS;
         current = 0;
-        fillBlock();
+        readBlock();
     }
     if (buffer[blockIndex][current] == '\0') {
         current++;
@@ -30,11 +52,35 @@ char Buffer::getchar() {
     return (char) buffer[blockIndex][current++];
 }
 
+void Buffer::addchars(char* c) {
+    if (current == 0) {
+        posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
+    }
+
+//    cout << "got: " << c << endl;
+    int string_length = strlen(c);
+    if ((current + string_length) < BUFSIZE) {
+        strcpy(buffer[blockIndex]+current, c);
+        current += string_length;
+    } else {
+        // restliche Zeichen auffüllen
+        int cut_at = (BUFSIZE - current);
+        memcpy (buffer[blockIndex]+current, c, cut_at);
+        writeBlock();
+        free(buffer[blockIndex]);
+        current = 0;
+        addchars(c+cut_at);
+    }
+//    cout << "\n\nbuffer[blockIndex]: " << buffer[blockIndex] 
+//        << ", length: " << string_length 
+//        << ", current index: " << current << endl;
+}
+
 void Buffer::ungetchar() {
     current--;
 }
 
-void Buffer::fillBlock() {
+void Buffer::readBlock() {
     char *buf;
     posix_memalign((void**)&buf, ALIGNMENT, BUFSIZE);
     int read_chars = read(fd, buf, BUFSIZE);
@@ -46,4 +92,16 @@ void Buffer::fillBlock() {
     }
 }
 
+void Buffer::writeBlock() {
+//    cout << "Running writeBlock!" << endl;
+    char *buf;
+    posix_memalign((void**)&buf, ALIGNMENT, BUFSIZE);
+//    memset(buf, ' ', ps);
+    strcpy(buf, buffer[blockIndex]);
 
+    int returncode;
+    if ( (returncode = write(fd, buf, BUFSIZE)) < 0) {
+        perror("Write failed");
+    }
+    free(buf);
+}

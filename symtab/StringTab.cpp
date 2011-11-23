@@ -16,14 +16,14 @@ char* StringTab::insert(char* lexem, int size) {
         memcpy(freeP, lexem, size + 1);
         freeP[size] = '\0';
         freeP += size + 1;
-        std::cout << "Freespace vor dem Einfuegen von '" << lexem << "': " << freeSpace << std::endl;
+//        std::cout << "Freespace vor dem Einfuegen von '" << lexem << "': " << freeSpace << std::endl;
         freeSpace -= size + 1;
-        std::cout << "Freespace nach dem Einfuegen von '" << lexem << "': " << freeSpace << std::endl;
+//        std::cout << "Freespace nach dem Einfuegen von '" << lexem << "': " << freeSpace << std::endl;
         return tmp;
     } else {
         addStringTabNode();
         return insert(lexem, size);
-    }    
+    }
 }
 
 void StringTab::addStringTabNode() {
