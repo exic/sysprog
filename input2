@@ -1,0 +1,39 @@
+(* berechnet a^b % c *)
+
+int a;
+int b;
+int c;
+
+int x;
+int y;
+
+int mod;
+int div;
+
+read(a);
+read(b);
+read(c);
+
+x=1;
+y=a;
+while(0 < b){
+ (* b % 2 *)
+  div = b/2;
+  mod = b - (div * 2);
+  if (mod = 1){
+    (* (x*y)%c *)
+    div = (x*y)/c;
+    mod = (x*y) - (div * c);
+    x = mod;
+  } else {};
+    (* (y*y)%c *)
+    div = (y*y)/c;
+    mod = (y*y) - (div * c);
+    y = mod; (* squaring the base*)
+    b = b / 2;
+};
+ (* x % c *)
+  div = x/c;
+  mod = x - (div * c);
+
+print(mod);
