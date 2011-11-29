@@ -17,11 +17,13 @@ $(EXE): $(OBJS) $(wildcard *.hpp) $(LIBS)
 TMP_IN = /tmp/test67.txt
 TMP_OUT = /tmp/out67.txt
 
-run: modules $(EXE)
+run: modules test $(EXE)
 	cp input1 $(TMP_IN)
+	rm -f $(TMP_OUT)
 	./$(EXE) $(TMP_IN) $(TMP_OUT)
 	mv $(TMP_OUT) out.txt
 	rm $(TMP_IN)
+	echo Done.; echo; echo
 
 modules:
 	( for module in $(MODULES); do\

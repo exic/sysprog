@@ -1,10 +1,10 @@
 test: $(OBJS)
-	[ -d tests ] && cd tests && make || true
+	if [ -d tests ]; then cd tests && make; fi
 
 clean:
 	find -name '*.o' -or -name '*.a' -or -name 'test-exec' | xargs rm -f
 	rm -f $(EXE) $(OBJS) $(OUT) $(OUTLIB)
-	[ -d tests ] && ( cd tests && make clean ) || true
+	if [ -d tests ]; then cd tests && make clean; fi
 
 %.o: %.cpp
 	echo CC $<
