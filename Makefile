@@ -13,9 +13,15 @@ all: run
 $(EXE): $(OBJS) $(wildcard *.hpp) $(LIBS)
 	$(CXX) $(OBJS) $(CXXFLAGS) -o $(EXE)
 
+
+TMP_IN = /tmp/test67.txt
+TMP_OUT = /tmp/out67.txt
+
 run: modules $(EXE)
-	cp Scanner-test.txt /tmp/test67.txt
-	./$(EXE) /tmp/test67.txt /tmp/out67.txt
+	cp input1 $(TMP_IN)
+	./$(EXE) $(TMP_IN) $(TMP_OUT)
+	mv $(TMP_OUT) out.txt
+	rm $(TMP_IN)
 
 modules:
 	( for module in $(MODULES); do\
