@@ -22,13 +22,10 @@ Buffer::Buffer(char* filename, bool read) {
     blockIndex = 0;
     current = 0;
     steppedBackBlock = false;
-//    cout << "hi" << endl;
 
     if (read) {
         readBlock();
     }
-//    cout << "read that.\n";
-//    cout << buffer[blockIndex] << endl;
 }
 
 
@@ -65,7 +62,6 @@ void Buffer::addchars(char* c) {
         posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
     }
 
-//    cout << "got: " << c << endl;
     int string_length = strlen(c);
     if ((current + string_length) < BUFSIZE) {
         strcpy(buffer[blockIndex]+current, c);
@@ -81,9 +77,6 @@ void Buffer::addchars(char* c) {
         // add the rest
         addchars(c+cut_at);
     }
-//    cout << "\n\nbuffer[blockIndex]: " << buffer[blockIndex] 
-//        << ", length: " << string_length 
-//        << ", current index: " << current << endl;
 }
 
 void Buffer::addchars(int value) {
@@ -100,7 +93,6 @@ void Buffer::addchars(const char* c) {
 void Buffer::ungetchar() {
     current--;
     if (current < 0) {
-//        cout << "stepping back block!" << endl;
         current = BUFSIZE - 1;
         blockIndex = (blockIndex - 1) % BLOCKS;
         steppedBackBlock = true;
@@ -109,12 +101,10 @@ void Buffer::ungetchar() {
 }
 
 void Buffer::readBlock() {
-//    cout << "attempt to read next block" << endl;
-    char *buf;
-    posix_memalign((void**)&buf, ALIGNMENT, BUFSIZE);
-    int read_chars = read(fd, buf, BUFSIZE);
+    posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
 
-    buffer[blockIndex] = buf;
+    int read_chars = read(fd, buffer[blockIndex], BUFSIZE);
+
     buffer[blockIndex][read_chars] = '\0';
     if (read_chars < BUFSIZE) {
         buffer[blockIndex][read_chars] = -1;
@@ -122,15 +112,9 @@ void Buffer::readBlock() {
 }
 
 void Buffer::writeBlock() {
-//    cout << "Running writeBlock!" << endl;
-    char *buf;
-    posix_memalign((void**)&buf, ALIGNMENT, BUFSIZE);
-//    memset(buf, ' ', ps);
-    strcpy(buf, buffer[blockIndex]);
+    posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
 
-    int returncode;
-    if ( (returncode = write(fd, buf, BUFSIZE)) < 0) {
+    if ( (write(fd, buffer[blockIndex], BUFSIZE)) < 0) {
         perror("Write failed");
     }
-    free(buf);
 }
