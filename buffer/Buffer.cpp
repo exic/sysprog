@@ -92,6 +92,11 @@ void Buffer::addchars(const char* c) {
 
 void Buffer::ungetchar() {
     current--;
+    if (current < 0) {
+        current = BUFSIZE;
+        blockIndex = (blockIndex - 1) % BLOCKS;
+        // TODO: Test
+    }
 }
 
 void Buffer::readBlock() {
