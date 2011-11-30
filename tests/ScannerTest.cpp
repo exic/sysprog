@@ -126,6 +126,23 @@ TEST_F(ScannerTest, TokenTest) {
                  // out-of-range-int is wanted here.
                  ASSERT_EQ(IDENTIFIER, t->getType());
                  ASSERT_STREQ("didntgettoolongvalue", t->getEntry()->getLexem());
+                 break;
+             case 50:
+                 ASSERT_EQ(IDENTIFIER, t->getType());
+                 ASSERT_STREQ("n", t->getEntry()->getLexem());
+                 break;
+             case 51:
+                 ASSERT_EQ(SIGN_LT, t->getType());
+                 break;
+             case 52:
+                 ASSERT_EQ(SIGN_ASSIGN, t->getType());
+                 break;
+             case 53:
+                 ASSERT_EQ(IDENTIFIER, t->getType());
+                 ASSERT_STREQ("o", t->getEntry()->getLexem());
+                 break;
+             case 54:
+                 ASSERT_EQ(SIGN_SEMICOLON, t->getType());
                  sawLastPoint = true;
                  break;
          }

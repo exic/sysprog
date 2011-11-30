@@ -78,14 +78,6 @@ Status Automat::statusINT(char c) {
 }
 
 Status Automat::statusSIGN(char c) {
-    if (!Util::isSign(c)) {
-        return READ_SIGN;
-    }
-
-    if (sign_index == 1 && sign[0] != '(' && sign[0] != '<') {
-        return READ_SIGN;
-    }
-
     if (sign_index == 1) {
         if (sign[0] == '(') {
             if (c == '*') {
@@ -99,11 +91,20 @@ Status Automat::statusSIGN(char c) {
         }
     } else if (sign_index == 2) {
         if (c != '>') {
+//            cout << "hereiam" << endl;
             unget = 2;
             sign[1] = '\0';
             return READ_SIGN;
         }
     } else if (sign_index == 3) {
+        return READ_SIGN;
+    }
+
+    if (!Util::isSign(c)) {
+        return READ_SIGN;
+    }
+
+    if (sign_index == 1 && sign[0] != '(' && sign[0] != '<') {
         return READ_SIGN;
     }
 
@@ -202,6 +203,7 @@ Token* Automat::getToken() {
         ttype = INTEGER;
     } else if (status == READ_SIGN) {
         sign[sign_index] = '\0';
+//        cout << "found sign: " << sign << ", index: " << sign_index << endl;
         sign_index = 0;
 
         ttype = getTokenTypeBySign();
