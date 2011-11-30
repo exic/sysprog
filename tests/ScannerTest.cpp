@@ -150,4 +150,3 @@ TEST_F(ScannerTest, TokenTest) {
     ASSERT_TRUE(sawLastPoint);
 
 }
-

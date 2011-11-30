@@ -48,6 +48,7 @@ class Buffer {
         int blockIndex;
         char* buffer[BLOCKS];
         int fd;
+        bool steppedBackBlock;
 };
 
 #endif

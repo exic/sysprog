@@ -21,6 +21,8 @@ Buffer::Buffer(char* filename, bool read) {
 
     blockIndex = 0;
     current = 0;
+    steppedBackBlock = false;
+//    cout << "hi" << endl;
 
     if (read) {
         readBlock();
@@ -44,12 +46,17 @@ char Buffer::getchar() {
     if (current >= BUFSIZE) {
         blockIndex = (blockIndex + 1) % BLOCKS;
         current = 0;
-        readBlock();
+        if (steppedBackBlock) {
+            steppedBackBlock = false;
+        } else {
+            readBlock();
+        }
     }
     if (buffer[blockIndex][current] == '\0') {
         current++;
         return getchar();
     }
+//    cout << "getchar...: " << current << endl;
     return (char) buffer[blockIndex][current++];
 }
 
@@ -93,13 +100,16 @@ void Buffer::addchars(const char* c) {
 void Buffer::ungetchar() {
     current--;
     if (current < 0) {
-        current = BUFSIZE;
+//        cout << "stepping back block!" << endl;
+        current = BUFSIZE - 1;
         blockIndex = (blockIndex - 1) % BLOCKS;
+        steppedBackBlock = true;
         // TODO: Test
     }
 }
 
 void Buffer::readBlock() {
+//    cout << "attempt to read next block" << endl;
     char *buf;
     posix_memalign((void**)&buf, ALIGNMENT, BUFSIZE);
     int read_chars = read(fd, buf, BUFSIZE);
