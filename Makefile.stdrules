@@ -1,6 +1,5 @@
 test: $(OBJS)
-	# if [ -d tests ]; then cd tests && make; fi
-	true
+	if [ -d tests ]; then cd tests && make; fi
 
 clean:
 	find -name '*.o' -or -name '*.a' -or -name 'test-exec' | xargs rm -f
