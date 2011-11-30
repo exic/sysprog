@@ -5,6 +5,8 @@ CXXFLAGS += $(LIBS)
 
 OBJS = ScannerTest.o TestRunner.o ../libscan.a ../libbuffer.a ../libsymtab.a
 
+ScannerTest.o: ../libscan.a
+
 OUT = test-exec
 
 run-test: $(OUT)

@@ -13,7 +13,7 @@ class Util {
         }
 
         static bool isSign(char c) {
-            char signs[] = "+-/*<>=!&;(){}[]";
+            char signs[] = "+-/*<>=!&;:(){}[]";
             return containsChar(signs, c);
         }
 

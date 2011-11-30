@@ -194,6 +194,14 @@ Token* Automat::getToken() {
             ttype = PRINT;
         } else if (strcmp("read", lexem) == 0) {
             ttype = READ;
+        } else if (strcmp("if", lexem) == 0) {
+            ttype = IF;
+        } else if (strcmp("else", lexem) == 0) {
+            ttype = ELSE;
+        } else if (strcmp("while", lexem) == 0) {
+            ttype = WHILE;
+        } else if (strcmp("int", lexem) == 0) {
+            ttype = INT;
         } else {
             ttype = IDENTIFIER;
         }
@@ -260,6 +268,8 @@ TType Automat::getTokenTypeBySign() {
         return SIGN_AMPERSAND;
     } else if (strcmp(";", sign) == 0) {
         return SIGN_SEMICOLON;
+    } else if (strcmp(":", sign) == 0) {
+        return SIGN_COLON;
     } else if (strcmp("(", sign) == 0) {
         return SIGN_LEFTBRACKET;
     } else if (strcmp(")", sign) == 0) {

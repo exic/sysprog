@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 $name = "TType";
-@names = ("no_type", "integer", "identifier", "print", "read");
+@names = ("no_type", "integer", "identifier", "print", "read", "if", "else", "while", "int");
 @signnames = (
     "addititon",
     "subtraction",
@@ -14,6 +14,7 @@ $name = "TType";
     "exclamation",
     "ampersand",
     "semicolon",
+    "colon",
     "leftBracket",
     "rightBracket",
     "leftAngleBracket",
@@ -45,7 +46,6 @@ $name = "Status";
     "READ_IDENTIFIER",
     "READ_INT",
     "READ_SIGN",
-    "TOKEN_READ",
 
     "NEWLINE"
 );
