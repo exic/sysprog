@@ -7,7 +7,7 @@ int c;
 int x;
 int y;
 
-int mod;
+int mod;?
 int div;
 
 read(a);

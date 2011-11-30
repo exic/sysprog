@@ -166,6 +166,7 @@ Token* Automat::getToken() {
     }
     if (isError()) {
         lexem[lexem_index] = '\0';
+//        cerr << " got error symbol: " << lexem << ", index: " << lexem_index << endl;
         lexem_index = 0;
         status = NONE;
         return new Token(NO_TYPE, line, column);

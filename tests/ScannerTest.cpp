@@ -146,6 +146,7 @@ TEST_F(ScannerTest, TokenTest) {
                  sawLastPoint = true;
                  break;
          }
+//         cout << "done..." << endl;
     }
     ASSERT_TRUE(sawLastPoint);
 

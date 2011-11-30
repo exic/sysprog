@@ -34,12 +34,14 @@ Token* Scanner::nextToken() {
 //        "FINAL_COMMENT_NOT_CLOSED_ERROR", "ERROR", "READING_COMMENT",
 //        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER",
 //        "READ_INT", "READ_SIGN", "NEWLINE" };
-        if (automat->getStatus() == ERROR) {
-            cerr << "Unknown character at line " << automat->getLine() << ", column " << automat->getColumn() << ", symbol: \"" << automat->getLexem() << "\"\n";
-        } else if (automat->getStatus() == FINAL_COMMENT_NOT_CLOSED_ERROR) {
+        if (automat->getStatus() == FINAL_COMMENT_NOT_CLOSED_ERROR) {
             cerr << "Comment was not closed!" << endl;
         }
 //        cout << "Automat-Status: " << status_str[automat->getStatus()] << endl;
+    }
+
+    if (token && (token->getType() == NO_TYPE) ) {
+        cerr << "Unknown character at line " << token->getLine() << ", column " << token->getColumn() << ", symbol: \"" << automat->getLexem() << "\"\n";
     }
 
     if (token && (token->getType() == IDENTIFIER || token->getType() == NO_TYPE) ) {
