@@ -34,6 +34,7 @@ Buffer::Buffer(char* filename, bool read) {
 Buffer::~Buffer() {
     if (! this->is_read) {
         memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
+        buffer[blockIndex][BUFSIZE-1] = '\n';
         writeBlock();
     }
     close(fd);
@@ -63,18 +64,31 @@ void Buffer::addchars(char* c) {
         strcpy(buffer[blockIndex]+current, c);
         current += string_length;
     } else {
-        // restliche Zeichen auffüllen
+        // fill the current buffer
         int cut_at = (BUFSIZE - current);
         memcpy (buffer[blockIndex]+current, c, cut_at);
+        // write it
         writeBlock();
         free(buffer[blockIndex]);
         current = 0;
+        // add the rest
         addchars(c+cut_at);
     }
 //    cout << "\n\nbuffer[blockIndex]: " << buffer[blockIndex] 
 //        << ", length: " << string_length 
 //        << ", current index: " << current << endl;
 }
+
+void Buffer::addchars(int value) {
+    char* buffer = new char[32];
+    sprintf(buffer, "%i", value);
+    addchars(buffer);
+}
+
+void Buffer::addchars(const char* c) {
+    addchars(const_cast<char*>(c));
+}
+
 
 void Buffer::ungetchar() {
     current--;

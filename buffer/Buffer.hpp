@@ -1,4 +1,6 @@
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 
 #ifndef BUFFER
 #define BUFFER
@@ -30,8 +32,13 @@ class Buffer {
         Buffer(char* filename, bool read);
         ~Buffer();
         char getchar();
-        void addchars(char* c);
         void ungetchar();
+
+        void addchars(char* c);
+        // Convenience functions
+        void addchars(int value);
+        void addchars(const char* c);
+
     private:
         bool is_read;
         void readBlock();

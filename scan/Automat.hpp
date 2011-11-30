@@ -4,6 +4,7 @@
 #include "Token.hpp"
 #include "Status.hpp"
 #include "Constants.hpp"
+#include "Util.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -31,15 +32,13 @@ class Automat {
         }
         char* getLexem() { return lexem; }
     private:
-        bool isDigit(char c);
-        bool isLetter(char c);
-        bool isSign(char c);
         void newline();
         Status statusNONE(char c);
         Status statusCOMMENT(char c);
         Status statusIDENTIFIER(char c);
         Status statusINT(char c);
         Status statusSIGN(char c);
+        TType getTokenTypeBySign();
         int line;
         int column;
         char lastchar;

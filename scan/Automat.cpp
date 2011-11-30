@@ -13,9 +13,9 @@ Automat::Automat() {
 Automat::~Automat() {
 }
 
+
 void Automat::readChar(char c) {
     column++;
-//    cout << "char: " << c << ", col: " << column << endl;
     unget = 0;
 
     switch (status) {
@@ -36,28 +36,6 @@ void Automat::readChar(char c) {
             status = statusNONE(c);
             break;
     }
-
-    return;
-}
-
-Status Automat::statusNONE(char c) {
-    if (isDigit(c)) {
-        return statusINT(c);
-    } else if (isLetter(c)) {
-        return statusIDENTIFIER(c);
-    } else if (isSign(c)) {
-        return statusSIGN(c);
-    } else {
-        switch (c) {
-            case '\n':
-                return NEWLINE;
-            case -1: // eof
-                return FINAL;
-            case ' ':
-                return NONE;
-        }
-    }
-    return ERROR;
 }
 
 
@@ -84,7 +62,7 @@ Status Automat::statusCOMMENT(char c) {
 }
 
 Status Automat::statusIDENTIFIER(char c) {
-    if (!isDigit(c) && !isLetter(c)) {
+    if (!Util::isDigit(c) && !Util::isLetter(c)) {
         return READ_IDENTIFIER;
     }
     lexem[lexem_index++] = c;
@@ -92,7 +70,7 @@ Status Automat::statusIDENTIFIER(char c) {
 }
 
 Status Automat::statusINT(char c) {
-    if (!isDigit(c)) {
+    if (!Util::isDigit(c)) {
         return READ_INT;
     }
     value_str[value_str_index++] = c;
@@ -100,7 +78,7 @@ Status Automat::statusINT(char c) {
 }
 
 Status Automat::statusSIGN(char c) {
-    if (!isSign(c)) {
+    if (!Util::isSign(c)) {
         return READ_SIGN;
     }
 
@@ -133,11 +111,38 @@ Status Automat::statusSIGN(char c) {
     return READING_SIGN;
 }
 
+Status Automat::statusNONE(char c) {
+    if (Util::isDigit(c)) {
+        return statusINT(c);
+    } else if (Util::isLetter(c)) {
+        return statusIDENTIFIER(c);
+    } else if (Util::isSign(c)) {
+        return statusSIGN(c);
+    } else {
+        switch (c) {
+            case '\n':
+                return NEWLINE;
+            case -1: // eof
+                return FINAL;
+            case ' ':
+                return NONE;
+        }
+    }
+    lexem[lexem_index++] = c;
+    return ERROR;
+}
+
+
+void Automat::newline() {
+    line++;
+    column = 0;
+}
+
+
 bool Automat::isTokenRead() {
     return (
-        status == TOKEN_READ
+        status == READ_IDENTIFIER
         || status == READ_INT
-        || status == READ_IDENTIFIER
         || status == READ_SIGN
         || status == FINAL
    );
@@ -151,27 +156,28 @@ bool Automat::isEof() {
     return status == FINAL || status == FINAL_COMMENT_NOT_CLOSED_ERROR;
 }
 
-void Automat::newline() {
-    line++;
-    column = 0;
-}
 
 Token* Automat::getToken() {
-
-    const char* status_str[] = { "NONE", "FINAL",
-        "FINAL_COMMENT_NOT_CLOSED_ERROR", "ERROR", "READING_COMMENT",
-        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER",
-        "READ_INT", "READ_SIGN", "TOKEN_READ", "NEWLINE" };
 
     if (status == NEWLINE) {
         newline();
         return 0;
     }
-    if (!isTokenRead() || isError() || isEof()) {
+    if (isError()) {
+        lexem[lexem_index] = '\0';
+        lexem_index = 0;
+        status = NONE;
+        return new Token(NO_TYPE, line, column);
+    }
+    if (!isTokenRead() || isEof()) {
         return 0;
     }
 
-    column--;
+    if (unget < 1) {
+        unget = 1;
+    }
+    column -= unget;
+
     Token* newToken = 0;
     TType ttype = NO_TYPE;
 
@@ -197,105 +203,77 @@ Token* Automat::getToken() {
     } else if (status == READ_SIGN) {
         sign[sign_index] = '\0';
         sign_index = 0;
-        // cout << "Read sign: " << sign << endl;
 
-        if (strcmp("+", sign) == 0) {
-            ttype = SIGN_ADDITITON;
-        } else if (strcmp("-", sign) == 0) {
-            ttype = SIGN_SUBTRACTION;
-        } else if (strcmp("/", sign) == 0) {
-            ttype = SIGN_DIVISION;
-        } else if (strcmp("*", sign) == 0) {
-            ttype = SIGN_MULTIPLICATION;
-        } else if (strcmp("<", sign) == 0) {
-            ttype = SIGN_LT;
-        } else if (strcmp("<=>", sign) == 0) {
-            ttype = SIGN_NE;
+        ttype = getTokenTypeBySign();
+
+        if (ttype == SIGN_NE) {
             token_length = 3;
-        } else if (strcmp(">", sign) == 0) {
-            ttype = SIGN_GT;
-        } else if (strcmp("=", sign) == 0) {
-            ttype = SIGN_ASSIGN;
-        } else if (strcmp("!", sign) == 0) {
-            ttype = SIGN_EXCLAMATION;
-        } else if (strcmp("&", sign) == 0) {
-            ttype = SIGN_AMPERSAND;
-        } else if (strcmp(";", sign) == 0) {
-            ttype = SIGN_SEMICOLON;
-        } else if (strcmp("(", sign) == 0) {
-            ttype = SIGN_LEFTBRACKET;
-        } else if (strcmp(")", sign) == 0) {
-            ttype = SIGN_RIGHTBRACKET;
-        } else if (strcmp("{", sign) == 0) {
-            ttype = SIGN_LEFTANGLEBRACKET;
-        } else if (strcmp("}", sign) == 0) {
-            ttype = SIGN_RIGHTANGLEBRACKET;
-        } else if (strcmp("[", sign) == 0) {
-            ttype = SIGN_LEFTSQUAREBRACKET;
-        } else if (strcmp("]", sign) == 0) {
-            ttype = SIGN_RIGHTSQUAREBRACKET;
-        } else {
-            cout << "Sign token \"" << sign << "\" not found, line " << line << ", column " << column << endl;
         }
     } else {
-        cerr << "Not a valid status: " << status_str[status] << endl;
-//        newToken = new Token(PRINT, line, column);
+        // Should not happen
+        cerr << "Not a valid status: " << status << endl;
     }
 
     if (ttype != NO_TYPE) {
-        // FIXME: pointer + null vs. enum...
-//        cout << "newtoken " << ttype << endl;
+//        cout << "newtoken " << ttype << ", line " << line << ", column " << column << ", token_length " << token_length << endl;
         newToken = new Token(ttype, line, column - (token_length - 1));
     }
 
     if (status == READ_INT && newToken != NULL) {
-    	char* pEnd;
-    	long int value = strtol(value_str, &pEnd, 10);
-    	if (errno == ERANGE) {
-    		 cerr << "Integer out of Range" << endl;
-    	}
-        newToken->setValue(value);
+        char* pEnd;
+        long int value = strtol(value_str, &pEnd, 10);
+        if (errno == ERANGE) {
+             cerr << "Integer out of Range: "  << value_str << endl;
+             newToken = 0;
+        } else {
+            newToken->setValue(value);
+        }
     }
 
     status = NONE;
-    if (unget < 1) {
-        unget = 1;
-    }
     return newToken;
 }
 
-bool Automat::isDigit(char c) {
-    return c >= '0' && c <= '9';
-}
-
-bool Automat::isLetter(char c) {
-    return (c >= 'a' && c <= 'z')
-        || (c >= 'A' && c <= 'Z');
-}
-
-bool Automat::isSign(char c) {
-    switch (c) {
-        case '+':
-        case '-':
-        case '/':
-        case '*':
-        case '<':
-        case '>':
-        case '=':
-        case '!':
-        case '&':
-        case ';':
-        case '(':
-        case ')':
-        case '{':
-        case '}':
-        case '[':
-        case ']':
-            return true;
-        default:
-            return false;
+TType Automat::getTokenTypeBySign() {
+    if (strcmp("+", sign) == 0) {
+        return SIGN_ADDITITON;
+    } else if (strcmp("-", sign) == 0) {
+        return SIGN_SUBTRACTION;
+    } else if (strcmp("/", sign) == 0) {
+        return SIGN_DIVISION;
+    } else if (strcmp("*", sign) == 0) {
+        return SIGN_MULTIPLICATION;
+    } else if (strcmp("<", sign) == 0) {
+        return SIGN_LT;
+    } else if (strcmp("<=>", sign) == 0) {
+        return SIGN_NE;
+    } else if (strcmp(">", sign) == 0) {
+        return SIGN_GT;
+    } else if (strcmp("=", sign) == 0) {
+        return SIGN_ASSIGN;
+    } else if (strcmp("!", sign) == 0) {
+        return SIGN_EXCLAMATION;
+    } else if (strcmp("&", sign) == 0) {
+        return SIGN_AMPERSAND;
+    } else if (strcmp(";", sign) == 0) {
+        return SIGN_SEMICOLON;
+    } else if (strcmp("(", sign) == 0) {
+        return SIGN_LEFTBRACKET;
+    } else if (strcmp(")", sign) == 0) {
+        return SIGN_RIGHTBRACKET;
+    } else if (strcmp("{", sign) == 0) {
+        return SIGN_LEFTANGLEBRACKET;
+    } else if (strcmp("}", sign) == 0) {
+        return SIGN_RIGHTANGLEBRACKET;
+    } else if (strcmp("[", sign) == 0) {
+        return SIGN_LEFTSQUAREBRACKET;
+    } else if (strcmp("]", sign) == 0) {
+        return SIGN_RIGHTSQUAREBRACKET;
     }
+    cout << "Sign token \"" << sign << "\" not found, line " << line << ", column " << column << endl;
+    return NO_TYPE;
 }
+
 int Automat::getLine() {
     return line;
 }
