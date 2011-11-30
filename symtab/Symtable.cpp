@@ -37,6 +37,9 @@ int Symtable::hash(char* lexem) {
         counter++;
     }
     int lastChar = *(lexem + (counter - 1));
-
-    return (50 * firstChar + 25 * lastChar + counter) % SYMTABLE_HASHTABLESIZE;
+    int hashVal = (50 * firstChar + 25 * lastChar + counter) % SYMTABLE_HASHTABLESIZE;
+    if (hashVal < 0) {
+        hashVal *= -1;
+    }
+    return hashVal;
 }
