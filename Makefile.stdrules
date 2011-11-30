@@ -1,17 +1,17 @@
 test: $(OBJS)
-	if [ -d tests ]; then cd tests && make; fi
+	@if [ -d tests ]; then cd tests && make --no-print-directory; fi
 
 clean:
-	find -name '*.o' -or -name '*.a' -or -name 'test-exec' | xargs rm -f
-	rm -f $(EXE) $(OBJS) $(OUT) $(OUTLIB)
-	if [ -d tests ]; then cd tests && make clean; fi
+	@find -name '*.o' -or -name '*.a' -or -name 'test-exec' | xargs rm -f
+	@rm -f $(EXE) $(OBJS) $(OUT) $(OUTLIB)
+	@if [ -d tests ]; then cd tests && make --no-print-directory clean; fi
 
 %.o: %.cpp
-	echo CC $<
-	${CXX} -c ${CXXFLAGS} $<
+	@echo CC $<
+	@${CXX} -c ${CXXFLAGS} $<
 
 $(OUTLIB): $(OBJS)
-	$(AR) $(ARFLAGS) rv $(OUTLIB) $?
-	$(RANLIB) $(OUTLIB)
+	@echo Linking $($?) to $(OUTLIB)
+	@$(AR) $(ARFLAGS) rs $(OUTLIB) $? >/dev/null
 
 # vim: set filetype=make : #

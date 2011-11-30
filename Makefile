@@ -4,32 +4,37 @@ OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 
 MODULES = buffer scan symtab
 LIBS = libscan.a libsymtab.a libbuffer.a
-CXXFLAGS += $(LIBS)
+# CXXFLAGS += $(LIBS)
 
 EXE = scanner
 
 all: run
 
-$(EXE): $(OBJS) $(wildcard *.hpp) $(LIBS)
-	$(CXX) $(OBJS) $(CXXFLAGS) -o $(EXE)
+$(EXE): $(OBJS) $(LIBS)
+	@$(CXX) $(OBJS) $(CXXFLAGS) $(LIBS) -o $(EXE)
 
 
 TMP_IN = /tmp/test67.txt
 TMP_OUT = /tmp/out67.txt
 
 run: modules test $(EXE)
-	cp input2 $(TMP_IN)
-	rm -f $(TMP_OUT)
-	./$(EXE) $(TMP_IN) $(TMP_OUT)
-	mv $(TMP_OUT) out.txt
-	rm $(TMP_IN)
-	echo Done.; echo; echo
+	@cp input2 $(TMP_IN)
+	@rm -f $(TMP_OUT)
+	@echo Running...; echo
+	@./$(EXE) $(TMP_IN) $(TMP_OUT)
+	@mv $(TMP_OUT) out.txt
+	@rm $(TMP_IN)
+	@echo; echo ...done.; echo
 
 modules:
-	( for module in $(MODULES); do\
-		echo ============ ========== $$module =========== ===========;\
-		cd $$module && make all && cd -;\
+	@( for module in $(MODULES); do\
+		echo "###############";\
+		echo "#" $$module ;\
+		echo "###############";\
+		cd $$module && make --no-print-directory all && cd - 2>&1 >/dev/null;\
+		echo "# $$module done";\
 	done );
+	@echo "###############"; echo
 
 #clean:
 #	find -name '*.o' -or -name '*.a' | xargs rm -f
