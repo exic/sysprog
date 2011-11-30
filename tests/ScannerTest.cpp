@@ -25,7 +25,7 @@ protected:
 };
 
 TEST_F(ScannerTest, TokensFileOne) {
-    char scannertestfile[] = "scannertestfile";
+    char scannertestfile[] = "/tmp/scannertestfile";
     Scanner *s = new Scanner(scannertestfile);
     int expectedTokenColumns[] = {
         1, 8, 13, 15, 18, 19, 20, -1,
@@ -42,7 +42,7 @@ TEST_F(ScannerTest, TokensFileOne) {
 }
 
 TEST_F(ScannerTest, TokensFileTwo) {
-    char scannertestfile[] = "scannertestfile2";
+    char scannertestfile[] = "/tmp/scannertestfile2";
     Scanner *s = new Scanner(scannertestfile);
     int expectedTokenColumns[] = {
         -1,
@@ -72,7 +72,7 @@ TEST_F(ScannerTest, TokensFileTwo) {
 }
 
 TEST_F(ScannerTest, TokenTest) {
-    char scannertestfile[] = "scannertestfile";
+    char scannertestfile[] = "/tmp/scannertestfile";
     Scanner *s = new Scanner(scannertestfile);
     Token* t;
     bool sawLastPoint = false;
