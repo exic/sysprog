@@ -31,7 +31,7 @@ Buffer::Buffer(char* filename, bool read) {
 
 
 Buffer::~Buffer() {
-    if (! this->is_read) {
+    if (! this->is_read && !buffer) {
         memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
         buffer[blockIndex][BUFSIZE-1] = '\n';
         writeBlock();

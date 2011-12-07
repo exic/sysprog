@@ -2,11 +2,11 @@ include Makefile.inc
 
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 
-MODULES = buffer scan symtab
-LIBS = libscan.a libsymtab.a libbuffer.a
+MODULES = buffer scan symtab pars
+LIBS = libscan.a libsymtab.a libbuffer.a libpars.a
 # CXXFLAGS += $(LIBS)
 
-EXE = scanner
+EXE = parser
 
 all: run
 
@@ -18,7 +18,7 @@ TMP_IN = /tmp/test67.txt
 TMP_OUT = /tmp/out67.txt
 
 run: modules test $(EXE)
-	@cp input2 $(TMP_IN)
+	@cp input1 $(TMP_IN)
 	@rm -f $(TMP_OUT)
 	@echo Running...; echo
 	@./$(EXE) $(TMP_IN) $(TMP_OUT)
