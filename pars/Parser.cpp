@@ -12,8 +12,11 @@ void Parser::parse() {
 	cout << ">> Start Parsing" << endl;
 	this->parseTree = new ParseTree();
 	Node* nProg = prog();
-	this->parseTree->setRootNode(nProg);
+	this->parseTree->getRootNode()->addChildNode(nProg);
 	cout << ">> End Parsing" << endl;
+	cout << ">> Start Printing Tree" << endl;
+	this->parseTree->printTree(this->parseTree->getRootNode());
+	cout << ">> End Printing Tree" << endl;
 }
 
 Node* Parser::prog() {
