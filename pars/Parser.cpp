@@ -50,17 +50,17 @@ Node* Parser::decl() {
 	Node* decl = new Node(Rule::DECL);
 
 	// int
-	tmp->setRule(Rule::KEYWORD);
+	tmp = new Node(Rule::KEYWORD);
 	tmp->setToken(this->currentToken);
 	decl->addChildNode(tmp);
 	// identifier
 	getNextExpectedToken(IDENTIFIER);
-	tmp->setRule(Rule::IDENTIFIER);
+	tmp = new Node(Rule::IDENTIFIER);
 	tmp->setToken(this->currentToken);
 	decl->addChildNode(tmp);
 	// semicolon
 	getNextExpectedToken(SIGN_SEMICOLON);
-	tmp->setRule(Rule::KEYWORD);
+	tmp = new Node(Rule::KEYWORD);
 	tmp->setToken(this->currentToken);
 	decl->addChildNode(tmp);
 
@@ -70,7 +70,7 @@ Node* Parser::decl() {
 Node* Parser::statements() {
 	Node* statements = new Node(Rule::STATEMENTS);
 	while (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
-		   this->currentToken->getType() == READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
+		   /*this->currentToken->getType() == READ ||*/ this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
 		   this->currentToken->getType() == IF || this->currentToken->getType() == WHILE) {
 		Node* nStatement = statement();
 		statements->addChildNode(nStatement);
@@ -83,22 +83,22 @@ Node* Parser::statement() {
 	Node* statement = new Node(Rule::STATEMENT);
 	if (this->currentToken->getType() == PRINT) {
 		// print
-		tmp->setRule(Rule::KEYWORD);
+		tmp = new Node(Rule::KEYWORD);
 		tmp->setToken(this->currentToken);
 		statement->addChildNode(tmp);
 		// (
 		getNextExpectedToken(SIGN_LEFTBRACKET);
-		tmp->setRule(Rule::KEYWORD);
+		tmp = new Node(Rule::KEYWORD);
 		tmp->setToken(this->currentToken);
 		statement->addChildNode(tmp);
 		// )
 		getNextExpectedToken(SIGN_RIGHTBRACKET);
-		tmp->setRule(Rule::KEYWORD);
+		tmp = new Node(Rule::KEYWORD);
 		tmp->setToken(this->currentToken);
 		statement->addChildNode(tmp);
 		// ;
 		getNextExpectedToken(SIGN_SEMICOLON);
-		tmp->setRule(Rule::KEYWORD);
+		tmp = new Node(Rule::KEYWORD);
 		tmp->setToken(this->currentToken);
 		statement->addChildNode(tmp);
 	}
@@ -109,7 +109,7 @@ void Parser::getNextToken() {
 	this->currentToken = scanner->nextToken();
 	if (!this->currentToken) {
 		cout << "EOF" << endl;
-		exit(1);
+		exit(0);
 	}
 
 	//=========================================================
