@@ -22,9 +22,9 @@ private:
 
 	void getNextToken();
 	void getNextExpectedToken(TType ttype);
-	void prog(Node* node);
-	void decls(Node* node);
-	void decl(Node* node);
+	Node* prog();
+	Node* decls();
+	Node* decl();
 };
 
 #endif /* PARSER_H_ */

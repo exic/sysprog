@@ -1,7 +1,7 @@
 #include "ParseTree.hpp"
 
 ParseTree::ParseTree() {
-	this->root = new Node(Rule::ROOT);
+	this->root = NULL;
 }
 
 ParseTree::~ParseTree() {

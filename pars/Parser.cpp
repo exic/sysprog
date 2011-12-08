@@ -11,45 +11,53 @@ Parser::~Parser() {
 void Parser::parse() {
 	cout << ">> Start Parsing" << endl;
 	this->parseTree = new ParseTree();
-	prog(this->parseTree->getRootNode());
+	Node* nProg = prog();
+	this->parseTree->setRootNode(nProg);
 	cout << ">> End Parsing" << endl;
 }
 
-void Parser::prog(Node* node) {
+Node* Parser::prog() {
 	getNextToken();
-	Node* prog = node->addChildNode(Rule::PROG);
+	Node* prog = new Node(Rule::PROG);
 	if (this->currentToken->getType() == INT) {
-		decls(prog);
+		Node* nDecls = decls();
+		prog->addChildNode(nDecls);
 	}
-	if (this->currentToken->getType() == PRINT) {
+	if (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
+		this->currentToken->getType() == READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
+		this->currentToken->getType() == IF || this->currentToken->getType() == WHILE) {
 
 	}
+	return prog;
 }
 
-void Parser::decls(Node* node) {
+Node* Parser::decls() {
+	Node* decls = new Node(Rule::DECLS);
 	while (this->currentToken->getType() == INT) {
-		Node* decls = node->addChildNode(Rule::DECLS);
-		decl(decls);
+		Node* nDecl = decl();
+		decls->addChildNode(nDecl);
 		getNextToken();
 	}
+	return decls;
 }
 
-void Parser::decl(Node* node) {
-	node->setRule(Rule::DECL);
+Node* Parser::decl() {
+	Node* decl = new Node(Rule::DECL);
 	// int
 	Node* tmp = new Node(Rule::KEYWORD);
 	tmp->setToken(this->currentToken);
-	node->addChildNode(tmp);
+	decl->addChildNode(tmp);
 	// identifier
 	getNextExpectedToken(IDENTIFIER);
 	tmp = new Node(Rule::IDENTIFIER);
 	tmp->setToken(this->currentToken);
-	node->addChildNode(tmp);
+	decl->addChildNode(tmp);
 	// semicolon
 	getNextExpectedToken(SIGN_SEMICOLON);
 	tmp = new Node(Rule::SEMICOLON);
 	tmp->setToken(this->currentToken);
-	node->addChildNode(tmp);
+	decl->addChildNode(tmp);
+	return decl;
 }
 
 void Parser::getNextToken() {

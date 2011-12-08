@@ -8,6 +8,7 @@ public:
 	ParseTree();
 	virtual ~ParseTree();
 	Node* getRootNode() { return root; };
+	void setRootNode(Node* root) { this->root = root; };
 private:
 	Node* root;
 };
