@@ -20,11 +20,15 @@ private:
 	ParseTree* parseTree;
 	Token* currentToken;
 
+	Node* tmp;
+
 	void getNextToken();
 	void getNextExpectedToken(TType ttype);
 	Node* prog();
 	Node* decls();
 	Node* decl();
+	Node* statements();
+	Node* statement();
 };
 
 #endif /* PARSER_H_ */

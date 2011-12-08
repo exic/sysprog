@@ -2,6 +2,7 @@
 
 Parser::Parser(Scanner* scanner) {
 	this->scanner = scanner;
+	tmp = new Node(Rule::EMPTY);
 }
 
 Parser::~Parser() {
@@ -29,7 +30,8 @@ Node* Parser::prog() {
 	if (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
 		this->currentToken->getType() == READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
 		this->currentToken->getType() == IF || this->currentToken->getType() == WHILE) {
-
+		Node* nStatements = statements();
+		prog->addChildNode(nStatements);
 	}
 	return prog;
 }
@@ -46,21 +48,61 @@ Node* Parser::decls() {
 
 Node* Parser::decl() {
 	Node* decl = new Node(Rule::DECL);
+
 	// int
-	Node* tmp = new Node(Rule::KEYWORD);
+	tmp->setRule(Rule::KEYWORD);
 	tmp->setToken(this->currentToken);
 	decl->addChildNode(tmp);
 	// identifier
 	getNextExpectedToken(IDENTIFIER);
-	tmp = new Node(Rule::IDENTIFIER);
+	tmp->setRule(Rule::IDENTIFIER);
 	tmp->setToken(this->currentToken);
 	decl->addChildNode(tmp);
 	// semicolon
 	getNextExpectedToken(SIGN_SEMICOLON);
-	tmp = new Node(Rule::SEMICOLON);
+	tmp->setRule(Rule::KEYWORD);
 	tmp->setToken(this->currentToken);
 	decl->addChildNode(tmp);
+
 	return decl;
+}
+
+Node* Parser::statements() {
+	Node* statements = new Node(Rule::STATEMENTS);
+	while (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
+		   this->currentToken->getType() == READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
+		   this->currentToken->getType() == IF || this->currentToken->getType() == WHILE) {
+		Node* nStatement = statement();
+		statements->addChildNode(nStatement);
+		getNextToken();
+	}
+	return statements;
+}
+
+Node* Parser::statement() {
+	Node* statement = new Node(Rule::STATEMENT);
+	if (this->currentToken->getType() == PRINT) {
+		// print
+		tmp->setRule(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		statement->addChildNode(tmp);
+		// (
+		getNextExpectedToken(SIGN_LEFTBRACKET);
+		tmp->setRule(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		statement->addChildNode(tmp);
+		// )
+		getNextExpectedToken(SIGN_RIGHTBRACKET);
+		tmp->setRule(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		statement->addChildNode(tmp);
+		// ;
+		getNextExpectedToken(SIGN_SEMICOLON);
+		tmp->setRule(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		statement->addChildNode(tmp);
+	}
+	return statement;
 }
 
 void Parser::getNextToken() {
