@@ -5,6 +5,7 @@ Parser::Parser(Scanner* scanner) {
 	this->scanner = scanner;
 	tmp = new Node(Rule::EMPTY);
 	end = false;
+	checkedNextToken = false;
 }
 
 Parser::~Parser() {
@@ -55,6 +56,24 @@ Node* Parser::decl() {
 	tmp = new Node(Rule::KEYWORD);
 	tmp->setToken(this->currentToken);
 	decl->addChildNode(tmp);
+	// opt: [integer]
+	if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
+		checkedNextToken = false;
+		// [
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		decl->addChildNode(tmp);
+		// integer
+		getNextExpectedToken(INTEGER);
+		tmp = new Node(Rule::INTEGER);
+		tmp->setToken(this->currentToken);
+		decl->addChildNode(tmp);
+		// ]
+		getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		decl->addChildNode(tmp);
+	}
 	// identifier
 	getNextExpectedToken(IDENTIFIER);
 	tmp = new Node(Rule::IDENTIFIER);
@@ -105,36 +124,39 @@ Node* Parser::statement() {
 	return statement;
 }
 
-void Parser::getNextToken() {
+bool Parser::checkNextToken(TType ttype) {
+	checkedNextToken = true;
 	this->currentToken = scanner->nextToken();
+	if (!this->currentToken) {
+		return false;
+	} else if (this->currentToken->getType() == ttype) {
+		writeScannerOutput();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void Parser::scannerNextToken() {
+	if (!checkedNextToken) {
+		this->currentToken = scanner->nextToken();
+	} else {
+		checkedNextToken = false;
+	}
+}
+
+void Parser::getNextToken() {
+	scannerNextToken();
 	if (!this->currentToken) {
 		end = true;
 		return;
 	}
 
-	//=========================================================
-	// SCANNEROUTPUT
-	//=========================================================
-	if (this->currentToken->getType() == NO_TYPE) {
-		cout << "NO_TYPE Token" << endl;
-	}
-
-	cout << "Token " << getTokenString(this->currentToken->getType())
-		<< " Line: " << this->currentToken->getLine()
-		<< ", Column " << this->currentToken->getColumn();
-
-	if (this->currentToken->getType() == IDENTIFIER) {
-		cout << ", Lexem: " << this->currentToken->getEntry()->getLexem();
-	} else if (this->currentToken->getType() == INTEGER) {
-		cout << ", Value: " << this->currentToken->getValue();
-	}
-
-	cout << endl;
-	//=========================================================
+	writeScannerOutput();
 }
 
 void Parser::getNextStatementToken() {
-	this->currentToken = scanner->nextToken();
+	scannerNextToken();
 	if (!this->currentToken) {
 		end = true;
 		return;
@@ -146,29 +168,11 @@ void Parser::getNextStatementToken() {
 		exit(0);
 	}
 
-	//=========================================================
-	// SCANNEROUTPUT
-	//=========================================================
-	if (this->currentToken->getType() == NO_TYPE) {
-		cout << "NO_TYPE Token" << endl;
-	}
-
-	cout << "Token " << getTokenString(this->currentToken->getType())
-		<< " Line: " << this->currentToken->getLine()
-		<< ", Column " << this->currentToken->getColumn();
-
-	if (this->currentToken->getType() == IDENTIFIER) {
-		cout << ", Lexem: " << this->currentToken->getEntry()->getLexem();
-	} else if (this->currentToken->getType() == INTEGER) {
-		cout << ", Value: " << this->currentToken->getValue();
-	}
-
-	cout << endl;
-	//=========================================================
+	writeScannerOutput();
 }
 
 void Parser::getNextExpectedToken(TType ttype) {
-	this->currentToken = scanner->nextToken();
+	scannerNextToken();
 	if (!this->currentToken) {
 		cout << "ERROR: Expected: " << getTokenString(ttype) << ", Got: EOF" << endl;
 		cout << "Stop ..." << endl;
@@ -180,6 +184,20 @@ void Parser::getNextExpectedToken(TType ttype) {
 		exit(0);
 	}
 
+	writeScannerOutput();
+}
+
+char* Parser::getTokenString(TType ttype) {
+	char* ttype_str[30] = { (char*)"NO_TYPE", (char*)"INTEGER", (char*)"IDENTIFIER", (char*)"PRINT",
+		(char*)"READ", (char*)"IF", (char*)"ELSE", (char*)"WHILE", (char*)"INT", (char*)"ADDITITON", (char*)"SUBTRACTION",
+		(char*)"DIVISION", (char*)"MULTIPLICATION", (char*)"LT", (char*)"GT", (char*)"ASSIGN", (char*)"NE",
+		(char*)"EXCLAMATION", (char*)"AMPERSAND", (char*)"SEMICOLON", (char*)"COLON", (char*)"LEFTBRACKET",
+		(char*)"RIGHTBRACKET", (char*)"LEFTANGLEBRACKET", (char*)"RIGHTANGLEBRACKET",
+		(char*)"LEFTSQUAREBRACKET", (char*)"RIGHTSQUAREBRACKET" };
+	return ttype_str[ttype];
+}
+
+void Parser::writeScannerOutput() {
 	//=========================================================
 	// SCANNEROUTPUT
 	//=========================================================
@@ -199,14 +217,4 @@ void Parser::getNextExpectedToken(TType ttype) {
 
 	cout << endl;
 	//=========================================================
-}
-
-char* Parser::getTokenString(TType ttype) {
-	char* ttype_str[30] = { (char*)"NO_TYPE", (char*)"INTEGER", (char*)"IDENTIFIER", (char*)"PRINT",
-		(char*)"READ", (char*)"IF", (char*)"ELSE", (char*)"WHILE", (char*)"INT", (char*)"ADDITITON", (char*)"SUBTRACTION",
-		(char*)"DIVISION", (char*)"MULTIPLICATION", (char*)"LT", (char*)"GT", (char*)"ASSIGN", (char*)"NE",
-		(char*)"EXCLAMATION", (char*)"AMPERSAND", (char*)"SEMICOLON", (char*)"COLON", (char*)"LEFTBRACKET",
-		(char*)"RIGHTBRACKET", (char*)"LEFTANGLEBRACKET", (char*)"RIGHTANGLEBRACKET",
-		(char*)"LEFTSQUAREBRACKET", (char*)"RIGHTSQUAREBRACKET" };
-	return ttype_str[ttype];
 }

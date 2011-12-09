@@ -22,12 +22,16 @@ private:
 
 	Node* tmp;
 	bool end;
+	bool checkedNextToken;
 
 	char* getTokenString(TType ttype);
 
+	void scannerNextToken();
 	void getNextToken();
 	void getNextExpectedToken(TType ttype);
 	void getNextStatementToken();
+	bool checkNextToken(TType ttype);
+	void writeScannerOutput();
 	Node* prog();
 	Node* decls();
 	Node* decl();

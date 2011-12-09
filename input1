@@ -1,4 +1,5 @@
 int lorem;
-int ipsum;
+int [122] ipsum;
+int [23] solem;
 print();
 print();
