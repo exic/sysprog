@@ -1,8 +1,10 @@
 #include "Parser.hpp"
 
+
 Parser::Parser(Scanner* scanner) {
 	this->scanner = scanner;
 	tmp = new Node(Rule::EMPTY);
+	end = false;
 }
 
 Parser::~Parser() {
@@ -38,7 +40,7 @@ Node* Parser::prog() {
 
 Node* Parser::decls() {
 	Node* decls = new Node(Rule::DECLS);
-	while (this->currentToken->getType() == INT) {
+	while (!end && (this->currentToken->getType() == INT)) {
 		Node* nDecl = decl();
 		decls->addChildNode(nDecl);
 		getNextToken();
@@ -69,9 +71,9 @@ Node* Parser::decl() {
 
 Node* Parser::statements() {
 	Node* statements = new Node(Rule::STATEMENTS);
-	while (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
+	while (!end && (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
 		   /*this->currentToken->getType() == READ ||*/ this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
-		   this->currentToken->getType() == IF || this->currentToken->getType() == WHILE) {
+		   this->currentToken->getType() == IF || this->currentToken->getType() == WHILE)) {
 		Node* nStatement = statement();
 		statements->addChildNode(nStatement);
 		getNextToken();
@@ -108,25 +110,18 @@ Node* Parser::statement() {
 void Parser::getNextToken() {
 	this->currentToken = scanner->nextToken();
 	if (!this->currentToken) {
-		cout << "EOF" << endl;
-		exit(0);
+		end = true;
+		return;
 	}
 
 	//=========================================================
 	// SCANNEROUTPUT
 	//=========================================================
-	const char* ttype_str[] = { "NO_TYPE", "INTEGER", "IDENTIFIER", "PRINT",
-		"READ", "IF", "ELSE", "WHILE", "INT", "ADDITITON", "SUBTRACTION",
-		"DIVISION", "MULTIPLICATION", "LT", "GT", "ASSIGN", "NE",
-		"EXCLAMATION", "AMPERSAND", "SEMICOLON", "COLON", "LEFTBRACKET",
-		"RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET",
-		"LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
-
 	if (this->currentToken->getType() == NO_TYPE) {
 		cout << "NO_TYPE Token" << endl;
 	}
 
-	cout << "Token " << ttype_str[this->currentToken->getType()]
+	cout << "Token " << getTokenString(this->currentToken->getType())
 		<< " Line: " << this->currentToken->getLine()
 		<< ", Column " << this->currentToken->getColumn();
 
@@ -143,28 +138,24 @@ void Parser::getNextToken() {
 void Parser::getNextExpectedToken(TType ttype) {
 	this->currentToken = scanner->nextToken();
 	if (!this->currentToken) {
-		cout << "ERROR: Expected: TType, Got: EOF" << endl;
-		exit(1);
+		cout << "ERROR: Expected: " << getTokenString(ttype) << ", Got: EOF" << endl;
+		cout << "Stop ..." << endl;
+		exit(0);
 	} else if (this->currentToken->getType() != ttype) {
-		cout << "ERROR: Expected: TType, Got: TType" << endl;
-		exit(1);
+		cout << "ERROR: Expected: " << getTokenString(ttype) << ", Got: "
+		     << getTokenString(this->currentToken->getType()) << endl;
+		cout << "Stop ..." << endl;
+		exit(0);
 	}
 
 	//=========================================================
 	// SCANNEROUTPUT
 	//=========================================================
-	const char* ttype_str[] = { "NO_TYPE", "INTEGER", "IDENTIFIER", "PRINT",
-		"READ", "IF", "ELSE", "WHILE", "INT", "ADDITITON", "SUBTRACTION",
-		"DIVISION", "MULTIPLICATION", "LT", "GT", "ASSIGN", "NE",
-		"EXCLAMATION", "AMPERSAND", "SEMICOLON", "COLON", "LEFTBRACKET",
-		"RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET",
-		"LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
-
 	if (this->currentToken->getType() == NO_TYPE) {
 		cout << "NO_TYPE Token" << endl;
 	}
 
-	cout << "Token " << ttype_str[this->currentToken->getType()]
+	cout << "Token " << getTokenString(this->currentToken->getType())
 		<< " Line: " << this->currentToken->getLine()
 		<< ", Column " << this->currentToken->getColumn();
 
@@ -176,4 +167,14 @@ void Parser::getNextExpectedToken(TType ttype) {
 
 	cout << endl;
 	//=========================================================
+}
+
+char* Parser::getTokenString(TType ttype) {
+	char* ttype_str[30] = { (char*)"NO_TYPE", (char*)"INTEGER", (char*)"IDENTIFIER", (char*)"PRINT",
+		(char*)"READ", (char*)"IF", (char*)"ELSE", (char*)"WHILE", (char*)"INT", (char*)"ADDITITON", (char*)"SUBTRACTION",
+		(char*)"DIVISION", (char*)"MULTIPLICATION", (char*)"LT", (char*)"GT", (char*)"ASSIGN", (char*)"NE",
+		(char*)"EXCLAMATION", (char*)"AMPERSAND", (char*)"SEMICOLON", (char*)"COLON", (char*)"LEFTBRACKET",
+		(char*)"RIGHTBRACKET", (char*)"LEFTANGLEBRACKET", (char*)"RIGHTANGLEBRACKET",
+		(char*)"LEFTSQUAREBRACKET", (char*)"RIGHTSQUAREBRACKET" };
+	return ttype_str[ttype];
 }

@@ -21,6 +21,9 @@ private:
 	Token* currentToken;
 
 	Node* tmp;
+	bool end;
+
+	char* getTokenString(TType ttype);
 
 	void getNextToken();
 	void getNextExpectedToken(TType ttype);
