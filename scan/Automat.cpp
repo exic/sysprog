@@ -193,7 +193,7 @@ Token* Automat::getToken() {
         if (strcmp("print", lexem) == 0) {
             ttype = PRINT;
         } else if (strcmp("read", lexem) == 0) {
-            ttype = READ;
+            ttype = T_READ;
         } else if (strcmp("if", lexem) == 0) {
             ttype = IF;
         } else if (strcmp("else", lexem) == 0) {

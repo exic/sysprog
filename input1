@@ -1,3 +1,4 @@
-int muh;
-int bah;
+int lorem;
+int ipsum;
+print();
 print();

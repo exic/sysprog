@@ -27,6 +27,7 @@ private:
 
 	void getNextToken();
 	void getNextExpectedToken(TType ttype);
+	void getNextStatementToken();
 	Node* prog();
 	Node* decls();
 	Node* decl();

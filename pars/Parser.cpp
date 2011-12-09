@@ -30,7 +30,7 @@ Node* Parser::prog() {
 		prog->addChildNode(nDecls);
 	}
 	if (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
-		this->currentToken->getType() == READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
+		this->currentToken->getType() == T_READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
 		this->currentToken->getType() == IF || this->currentToken->getType() == WHILE) {
 		Node* nStatements = statements();
 		prog->addChildNode(nStatements);
@@ -71,12 +71,10 @@ Node* Parser::decl() {
 
 Node* Parser::statements() {
 	Node* statements = new Node(Rule::STATEMENTS);
-	while (!end && (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
-		   /*this->currentToken->getType() == READ ||*/ this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
-		   this->currentToken->getType() == IF || this->currentToken->getType() == WHILE)) {
+	while (!end) {
 		Node* nStatement = statement();
 		statements->addChildNode(nStatement);
-		getNextToken();
+		getNextStatementToken();
 	}
 	return statements;
 }
@@ -112,6 +110,40 @@ void Parser::getNextToken() {
 	if (!this->currentToken) {
 		end = true;
 		return;
+	}
+
+	//=========================================================
+	// SCANNEROUTPUT
+	//=========================================================
+	if (this->currentToken->getType() == NO_TYPE) {
+		cout << "NO_TYPE Token" << endl;
+	}
+
+	cout << "Token " << getTokenString(this->currentToken->getType())
+		<< " Line: " << this->currentToken->getLine()
+		<< ", Column " << this->currentToken->getColumn();
+
+	if (this->currentToken->getType() == IDENTIFIER) {
+		cout << ", Lexem: " << this->currentToken->getEntry()->getLexem();
+	} else if (this->currentToken->getType() == INTEGER) {
+		cout << ", Value: " << this->currentToken->getValue();
+	}
+
+	cout << endl;
+	//=========================================================
+}
+
+void Parser::getNextStatementToken() {
+	this->currentToken = scanner->nextToken();
+	if (!this->currentToken) {
+		end = true;
+		return;
+	} else if (!(this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
+		   this->currentToken->getType() == T_READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
+		   this->currentToken->getType() == IF || this->currentToken->getType() == WHILE)) {
+		cout << "ERROR: Expected: Statement, Got: " << getTokenString(this->currentToken->getType()) << endl;
+		cout << "Stop ..." << endl;
+		exit(0);
 	}
 
 	//=========================================================
