@@ -29,7 +29,7 @@ private:
 	void scannerNextToken();
 	void getNextToken();
 	void getNextExpectedToken(TType ttype);
-	void getNextStatementToken();
+	void getNextStatementToken(bool inner, bool optional);
 	void getNextExp2Token();
 	bool checkNextTokenOp();
 	bool checkNextToken(TType ttype);
@@ -39,6 +39,8 @@ private:
 	Node* decl();
 	Node* statements();
 	Node* statement();
+	Node* index();
+	Node* array();
 	Node* exp();
 	Node* exp2();
 	Node* op_exp();

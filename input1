@@ -1,5 +1,3 @@
-int lorem;
-int [122] ipsum;
-print(dada <=> 3232);
-print(222);
-print(dada[-23]);
+int adas;
+if (aaa) print(aaa); else print(bbb);;
+while (bbb) print(b);;

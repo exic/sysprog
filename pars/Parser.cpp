@@ -59,20 +59,8 @@ Node* Parser::decl() {
 	// opt: [integer]
 	if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
 		checkedNextToken = false;
-		// [
-		tmp = new Node(Rule::KEYWORD);
-		tmp->setToken(this->currentToken);
-		decl->addChildNode(tmp);
-		// integer
-		getNextExpectedToken(INTEGER);
-		tmp = new Node(Rule::INTEGER);
-		tmp->setToken(this->currentToken);
-		decl->addChildNode(tmp);
-		// ]
-		getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
-		tmp = new Node(Rule::KEYWORD);
-		tmp->setToken(this->currentToken);
-		decl->addChildNode(tmp);
+		Node* nArray = array();
+		decl->addChildNode(nArray);
 	}
 	// identifier
 	getNextExpectedToken(IDENTIFIER);
@@ -93,38 +81,211 @@ Node* Parser::statements() {
 	while (!end) {
 		Node* nStatement = statement();
 		statements->addChildNode(nStatement);
-		getNextStatementToken();
+		getNextStatementToken(false, true);
 	}
 	return statements;
 }
 
 Node* Parser::statement() {
-	Node* statement = new Node(Rule::STATEMENT);
-	if (this->currentToken->getType() == PRINT) {
-		// print
+	Node* nStatement = new Node(Rule::STATEMENT);
+	if (this->currentToken->getType() == IDENTIFIER) {
+		// identifier
+		tmp = new Node(Rule::IDENTIFIER);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// opt: INDEX
+		if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
+			checkedNextToken = false;
+			Node* nIndex = index();
+			nStatement->addChildNode(nIndex);
+		}
+		// =
+		getNextExpectedToken(SIGN_ASSIGN);
 		tmp = new Node(Rule::KEYWORD);
 		tmp->setToken(this->currentToken);
-		statement->addChildNode(tmp);
-		// (
-		getNextExpectedToken(SIGN_LEFTBRACKET);
-		tmp = new Node(Rule::KEYWORD);
-		tmp->setToken(this->currentToken);
-		statement->addChildNode(tmp);
+		nStatement->addChildNode(tmp);
 		// exp
 		Node* nExp = exp();
-		statement->addChildNode(nExp);
-		// )
-		getNextExpectedToken(SIGN_RIGHTBRACKET);
-		tmp = new Node(Rule::KEYWORD);
-		tmp->setToken(this->currentToken);
-		statement->addChildNode(tmp);
+		nStatement->addChildNode(nExp);
 		// ;
 		getNextExpectedToken(SIGN_SEMICOLON);
 		tmp = new Node(Rule::KEYWORD);
 		tmp->setToken(this->currentToken);
-		statement->addChildNode(tmp);
+		nStatement->addChildNode(tmp);
+	} else if (this->currentToken->getType() == T_READ) {
+		// read
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// (
+		getNextExpectedToken(SIGN_LEFTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// identifier
+		getNextExpectedToken(IDENTIFIER);
+		tmp = new Node(Rule::IDENTIFIER);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// opt: INDEX
+		if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
+			checkedNextToken = false;
+			Node* nIndex = index();
+			nStatement->addChildNode(nIndex);
+		}
+		// )
+		getNextExpectedToken(SIGN_RIGHTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// ;
+		getNextExpectedToken(SIGN_SEMICOLON);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+	} else if (this->currentToken->getType() == PRINT) {
+		// print
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// (
+		getNextExpectedToken(SIGN_LEFTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// exp
+		Node* nExp = exp();
+		nStatement->addChildNode(nExp);
+		// )
+		getNextExpectedToken(SIGN_RIGHTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// ;
+		getNextExpectedToken(SIGN_SEMICOLON);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+	} else if (this->currentToken->getType() == SIGN_LEFTANGLEBRACKET) {
+		// {
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// statements
+		Node* nStatements = new Node(Rule::STATEMENTS);
+		getNextStatementToken(true, false);
+		while (this->currentToken->getType() != SIGN_RIGHTANGLEBRACKET) {
+			Node* nStatement = statement();
+			nStatements->addChildNode(nStatement);
+			getNextStatementToken(true, false);
+		}
+		if (nStatements->getChildNodesCount() > 0)
+			nStatement->addChildNode(nStatements);
+		// }
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+	} else if (this->currentToken->getType() == IF) {
+		// if
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// (
+		getNextExpectedToken(SIGN_LEFTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// exp
+		Node* nExp = exp();
+		nStatement->addChildNode(nExp);
+		// )
+		getNextExpectedToken(SIGN_RIGHTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// statement
+		getNextStatementToken(false, false);
+		Node* nnStatement = statement();
+		nStatement->addChildNode(nnStatement);
+		// else
+		getNextExpectedToken(ELSE);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// statement
+		getNextStatementToken(false, false);
+		Node* nnnStatement = statement();
+		nStatement->addChildNode(nnnStatement);
+		// ;
+		getNextExpectedToken(SIGN_SEMICOLON);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+	} else if (this->currentToken->getType() == WHILE) {
+		// while
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// (
+		getNextExpectedToken(SIGN_LEFTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// exp
+		Node* nExp = exp();
+		nStatement->addChildNode(nExp);
+		// )
+		getNextExpectedToken(SIGN_RIGHTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
+		// statement
+		getNextStatementToken(false, false);
+		Node* nnStatement = statement();
+		nStatement->addChildNode(nnStatement);
+		// ;
+		getNextExpectedToken(SIGN_SEMICOLON);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nStatement->addChildNode(tmp);
 	}
-	return statement;
+	return nStatement;
+}
+
+Node* Parser::array() {
+	Node* array = new Node(Rule::ARRAY);
+	// [
+	tmp = new Node(Rule::KEYWORD);
+	tmp->setToken(this->currentToken);
+	array->addChildNode(tmp);
+	// integer
+	getNextExpectedToken(INTEGER);
+	tmp = new Node(Rule::INTEGER);
+	tmp->setToken(this->currentToken);
+	array->addChildNode(tmp);
+	// ]
+	getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
+	tmp = new Node(Rule::KEYWORD);
+	tmp->setToken(this->currentToken);
+	array->addChildNode(tmp);
+	return array;
+}
+
+Node* Parser::index() {
+	Node* index = new Node(Rule::INDEX);
+	// [
+	tmp = new Node(Rule::KEYWORD);
+	tmp->setToken(this->currentToken);
+	index->addChildNode(tmp);
+	// exp
+	Node* nExp = exp();
+	index->addChildNode(nExp);
+	// ]
+	getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
+	tmp = new Node(Rule::KEYWORD);
+	tmp->setToken(this->currentToken);
+	index->addChildNode(tmp);
+	return index;
 }
 
 Node* Parser::exp() {
@@ -263,14 +424,19 @@ void Parser::getNextToken() {
 	writeScannerOutput();
 }
 
-void Parser::getNextStatementToken() {
+void Parser::getNextStatementToken(bool inner, bool optional) {
 	scannerNextToken();
-	if (!this->currentToken) {
+	if (!this->currentToken && optional) {
 		end = true;
 		return;
-	} else if (!(this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
-		   this->currentToken->getType() == T_READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
-		   this->currentToken->getType() == IF || this->currentToken->getType() == WHILE)) {
+	} else if (!this->currentToken && !optional) {
+		cout << "ERROR: Expected: Statement, Got: EOF" << endl;
+		cout << "Stop ..." << endl;
+		exit(0);
+	} else if (!(inner && this->currentToken->getType() == SIGN_RIGHTANGLEBRACKET) &&
+		       !(this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
+		       this->currentToken->getType() == T_READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
+		       this->currentToken->getType() == IF || this->currentToken->getType() == WHILE)) {
 		cout << "ERROR: Expected: Statement, Got: " << getTokenString(this->currentToken->getType())
 			 << " in Line " << this->currentToken->getLine() << ", Column " << this->currentToken->getColumn() << endl;
 		cout << "Stop ..." << endl;
@@ -283,8 +449,9 @@ void Parser::getNextStatementToken() {
 void Parser::getNextExp2Token() {
 	scannerNextToken();
 	if (!this->currentToken) {
-		end = true;
-		return;
+		cout << "ERROR: Expected: Exp2, Got: EOF" << endl;
+		cout << "Stop ..." << endl;
+		exit(0);
 	} else if (!(this->currentToken->getType() == SIGN_LEFTBRACKET || this->currentToken->getType() == IDENTIFIER ||
 		   this->currentToken->getType() == INTEGER || this->currentToken->getType() == SIGN_SUBTRACTION ||
 		   this->currentToken->getType() == SIGN_EXCLAMATION)) {
