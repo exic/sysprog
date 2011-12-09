@@ -134,10 +134,11 @@ Node* Parser::exp() {
 	Node* nExp2 = exp2();
 	exp->addChildNode(nExp2);
 	// op_exp
-	Node* nOp_exp = op_exp();
-	if (nOp_exp->getChildNodesCount() > 0)
+	if (checkNextTokenOp()) {
+		checkedNextToken = false;
+		Node* nOp_exp = op_exp();
 		exp->addChildNode(nOp_exp);
-
+	}
 	return exp;
 }
 
@@ -199,17 +200,44 @@ Node* Parser::exp2() {
 
 Node* Parser::op_exp() {
 	Node* op_exp = new Node(Rule::OP_EXP);
-
+	// op
+	tmp = new Node(Rule::KEYWORD);
+	tmp->setToken(this->currentToken);
+	op_exp->addChildNode(tmp);
+	// exp
+	Node* nExp = exp();
+	op_exp->addChildNode(nExp);
 
 	return op_exp;
 }
 
 bool Parser::checkNextToken(TType ttype) {
+	if (!checkedNextToken) {
+		this->currentToken = scanner->nextToken();
+	}
 	checkedNextToken = true;
-	this->currentToken = scanner->nextToken();
 	if (!this->currentToken) {
 		return false;
 	} else if (this->currentToken->getType() == ttype) {
+		writeScannerOutput();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Parser::checkNextTokenOp() {
+	if (!checkedNextToken) {
+		this->currentToken = scanner->nextToken();
+	}
+	checkedNextToken = true;
+	if (!this->currentToken) {
+		return false;
+	} else if (this->currentToken->getType() == SIGN_ADDITITON || this->currentToken->getType() == SIGN_SUBTRACTION
+			   || this->currentToken->getType() == SIGN_MULTIPLICATION || this->currentToken->getType() == SIGN_DIVISION
+			   || this->currentToken->getType() == SIGN_LT || this->currentToken->getType() == SIGN_GT
+			   || this->currentToken->getType() == SIGN_ASSIGN || this->currentToken->getType() == SIGN_NE
+			   || this->currentToken->getType() == SIGN_AMPERSAND) {
 		writeScannerOutput();
 		return true;
 	} else {

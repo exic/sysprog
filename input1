@@ -1,5 +1,5 @@
 int lorem;
 int [122] ipsum;
-print(-dada);
-print(!(222));
+print(dada <=> 3232);
+print(222);
 print(dada[-23]);

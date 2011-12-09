@@ -31,6 +31,7 @@ private:
 	void getNextExpectedToken(TType ttype);
 	void getNextStatementToken();
 	void getNextExp2Token();
+	bool checkNextTokenOp();
 	bool checkNextToken(TType ttype);
 	void writeScannerOutput();
 	Node* prog();
