@@ -1,5 +1,5 @@
 int lorem;
 int [122] ipsum;
-int [23] solem;
-print();
-print();
+print(-dada);
+print(!(222));
+print(dada[-23]);

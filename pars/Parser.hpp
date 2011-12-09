@@ -30,6 +30,7 @@ private:
 	void getNextToken();
 	void getNextExpectedToken(TType ttype);
 	void getNextStatementToken();
+	void getNextExp2Token();
 	bool checkNextToken(TType ttype);
 	void writeScannerOutput();
 	Node* prog();
@@ -37,6 +38,9 @@ private:
 	Node* decl();
 	Node* statements();
 	Node* statement();
+	Node* exp();
+	Node* exp2();
+	Node* op_exp();
 };
 
 #endif /* PARSER_H_ */

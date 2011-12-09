@@ -110,6 +110,9 @@ Node* Parser::statement() {
 		tmp = new Node(Rule::KEYWORD);
 		tmp->setToken(this->currentToken);
 		statement->addChildNode(tmp);
+		// exp
+		Node* nExp = exp();
+		statement->addChildNode(nExp);
 		// )
 		getNextExpectedToken(SIGN_RIGHTBRACKET);
 		tmp = new Node(Rule::KEYWORD);
@@ -122,6 +125,83 @@ Node* Parser::statement() {
 		statement->addChildNode(tmp);
 	}
 	return statement;
+}
+
+Node* Parser::exp() {
+	Node* exp = new Node(Rule::EXP);
+	// exp2
+	getNextExp2Token();
+	Node* nExp2 = exp2();
+	exp->addChildNode(nExp2);
+	// op_exp
+	Node* nOp_exp = op_exp();
+	if (nOp_exp->getChildNodesCount() > 0)
+		exp->addChildNode(nOp_exp);
+
+	return exp;
+}
+
+Node* Parser::exp2() {
+	Node* nExp2 = new Node(Rule::EXP2);
+	if (this->currentToken->getType() == INTEGER) {
+		// integer
+		tmp = new Node(Rule::INTEGER);
+		tmp->setToken(this->currentToken);
+		nExp2->addChildNode(tmp);
+	} else if (this->currentToken->getType() == SIGN_SUBTRACTION
+			   || this->currentToken->getType() == SIGN_EXCLAMATION) {
+		// - || !
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nExp2->addChildNode(tmp);
+		// exp2
+		getNextExp2Token();
+		Node* nnExp2 = exp2();
+		nExp2->addChildNode(nnExp2);
+	} else if (this->currentToken->getType() == SIGN_LEFTBRACKET) {
+		// (
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nExp2->addChildNode(tmp);
+		// EXP
+		Node* nExp = exp();
+		nExp2->addChildNode(nExp);
+		// )
+		getNextExpectedToken(SIGN_RIGHTBRACKET);
+		tmp = new Node(Rule::KEYWORD);
+		tmp->setToken(this->currentToken);
+		nExp2->addChildNode(tmp);
+	} else if (this->currentToken->getType() == IDENTIFIER) {
+		// identifier
+		tmp = new Node(Rule::IDENTIFIER);
+		tmp->setToken(this->currentToken);
+		nExp2->addChildNode(tmp);
+		// opt: [exp]
+		if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
+			checkedNextToken = false;
+			// [
+			tmp = new Node(Rule::KEYWORD);
+			tmp->setToken(this->currentToken);
+			nExp2->addChildNode(tmp);
+			// exp
+			Node* nExp = exp();
+			nExp2->addChildNode(nExp);
+			// ]
+			getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
+			tmp = new Node(Rule::KEYWORD);
+			tmp->setToken(this->currentToken);
+			nExp2->addChildNode(tmp);
+		}
+	}
+
+	return nExp2;
+}
+
+Node* Parser::op_exp() {
+	Node* op_exp = new Node(Rule::OP_EXP);
+
+
+	return op_exp;
 }
 
 bool Parser::checkNextToken(TType ttype) {
@@ -163,7 +243,25 @@ void Parser::getNextStatementToken() {
 	} else if (!(this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
 		   this->currentToken->getType() == T_READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
 		   this->currentToken->getType() == IF || this->currentToken->getType() == WHILE)) {
-		cout << "ERROR: Expected: Statement, Got: " << getTokenString(this->currentToken->getType()) << endl;
+		cout << "ERROR: Expected: Statement, Got: " << getTokenString(this->currentToken->getType())
+			 << " in Line " << this->currentToken->getLine() << ", Column " << this->currentToken->getColumn() << endl;
+		cout << "Stop ..." << endl;
+		exit(0);
+	}
+
+	writeScannerOutput();
+}
+
+void Parser::getNextExp2Token() {
+	scannerNextToken();
+	if (!this->currentToken) {
+		end = true;
+		return;
+	} else if (!(this->currentToken->getType() == SIGN_LEFTBRACKET || this->currentToken->getType() == IDENTIFIER ||
+		   this->currentToken->getType() == INTEGER || this->currentToken->getType() == SIGN_SUBTRACTION ||
+		   this->currentToken->getType() == SIGN_EXCLAMATION)) {
+		cout << "ERROR: Expected: Exp2, Got: " << getTokenString(this->currentToken->getType())
+					 << " in Line " << this->currentToken->getLine() << ", Column " << this->currentToken->getColumn() << endl;
 		cout << "Stop ..." << endl;
 		exit(0);
 	}
@@ -179,7 +277,8 @@ void Parser::getNextExpectedToken(TType ttype) {
 		exit(0);
 	} else if (this->currentToken->getType() != ttype) {
 		cout << "ERROR: Expected: " << getTokenString(ttype) << ", Got: "
-		     << getTokenString(this->currentToken->getType()) << endl;
+			 << getTokenString(this->currentToken->getType())
+			 << " in Line " << this->currentToken->getLine() << ", Column " << this->currentToken->getColumn() << endl;
 		cout << "Stop ..." << endl;
 		exit(0);
 	}
