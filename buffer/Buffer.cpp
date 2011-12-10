@@ -5,6 +5,10 @@ using namespace std;
 Buffer::Buffer(char* filename, bool read) {
     this->is_read = read;
 
+    blockIndex = 0;
+    current = 0;
+    steppedBackBlock = false;
+
     if (read) {
         if ( (fd = open(filename, O_DIRECT | O_RDONLY)) < 0) {
             perror("Opening file for read failed");
@@ -17,11 +21,8 @@ Buffer::Buffer(char* filename, bool read) {
             perror("Opening file for write failed");
             exit(1);
         }
+        posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
     }
-
-    blockIndex = 0;
-    current = 0;
-    steppedBackBlock = false;
 
     if (read) {
         readBlock();
@@ -35,6 +36,7 @@ Buffer::~Buffer() {
         memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
         buffer[blockIndex][BUFSIZE-1] = '\n';
         writeBlock();
+        free(buffer[blockIndex]);
     }
     close(fd);
 }
@@ -49,18 +51,16 @@ char Buffer::getchar() {
             readBlock();
         }
     }
+
     if (buffer[blockIndex][current] == '\0') {
         current++;
         return getchar();
     }
-//    cout << "getchar...: " << current << endl;
+
     return (char) buffer[blockIndex][current++];
 }
 
 void Buffer::addchars(char* c) {
-    if (current == 0) {
-        posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
-    }
 
     int string_length = strlen(c);
     if ((current + string_length) < BUFSIZE) {
@@ -72,7 +72,7 @@ void Buffer::addchars(char* c) {
         memcpy (buffer[blockIndex]+current, c, cut_at);
         // write it
         writeBlock();
-        free(buffer[blockIndex]);
+
         current = 0;
         // add the rest
         addchars(c+cut_at);
@@ -96,7 +96,6 @@ void Buffer::ungetchar() {
         current = BUFSIZE - 1;
         blockIndex = (blockIndex - 1) % BLOCKS;
         steppedBackBlock = true;
-        // TODO: Test
     }
 }
 
@@ -112,8 +111,6 @@ void Buffer::readBlock() {
 }
 
 void Buffer::writeBlock() {
-    posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
-
     if ( (write(fd, buffer[blockIndex], BUFSIZE)) < 0) {
         perror("Write failed");
     }
