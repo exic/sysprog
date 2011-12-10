@@ -1,8 +1,3 @@
-print2
-Z =?= ((3 +++ 4 - 6));
-y=X / (X - 4);
-hiho 12341234123412341234
-printo read a <=>*b;
-(* eine einfache 
-Aufgabe !! *
-m = n <=/ o;
+int adas;
+if (aaa) print(aaa); else print(bbb);;
+while (bbb) print(b);;
