@@ -1,3 +1,5 @@
 Debug/
 .cproject
 out.txt
+*.[oa]
+test-exec
