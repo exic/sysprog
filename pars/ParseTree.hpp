@@ -8,15 +8,15 @@ using namespace std;
 
 class ParseTree {
 public:
-	ParseTree();
-	virtual ~ParseTree();
-	Node* getRootNode() { return root; };
-	void setRootNode(Node* root) { this->root = root; };
-	void printTree(Node* node);
+    ParseTree();
+    virtual ~ParseTree();
+    Node* getRootNode() { return root; };
+    void setRootNode(Node* root) { this->root = root; };
+    void printTree(Node* node);
 private:
-	Node* root;
+    Node* root;
 
-	int depth;
+    int depth;
 };
 
 #endif /* PARSETREE_HPP_ */
