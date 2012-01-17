@@ -30,7 +30,9 @@ class Automat {
         Status getStatus() {
             return status;
         }
-        char* getLexem() { return lexem; }
+        char* getLexem() {
+            return lexem;
+        }
     private:
         void newline();
         Status statusNONE(char c);

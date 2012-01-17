@@ -32,7 +32,7 @@ Buffer::Buffer(char* filename, bool read) {
 
 
 Buffer::~Buffer() {
-    if (! this->is_read && !buffer) {
+    if (! this->is_read) { // && !buffer) {
         memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
         buffer[blockIndex][BUFSIZE-1] = '\n';
         writeBlock();
@@ -95,6 +95,9 @@ void Buffer::ungetchar() {
     if (current < 0) {
         current = BUFSIZE - 1;
         blockIndex = (blockIndex - 1) % BLOCKS;
+        if (blockIndex < 0) {
+            blockIndex *= -1;
+        }
         steppedBackBlock = true;
     }
 }

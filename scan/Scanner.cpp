@@ -21,7 +21,6 @@ Token* Scanner::nextToken() {
 
         int unget = automat->getUnget();
         while (unget-- > 0) {
-//            cout << "unget" << endl;
             buffer->ungetchar();
         }
 

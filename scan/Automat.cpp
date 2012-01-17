@@ -65,7 +65,12 @@ Status Automat::statusIDENTIFIER(char c) {
     if (!Util::isDigit(c) && !Util::isLetter(c)) {
         return READ_IDENTIFIER;
     }
-    lexem[lexem_index++] = c;
+
+    if (lexem_index > (MAX_LEXEM_LENGTH - 2)) {
+        lexem_index++;
+    } else {
+        lexem[lexem_index++] = c;
+    }
     return READING_IDENTIFIER;
 }
 
@@ -185,10 +190,17 @@ Token* Automat::getToken() {
 
     int token_length = 1;
     if (status == READ_IDENTIFIER) {
-        lexem[lexem_index] = '\0';
-        lexem_index = 0;
+        token_length = lexem_index;
 
-        token_length = strlen(lexem);
+        if (lexem_index > (MAX_LEXEM_LENGTH - 1)) {
+            lexem[MAX_LEXEM_LENGTH - 1] = '\0';
+            cerr << "Lexem too long, skipping: "  << lexem << "... Line " << line << ", Column " << ( column - token_length) << ". Increase buffer size to read it." << endl;
+            lexem[0] = '\0';
+        } else {
+            lexem[lexem_index] = '\0';
+        }
+
+        lexem_index = 0;
 
         if (strcmp("print", lexem) == 0) {
             ttype = PRINT;
@@ -202,7 +214,7 @@ Token* Automat::getToken() {
             ttype = WHILE;
         } else if (strcmp("int", lexem) == 0) {
             ttype = INT;
-        } else {
+        } else if (strcmp("", lexem) != 0) {
             ttype = IDENTIFIER;
         }
     } else if (status == READ_INT) {
@@ -236,6 +248,7 @@ Token* Automat::getToken() {
         if (errno == ERANGE) {
              cerr << "Integer out of Range: "  << value_str << endl;
              newToken = 0;
+             errno = NULL;
         } else {
             newToken->setValue(value);
         }

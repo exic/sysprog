@@ -50,7 +50,7 @@ include Makefile.stdrules
 # ctags stuff... #
 ##################
 
-tags: *.cpp */*.cpp *.hpp */*.hpp
+tags: *.cpp */*.cpp */*.hpp
 	ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .
 
 tags-fetcher:

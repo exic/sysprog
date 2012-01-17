@@ -5,10 +5,12 @@
  *      Author: j
  */
 
+#include "../buffer/Constants.hpp"
+
 #ifndef CONSTANTS
 #define CONSTANTS
 
-#define MAX_LEXEM_LENGTH            128
+#define MAX_LEXEM_LENGTH            TOTAL_BUFSIZE
 #define MAX_SIGN_LENGTH             4
 
 

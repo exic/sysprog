@@ -6,5 +6,6 @@
 #define ALIGNMENT  512
 #define BUFSIZE    512
 #define BLOCKS     2
+#define TOTAL_BUFSIZE BUFSIZE * BLOCKS
 
 #endif
