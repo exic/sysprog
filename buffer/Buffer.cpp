@@ -22,6 +22,8 @@ Buffer::Buffer(char* filename, bool read) {
             exit(1);
         }
         posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
+        // initialize it
+        buffer[blockIndex][current] = '\0';
     }
 
     if (read) {
@@ -32,7 +34,7 @@ Buffer::Buffer(char* filename, bool read) {
 
 
 Buffer::~Buffer() {
-    if (! this->is_read) { // && !buffer) {
+    if (! this->is_read) {
         memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
         buffer[blockIndex][BUFSIZE-1] = '\n';
         writeBlock();
