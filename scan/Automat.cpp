@@ -194,7 +194,9 @@ Token* Automat::getToken() {
 
         if (lexem_index > (MAX_LEXEM_LENGTH - 1)) {
             lexem[MAX_LEXEM_LENGTH - 1] = '\0';
-            cerr << "Lexem too long, skipping: "  << lexem << "... Line " << line << ", Column " << ( column - token_length) << ". Increase buffer size to read it." << endl;
+            cerr << "Lexem too long, skipping: "  << lexem 
+                << "... Line " << line << ", Column " << ( column - token_length)
+                << ". Increase buffer size to read it." << endl;
             lexem[0] = '\0';
         } else {
             lexem[lexem_index] = '\0';
