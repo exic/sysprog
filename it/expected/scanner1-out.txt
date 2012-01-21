@@ -1,0 +1,31 @@
+Token INTEGER Line: 1, Column 1, Value: 12345
+Token IDENTIFIER Line: 3, Column 1, Lexem: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+Token IDENTIFIER Line: 4, Column 1, Lexem: abcdefghijklmnopqrstuvwxyz
+Token ADDITITON Line: 5, Column 1
+Token SUBTRACTION Line: 5, Column 4
+Token MULTIPLICATION Line: 5, Column 7
+Token DIVISION Line: 5, Column 10
+Token LT Line: 5, Column 13
+Token GT Line: 5, Column 15
+Token ASSIGN Line: 5, Column 17
+Token NE Line: 5, Column 19
+Token EXCLAMATION Line: 5, Column 23
+Token AMPERSAND Line: 5, Column 26
+Token SEMICOLON Line: 5, Column 29
+Token LEFTBRACKET Line: 5, Column 33
+Token RIGHTBRACKET Line: 5, Column 36
+Token LEFTANGLEBRACKET Line: 5, Column 39
+Token RIGHTANGLEBRACKET Line: 5, Column 42
+Token LEFTSQUAREBRACKET Line: 5, Column 45
+Token RIGHTSQUAREBRACKET Line: 5, Column 48
+Token IDENTIFIER Line: 7, Column 1, Lexem: dies
+Token IDENTIFIER Line: 7, Column 6, Lexem: ist
+Token IDENTIFIER Line: 7, Column 10, Lexem: ein
+Token IDENTIFIER Line: 7, Column 43, Lexem: Kommentar
+Token PRINT Line: 9, Column 1
+Token READ Line: 10, Column 1
+Token IDENTIFIER Line: 11, Column 1, Lexem: printread
+Token IDENTIFIER Line: 12, Column 1, Lexem: readprint
+Token IDENTIFIER Line: 13, Column 1, Lexem: ABCDEFGHIJK
+Token IDENTIFIER Line: 13, Column 13, Lexem: LMNOPQRSTUVWXYZ
+                                                                                                                                                                                                                                                              

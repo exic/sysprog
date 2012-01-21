@@ -1,0 +1,35 @@
+Token IDENTIFIER Line: 1, Column 1, Lexem: aaa234
+Token IDENTIFIER Line: 3, Column 1, Lexem: korrekt
+Token IDENTIFIER Line: 4, Column 1, Lexem: ein
+Token IDENTIFIER Line: 4, Column 5, Lexem: Identifier
+Token IDENTIFIER Line: 4, Column 16, Lexem: aaa234
+Token IDENTIFIER Line: 6, Column 1, Lexem: xxxxxx
+Token INTEGER Line: 8, Column 1, Value: 1234
+Token IDENTIFIER Line: 8, Column 5, Lexem: bbb
+Token IDENTIFIER Line: 10, Column 1, Lexem: korrekt
+Token IDENTIFIER Line: 11, Column 1, Lexem: ein
+Token IDENTIFIER Line: 11, Column 5, Lexem: Integer
+Token INTEGER Line: 11, Column 13, Value: 1234
+Token IDENTIFIER Line: 11, Column 18, Lexem: und
+Token IDENTIFIER Line: 11, Column 22, Lexem: ein
+Token IDENTIFIER Line: 11, Column 26, Lexem: Identifier
+Token IDENTIFIER Line: 11, Column 37, Lexem: bbb
+Token IDENTIFIER Line: 13, Column 1, Lexem: xxxxxx
+Token IDENTIFIER Line: 15, Column 1, Lexem: ccc1234
+Token INTEGER Line: 15, Column 9, Value: 123
+Token IDENTIFIER Line: 17, Column 1, Lexem: korrekt
+Token IDENTIFIER Line: 18, Column 1, Lexem: ein
+Token IDENTIFIER Line: 18, Column 5, Lexem: Identifier
+Token IDENTIFIER Line: 18, Column 16, Lexem: ccc1234
+Token IDENTIFIER Line: 19, Column 1, Lexem: ein
+Token IDENTIFIER Line: 19, Column 5, Lexem: Fehler
+Token IDENTIFIER Line: 19, Column 12, Lexem: Punkt
+Token IDENTIFIER Line: 20, Column 1, Lexem: ein
+Token IDENTIFIER Line: 20, Column 5, Lexem: Integer
+Token INTEGER Line: 20, Column 13, Value: 123
+Token IDENTIFIER Line: 22, Column 1, Lexem: xxxxxx
+Token PRINT Line: 24, Column 1
+Token LEFTBRACKET Line: 24, Column 6
+Token READ Line: 24, Column 7
+Token RIGHTBRACKET Line: 24, Column 11
+                                                                                                                                                                                                                                                                                                                                                                                                                          

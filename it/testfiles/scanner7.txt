@@ -1,0 +1,25 @@
+aaa234
+
+korrekt
+ein Identifier aaa234
+
+xxxxxx
+
+1234bbb
+
+korrekt
+ein Integer 1234 und ein Identifier bbb
+
+xxxxxx
+
+ccc1234.123
+
+korrekt
+ein Identifier ccc1234
+ein Fehler Punkt
+ein Integer 123
+
+xxxxxx
+
+print(read)
+

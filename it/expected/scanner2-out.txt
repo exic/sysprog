@@ -1,0 +1,23 @@
+Token INTEGER Line: 1, Column 1, Value: 123456789
+Token IDENTIFIER Line: 1, Column 10, Lexem: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+Token ADDITITON Line: 1, Column 62
+Token SUBTRACTION Line: 1, Column 63
+Token MULTIPLICATION Line: 1, Column 64
+Token DIVISION Line: 1, Column 65
+Token ASSIGN Line: 1, Column 66
+Token GT Line: 1, Column 67
+Token LT Line: 1, Column 68
+Token NE Line: 1, Column 69
+Token EXCLAMATION Line: 1, Column 72
+Token AMPERSAND Line: 1, Column 73
+Token SEMICOLON Line: 1, Column 74
+Token LT Line: 1, Column 75
+Token LEFTBRACKET Line: 1, Column 76
+Token RIGHTBRACKET Line: 1, Column 77
+Token LEFTANGLEBRACKET Line: 1, Column 78
+Token RIGHTANGLEBRACKET Line: 1, Column 79
+Token LEFTSQUAREBRACKET Line: 1, Column 80
+Token RIGHTSQUAREBRACKET Line: 1, Column 81
+Token IDENTIFIER Line: 1, Column 82, Lexem: diesistein
+Token READ Line: 1, Column 116
+                                                                                                                                                  

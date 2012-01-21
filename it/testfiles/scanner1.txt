@@ -1,0 +1,14 @@
+12345
+
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
++  -  *  /  < > = <=> !  &  ;   (  )  {  }  [  ] 
+
+dies ist ein (* 111 aaaa +- 1234.0 mod *) Kommentar
+
+print
+read
+printread
+readprint
+ABCDEFGHIJK$LMNOPQRSTUVWXYZ
+

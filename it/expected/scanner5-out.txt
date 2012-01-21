@@ -1,0 +1,12 @@
+Token IDENTIFIER Line: 1, Column 1, Lexem: dies
+Token IDENTIFIER Line: 1, Column 6, Lexem: ist
+Token IDENTIFIER Line: 1, Column 10, Lexem: ein
+Token INTEGER Line: 4, Column 1, Value: 4
+Token IDENTIFIER Line: 4, Column 3, Lexem: Zeile
+Token IDENTIFIER Line: 4, Column 9, Lexem: ok
+Token IDENTIFIER Line: 7, Column 1, Lexem: test
+Token IDENTIFIER Line: 9, Column 1, Lexem: sichtbar
+Token MULTIPLICATION Line: 10, Column 1
+Token RIGHTBRACKET Line: 10, Column 2
+Token IDENTIFIER Line: 11, Column 1, Lexem: end
+     

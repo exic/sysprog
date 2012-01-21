@@ -1,0 +1,16 @@
+#!/bin/sh
+
+cd $(dirname $0)
+
+for file in testfiles/*.txt; do
+    out=$(basename $file .txt)-out.txt
+    echo "#################### Scanning file $file"
+    if ! ../scanner $file $out; then
+        echo Error at file $file >&2
+        exit 1
+    fi
+    if ! cmp $out expected/$out; then
+        echo Output not as expected scanning file $file. >&2
+        exit 1
+    fi
+done
