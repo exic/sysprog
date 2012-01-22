@@ -1,3 +1,3 @@
 int adas;
-if (aaa) print(aaa); else print(bbb);;
-while (bbb) print(b);;
+if (aaa) print(aaa) else print(bbb);
+while (bbb) {print(b);};

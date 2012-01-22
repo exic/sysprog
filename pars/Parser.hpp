@@ -26,13 +26,17 @@ private:
     char* getTokenString(TType ttype);
 
     void scannerNextToken();
-    void getNextToken();
+    // Returns, if there is a next token at all
+    bool getNextToken();
     void getNextExpectedToken(TType ttype);
     void getNextStatementToken(bool inner, bool optional);
     void getNextExp2Token();
+    bool checkNextTokenExists();
     bool checkNextTokenOp();
-    bool checkNextToken(TType ttype);
+    bool checkNextTokenIsType(TType ttype);
+    bool isOp(TType type);
     void writeScannerOutput();
+    void printGotTokenInfo();
     Node* prog();
     Node* decls();
     Node* decl();
