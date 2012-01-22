@@ -9,6 +9,7 @@ using namespace std;
 
 class Node {
 public:
+    Node(Rule::Type rule, Token* token);
     Node(Rule::Type rule);
     virtual ~Node();
 
@@ -26,6 +27,7 @@ private:
     Node* childNodes[10];
     int childNodesCount;
     Token* token;
+    void init(Rule::Type rule, Token* token);
 };
 
 #endif /* NODE_HPP_ */

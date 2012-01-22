@@ -1,8 +1,16 @@
 #include "Node.hpp"
 
+Node::Node(Rule::Type rule, Token* token) {
+    this->init(rule, token);
+}
+
 Node::Node(Rule::Type rule) {
+    this->init(rule, NULL);
+}
+
+void Node::init(Rule::Type rule, Token* token) {
     this->rule = rule;
-    this->token = NULL;
+    this->token = token;
     this->childNodesCount = 0;
 }
 

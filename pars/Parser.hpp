@@ -20,7 +20,6 @@ private:
     ParseTree* parseTree;
     Token* currentToken;
 
-    Node* tmp;
     bool end;
     bool checkedNextToken;
 

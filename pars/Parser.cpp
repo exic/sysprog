@@ -3,7 +3,6 @@
 
 Parser::Parser(Scanner* scanner) {
     this->scanner = scanner;
-    tmp = new Node(Rule::EMPTY);
     end = false;
     checkedNextToken = false;
 }
@@ -53,9 +52,7 @@ Node* Parser::decl() {
     Node* decl = new Node(Rule::DECL);
 
     // int
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    decl->addChildNode(tmp);
+    decl->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     // opt: [integer]
     if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
         checkedNextToken = false;
@@ -64,14 +61,10 @@ Node* Parser::decl() {
     }
     // identifier
     getNextExpectedToken(IDENTIFIER);
-    tmp = new Node(Rule::IDENTIFIER);
-    tmp->setToken(this->currentToken);
-    decl->addChildNode(tmp);
+    decl->addChildNode(new Node(Rule::IDENTIFIER, this->currentToken));
     // semicolon
     getNextExpectedToken(SIGN_SEMICOLON);
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    decl->addChildNode(tmp);
+    decl->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
 
     return decl;
 }
@@ -90,9 +83,7 @@ Node* Parser::statement() {
     Node* nStatement = new Node(Rule::STATEMENT);
     if (this->currentToken->getType() == IDENTIFIER) {
         // identifier
-        tmp = new Node(Rule::IDENTIFIER);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::IDENTIFIER, this->currentToken));
         // opt: INDEX
         if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
             checkedNextToken = false;
@@ -101,32 +92,22 @@ Node* Parser::statement() {
         }
         // =
         getNextExpectedToken(SIGN_ASSIGN);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp
         Node* nExp = exp();
         nStatement->addChildNode(nExp);
         // ;
         getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     } else if (this->currentToken->getType() == T_READ) {
         // read
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // (
         getNextExpectedToken(SIGN_LEFTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // identifier
         getNextExpectedToken(IDENTIFIER);
-        tmp = new Node(Rule::IDENTIFIER);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::IDENTIFIER, this->currentToken));
         // opt: INDEX
         if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
             checkedNextToken = false;
@@ -135,42 +116,28 @@ Node* Parser::statement() {
         }
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // ;
         getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     } else if (this->currentToken->getType() == PRINT) {
         // print
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // (
         getNextExpectedToken(SIGN_LEFTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp
         Node* nExp = exp();
         nStatement->addChildNode(nExp);
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // ;
         getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     } else if (this->currentToken->getType() == SIGN_LEFTANGLEBRACKET) {
         // {
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // statements
         Node* nStatements = new Node(Rule::STATEMENTS);
         getNextStatementToken(true, false);
@@ -182,72 +149,52 @@ Node* Parser::statement() {
         if (nStatements->getChildNodesCount() > 0)
             nStatement->addChildNode(nStatements);
         // }
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     } else if (this->currentToken->getType() == IF) {
         // if
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // (
         getNextExpectedToken(SIGN_LEFTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp
         Node* nExp = exp();
         nStatement->addChildNode(nExp);
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // statement
         getNextStatementToken(false, false);
         Node* nnStatement = statement();
         nStatement->addChildNode(nnStatement);
         // else
         getNextExpectedToken(ELSE);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // statement
         getNextStatementToken(false, false);
         Node* nnnStatement = statement();
         nStatement->addChildNode(nnnStatement);
         // ;
         getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     } else if (this->currentToken->getType() == WHILE) {
         // while
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // (
         getNextExpectedToken(SIGN_LEFTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp
         Node* nExp = exp();
         nStatement->addChildNode(nExp);
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // statement
         getNextStatementToken(false, false);
         Node* nnStatement = statement();
         nStatement->addChildNode(nnStatement);
         // ;
         getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     }
     return nStatement;
 }
@@ -255,36 +202,26 @@ Node* Parser::statement() {
 Node* Parser::array() {
     Node* array = new Node(Rule::ARRAY);
     // [
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    array->addChildNode(tmp);
+    array->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     // integer
     getNextExpectedToken(INTEGER);
-    tmp = new Node(Rule::INTEGER);
-    tmp->setToken(this->currentToken);
-    array->addChildNode(tmp);
+    array->addChildNode(new Node(Rule::INTEGER, this->currentToken));
     // ]
     getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    array->addChildNode(tmp);
+    array->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     return array;
 }
 
 Node* Parser::index() {
     Node* index = new Node(Rule::INDEX);
     // [
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    index->addChildNode(tmp);
+    index->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     // exp
     Node* nExp = exp();
     index->addChildNode(nExp);
     // ]
     getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    index->addChildNode(tmp);
+    index->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     return index;
 }
 
@@ -307,52 +244,38 @@ Node* Parser::exp2() {
     Node* nExp2 = new Node(Rule::EXP2);
     if (this->currentToken->getType() == INTEGER) {
         // integer
-        tmp = new Node(Rule::INTEGER);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(Rule::INTEGER, this->currentToken));
     } else if (this->currentToken->getType() == SIGN_SUBTRACTION
                || this->currentToken->getType() == SIGN_EXCLAMATION) {
         // - || !
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp2
         getNextExp2Token();
         Node* nnExp2 = exp2();
         nExp2->addChildNode(nnExp2);
     } else if (this->currentToken->getType() == SIGN_LEFTBRACKET) {
         // (
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // EXP
         Node* nExp = exp();
         nExp2->addChildNode(nExp);
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     } else if (this->currentToken->getType() == IDENTIFIER) {
         // identifier
-        tmp = new Node(Rule::IDENTIFIER);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(Rule::IDENTIFIER, this->currentToken));
         // opt: [exp]
         if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
             checkedNextToken = false;
             // [
-            tmp = new Node(Rule::KEYWORD);
-            tmp->setToken(this->currentToken);
-            nExp2->addChildNode(tmp);
+            nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
             // exp
             Node* nExp = exp();
             nExp2->addChildNode(nExp);
             // ]
             getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
-            tmp = new Node(Rule::KEYWORD);
-            tmp->setToken(this->currentToken);
-            nExp2->addChildNode(tmp);
+            nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         }
     }
 
@@ -362,9 +285,7 @@ Node* Parser::exp2() {
 Node* Parser::op_exp() {
     Node* op_exp = new Node(Rule::OP_EXP);
     // op
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    op_exp->addChildNode(tmp);
+    op_exp->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     // exp
     Node* nExp = exp();
     op_exp->addChildNode(nExp);
