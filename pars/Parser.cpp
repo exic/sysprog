@@ -14,8 +14,7 @@ Parser::~Parser() {
 void Parser::parse() {
     cout << ">> Start Parsing" << endl;
     this->parseTree = new ParseTree();
-    Node* nProg = prog();
-    this->parseTree->getRootNode()->addChildNode(nProg);
+    this->parseTree->getRootNode()->addChildNode(prog());
     cout << ">> End Parsing" << endl;
     cout << ">> Start Printing Tree" << endl;
     this->parseTree->printTree(this->parseTree->getRootNode());
@@ -26,14 +25,12 @@ Node* Parser::prog() {
     getNextToken();
     Node* prog = new Node(Rule::PROG);
     if (this->currentToken->getType() == INT) {
-        Node* nDecls = decls();
-        prog->addChildNode(nDecls);
+        prog->addChildNode(decls());
     }
     if (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
         this->currentToken->getType() == T_READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
         this->currentToken->getType() == IF || this->currentToken->getType() == WHILE) {
-        Node* nStatements = statements();
-        prog->addChildNode(nStatements);
+        prog->addChildNode(statements());
     }
     return prog;
 }
@@ -41,8 +38,7 @@ Node* Parser::prog() {
 Node* Parser::decls() {
     Node* decls = new Node(Rule::DECLS);
     while (!end && (this->currentToken->getType() == INT)) {
-        Node* nDecl = decl();
-        decls->addChildNode(nDecl);
+        decls->addChildNode(decl());
         getNextToken();
     }
     return decls;
@@ -56,8 +52,7 @@ Node* Parser::decl() {
     // opt: [integer]
     if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
         checkedNextToken = false;
-        Node* nArray = array();
-        decl->addChildNode(nArray);
+        decl->addChildNode(array());
     }
     // identifier
     getNextExpectedToken(IDENTIFIER);
@@ -72,8 +67,7 @@ Node* Parser::decl() {
 Node* Parser::statements() {
     Node* statements = new Node(Rule::STATEMENTS);
     while (!end) {
-        Node* nStatement = statement();
-        statements->addChildNode(nStatement);
+        statements->addChildNode(statement());
         getNextStatementToken(false, true);
     }
     return statements;
@@ -87,15 +81,13 @@ Node* Parser::statement() {
         // opt: INDEX
         if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
             checkedNextToken = false;
-            Node* nIndex = index();
-            nStatement->addChildNode(nIndex);
+            nStatement->addChildNode(index());
         }
         // =
         getNextExpectedToken(SIGN_ASSIGN);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp
-        Node* nExp = exp();
-        nStatement->addChildNode(nExp);
+        nStatement->addChildNode(exp());
         // ;
         getNextExpectedToken(SIGN_SEMICOLON);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
@@ -111,8 +103,7 @@ Node* Parser::statement() {
         // opt: INDEX
         if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
             checkedNextToken = false;
-            Node* nIndex = index();
-            nStatement->addChildNode(nIndex);
+            nStatement->addChildNode(index());
         }
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
@@ -127,8 +118,7 @@ Node* Parser::statement() {
         getNextExpectedToken(SIGN_LEFTBRACKET);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp
-        Node* nExp = exp();
-        nStatement->addChildNode(nExp);
+        nStatement->addChildNode(exp());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
@@ -142,8 +132,7 @@ Node* Parser::statement() {
         Node* nStatements = new Node(Rule::STATEMENTS);
         getNextStatementToken(true, false);
         while (this->currentToken->getType() != SIGN_RIGHTANGLEBRACKET) {
-            Node* nStatement = statement();
-            nStatements->addChildNode(nStatement);
+            nStatements->addChildNode(statement());
             getNextStatementToken(true, false);
         }
         if (nStatements->getChildNodesCount() > 0)
@@ -157,22 +146,19 @@ Node* Parser::statement() {
         getNextExpectedToken(SIGN_LEFTBRACKET);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp
-        Node* nExp = exp();
-        nStatement->addChildNode(nExp);
+        nStatement->addChildNode(exp());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // statement
         getNextStatementToken(false, false);
-        Node* nnStatement = statement();
-        nStatement->addChildNode(nnStatement);
+        nStatement->addChildNode(statement());
         // else
         getNextExpectedToken(ELSE);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // statement
         getNextStatementToken(false, false);
-        Node* nnnStatement = statement();
-        nStatement->addChildNode(nnnStatement);
+        nStatement->addChildNode(statement());
         // ;
         getNextExpectedToken(SIGN_SEMICOLON);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
@@ -183,15 +169,13 @@ Node* Parser::statement() {
         getNextExpectedToken(SIGN_LEFTBRACKET);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp
-        Node* nExp = exp();
-        nStatement->addChildNode(nExp);
+        nStatement->addChildNode(exp());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // statement
         getNextStatementToken(false, false);
-        Node* nnStatement = statement();
-        nStatement->addChildNode(nnStatement);
+        nStatement->addChildNode(statement());
         // ;
         getNextExpectedToken(SIGN_SEMICOLON);
         nStatement->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
@@ -217,8 +201,7 @@ Node* Parser::index() {
     // [
     index->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     // exp
-    Node* nExp = exp();
-    index->addChildNode(nExp);
+    index->addChildNode(exp());
     // ]
     getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
     index->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
@@ -229,13 +212,11 @@ Node* Parser::exp() {
     Node* exp = new Node(Rule::EXP);
     // exp2
     getNextExp2Token();
-    Node* nExp2 = exp2();
-    exp->addChildNode(nExp2);
+    exp->addChildNode(exp2());
     // op_exp
     if (checkNextTokenOp()) {
         checkedNextToken = false;
-        Node* nOp_exp = op_exp();
-        exp->addChildNode(nOp_exp);
+        exp->addChildNode(op_exp());
     }
     return exp;
 }
@@ -251,14 +232,12 @@ Node* Parser::exp2() {
         nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // exp2
         getNextExp2Token();
-        Node* nnExp2 = exp2();
-        nExp2->addChildNode(nnExp2);
+        nExp2->addChildNode(exp2());
     } else if (this->currentToken->getType() == SIGN_LEFTBRACKET) {
         // (
         nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
         // EXP
-        Node* nExp = exp();
-        nExp2->addChildNode(nExp);
+        nExp2->addChildNode(exp());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
         nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
@@ -271,8 +250,7 @@ Node* Parser::exp2() {
             // [
             nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
             // exp
-            Node* nExp = exp();
-            nExp2->addChildNode(nExp);
+            nExp2->addChildNode(exp());
             // ]
             getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
             nExp2->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
@@ -287,8 +265,7 @@ Node* Parser::op_exp() {
     // op
     op_exp->addChildNode(new Node(Rule::KEYWORD, this->currentToken));
     // exp
-    Node* nExp = exp();
-    op_exp->addChildNode(nExp);
+    op_exp->addChildNode(exp());
 
     return op_exp;
 }
