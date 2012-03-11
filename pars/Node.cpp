@@ -1,15 +1,16 @@
 #include "Node.hpp"
 
-Node::Node(Rule::Type rule, Token* token) {
+Node::Node(ParseEnums::Rule rule, Token* token) {
     this->init(rule, token);
 }
 
-Node::Node(Rule::Type rule) {
+Node::Node(ParseEnums::Rule rule) {
     this->init(rule, NULL);
 }
 
-void Node::init(Rule::Type rule, Token* token) {
+void Node::init(ParseEnums::Rule rule, Token* token) {
     this->rule = rule;
+    this->type = ParseEnums::NOTYPE;
     this->token = token;
     this->childNodesCount = 0;
 }
@@ -20,7 +21,7 @@ Node::~Node() {
     delete token;
 }
 
-Node* Node::addChildNode(Rule::Type rule) {
+Node* Node::addChildNode(ParseEnums::Rule rule) {
     if (childNodesCount < 10) {
         Node* node = new Node(rule);
         this->childNodes[childNodesCount] = node;

@@ -5,7 +5,7 @@
 #include "../scan/TType.hpp"
 #include "ParseTree.hpp"
 #include "Node.hpp"
-#include "Rule.hpp"
+#include "ParseEnums.hpp"
 #include <iostream>
 
 using namespace std;
@@ -44,6 +44,7 @@ private:
     Node* statement();
     Node* index();
     Node* array();
+    Node* emptyArray();
     Node* exp();
     Node* exp2();
     Node* op_exp();

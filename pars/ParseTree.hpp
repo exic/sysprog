@@ -13,10 +13,11 @@ public:
     Node* getRootNode() { return root; };
     void setRootNode(Node* root) { this->root = root; };
     void printTree(Node* node);
+    bool typeCheck(Node* node);
 private:
     Node* root;
-
     int depth;
+    void store(Node* node, ParseEnums::Type type);
 };
 
 #endif /* PARSETREE_HPP_ */
