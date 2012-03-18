@@ -52,8 +52,10 @@ bool ParseTree::typeCheck(Node* node) {
 				cout << "Decl: noType" << endl;
 				if (node->getChildNode(1)->getType() == ParseEnums::ARRAYTYPE) {
 					store(node->getChildNode(2), ParseEnums::INTARRAYTYPE);
+					cout << "stored intarray" << endl;
 				} else {
 					store(node->getChildNode(2), ParseEnums::INTTYPE);
+					cout << "stored int" << endl;
 				}
 			}
 			break;
@@ -87,9 +89,27 @@ bool ParseTree::typeCheck(Node* node) {
 
 		case ParseEnums::STATEMENT:
 			if (node->getChildNode(0)->getRule() == ParseEnums::IDENTIFIER) {
-
-			// TODO
-
+				typeCheck(node->getChildNode(3));
+				typeCheck(node->getChildNode(1));
+				if (get(node->getChildNode(0)) == ParseEnums::ERRORTYPE ||
+						get(node->getChildNode(0)) == ParseEnums::NOTYPE) {
+					cerr << "Identifier " << node->getChildNode(0)->getToken()->getEntry()->getLexem() << " not defined" << endl;
+					node->setType(ParseEnums::ERRORTYPE);
+					cout << "xxx Statement: errorType" << endl;
+				} else if (node->getChildNode(3)->getType() == ParseEnums::INTTYPE
+						   &&
+						   ((get(node->getChildNode(0)) == ParseEnums::INTTYPE
+							 && node->getChildNode(1)->getType() == ParseEnums::NOTYPE)
+						    ||
+						    (get(node->getChildNode(0)) == ParseEnums::INTARRAYTYPE
+						     && node->getChildNode(1)->getType() == ParseEnums::ARRAYTYPE))) {
+					node->setType(ParseEnums::NOTYPE);
+					cout << "xxx Statement: noType" << endl;
+				} else {
+					cerr << "Identifier " << node->getChildNode(0)->getToken()->getEntry()->getLexem() << " incompatible types" << endl;
+					node->setType(ParseEnums::ERRORTYPE);
+					cout << "xxx Statement: errorType" << endl;
+				}
 			} else {
 				switch (node->getChildNode(0)->getToken()->getType()) {
 					case PRINT:		// print ( EXP )
@@ -101,7 +121,23 @@ bool ParseTree::typeCheck(Node* node) {
 					case T_READ:	// read ( identifier INDEX )
 						typeCheck(node->getChildNode(3));
 
-						//TODO
+						if (get(node->getChildNode(2)) == ParseEnums::ERRORTYPE
+								|| get(node->getChildNode(2)) == ParseEnums::NOTYPE) {
+							cerr << "Identifier " << node->getChildNode(2)->getToken()->getEntry()->getLexem() << " not defined" << endl;
+							node->setType(ParseEnums::ERRORTYPE);
+							cout << "xxx Statement print: errorType" << endl;
+						} else if ((get(node->getChildNode(2)) == ParseEnums::INTTYPE
+									&& node->getChildNode(3)->getType() == ParseEnums::NOTYPE)
+								   ||
+								   (get(node->getChildNode(2)) == ParseEnums::INTARRAYTYPE
+								    && node->getChildNode(3)->getType() == ParseEnums::ARRAYTYPE)) {
+							node->setType(ParseEnums::NOTYPE);
+							cout << "xxx Statement print: noType" << endl;
+						} else {
+							cerr << "Identifier " << node->getChildNode(2)->getToken()->getEntry()->getLexem() << " incompatible types" << endl;
+							node->setType(ParseEnums::ERRORTYPE);
+							cout << "xxx Statement print: errorType" << endl;
+						}
 
 						break;
 
@@ -184,8 +220,26 @@ bool ParseTree::typeCheck(Node* node) {
 					break;
 
 				case IDENTIFIER:
+					typeCheck(node->getChildNode(1));
 
-					//TODO
+					if (get(node->getChildNode(0)) == ParseEnums::NOTYPE) {
+						cerr << "Identifier " << node->getChildNode(0)->getToken()->getEntry()->getLexem() << " not defined" << endl;
+						node->setType(ParseEnums::ERRORTYPE);
+						cout << "xxx exp2 identifier: errorType" << endl;
+					} else if (get(node->getChildNode(0)) == ParseEnums::INTTYPE
+								&& node->getChildNode(1)->getType() == ParseEnums::NOTYPE) {
+						node->setType(get(node->getChildNode(0)));
+						cout << "xxx exp2 identifier: type of indentifier" << endl;
+					} else if (get(node->getChildNode(0)) == ParseEnums::INTARRAYTYPE
+								&& node->getChildNode(1)->getType() == ParseEnums::ARRAYTYPE) {
+						node->setType(ParseEnums::INTTYPE);
+						cout << "xxx exp2 identifier: intType" << endl;
+				    }
+					else {
+						cerr << "Identifier " << node->getChildNode(0)->getToken()->getEntry()->getLexem() << " no primitive types" << endl;
+						node->setType(ParseEnums::ERRORTYPE);
+						cout << "xxx exp2 identifier: errorType" << endl;
+					}
 
 					break;
 
@@ -291,7 +345,11 @@ bool ParseTree::typeCheck(Node* node) {
 }
 
 void ParseTree::store(Node* node, ParseEnums::Type type) {
-	//TODO
+	node->getToken()->getEntry()->setParseType(type);
+}
+
+ParseEnums::Type ParseTree::get(Node* node) {
+	return node->getToken()->getEntry()->getParseType();
 }
 
 void ParseTree::printTree(Node* node) {

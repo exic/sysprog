@@ -18,6 +18,7 @@ private:
     Node* root;
     int depth;
     void store(Node* node, ParseEnums::Type type);
+    ParseEnums::Type get(Node* node);
 };
 
 #endif /* PARSETREE_HPP_ */
