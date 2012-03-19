@@ -4,6 +4,7 @@ ParseTree::ParseTree() {
     this->root = new Node(ParseEnums::ROOT);
 
     depth = 0;
+    marker = 0;
 }
 
 ParseTree::~ParseTree() {
@@ -16,14 +17,12 @@ bool ParseTree::typeCheck(Node* node) {
 		case ParseEnums::ROOT:
 			typeCheck(node->getChildNode(0)); // PROG
 			node->setType(ParseEnums::NOTYPE);
-			cout << "Root: noType" << endl;
 			break;
 
 		case ParseEnums::PROG:
 			typeCheck(node->getChildNode(0)); // DECLS
 			typeCheck(node->getChildNode(1)); // STATEMENTS
 			node->setType(ParseEnums::NOTYPE);
-			cout << "Prog: noType" << endl;
 			break;
 
 		case ParseEnums::DECLS:
@@ -34,7 +33,6 @@ bool ParseTree::typeCheck(Node* node) {
 					typeCheck(node->getChildNode(2)); // DECLS
 			}
 			node->setType(ParseEnums::NOTYPE);
-			cout << "Decls: noType" << endl;
 			break;
 
 		case ParseEnums::DECL:
@@ -43,19 +41,14 @@ bool ParseTree::typeCheck(Node* node) {
 				cerr << "identifier " << node->getToken()->getEntry()->getLexem() <<
 						" already used" << endl;
 				node->setType(ParseEnums::ERRORTYPE);
-				cout << "Decl: errorType" << endl;
 			} else if (node->getChildNode(1)->getType() == ParseEnums::ERRORTYPE) {
 				node->setType(ParseEnums::ERRORTYPE);
-				cout << "Decl: errorType" << endl;
 			} else {
 				node->setType(ParseEnums::NOTYPE);
-				cout << "Decl: noType" << endl;
 				if (node->getChildNode(1)->getType() == ParseEnums::ARRAYTYPE) {
 					store(node->getChildNode(2), ParseEnums::INTARRAYTYPE);
-					cout << "stored intarray" << endl;
 				} else {
 					store(node->getChildNode(2), ParseEnums::INTTYPE);
-					cout << "stored int" << endl;
 				}
 			}
 			break;
@@ -64,15 +57,12 @@ bool ParseTree::typeCheck(Node* node) {
 			if (node->getChildNodesCount() == 3) {
 				if (node->getChildNode(1)->getToken()->getValue() > 0) {
 					node->setType(ParseEnums::ARRAYTYPE);
-					cout << "Array: arrayType" << endl;
 				} else {
 					cerr << "no valid dimension" << endl;
 					node->setType(ParseEnums::ERRORTYPE);
-					cout << "Array: errorType" << endl;
 				}
 			} else {
 				node->setType(ParseEnums::NOTYPE);
-				cout << "Array: noType" << endl;
 			}
 			break;
 
@@ -84,7 +74,6 @@ bool ParseTree::typeCheck(Node* node) {
 					typeCheck(node->getChildNode(2)); // STATEMENTS
 			}
 			node->setType(ParseEnums::NOTYPE);
-			cout << "Statements: noType" << endl;
 			break;
 
 		case ParseEnums::STATEMENT:
@@ -95,7 +84,6 @@ bool ParseTree::typeCheck(Node* node) {
 						get(node->getChildNode(0)) == ParseEnums::NOTYPE) {
 					cerr << "Identifier " << node->getChildNode(0)->getToken()->getEntry()->getLexem() << " not defined" << endl;
 					node->setType(ParseEnums::ERRORTYPE);
-					cout << "xxx Statement: errorType" << endl;
 				} else if (node->getChildNode(3)->getType() == ParseEnums::INTTYPE
 						   &&
 						   ((get(node->getChildNode(0)) == ParseEnums::INTTYPE
@@ -104,18 +92,15 @@ bool ParseTree::typeCheck(Node* node) {
 						    (get(node->getChildNode(0)) == ParseEnums::INTARRAYTYPE
 						     && node->getChildNode(1)->getType() == ParseEnums::ARRAYTYPE))) {
 					node->setType(ParseEnums::NOTYPE);
-					cout << "xxx Statement: noType" << endl;
 				} else {
 					cerr << "Identifier " << node->getChildNode(0)->getToken()->getEntry()->getLexem() << " incompatible types" << endl;
 					node->setType(ParseEnums::ERRORTYPE);
-					cout << "xxx Statement: errorType" << endl;
 				}
 			} else {
 				switch (node->getChildNode(0)->getToken()->getType()) {
 					case PRINT:		// print ( EXP )
 						typeCheck(node->getChildNode(2));
 						node->setType(ParseEnums::NOTYPE);
-						cout << "Statement: noType" << endl;
 						break;
 
 					case T_READ:	// read ( identifier INDEX )
@@ -125,18 +110,15 @@ bool ParseTree::typeCheck(Node* node) {
 								|| get(node->getChildNode(2)) == ParseEnums::NOTYPE) {
 							cerr << "Identifier " << node->getChildNode(2)->getToken()->getEntry()->getLexem() << " not defined" << endl;
 							node->setType(ParseEnums::ERRORTYPE);
-							cout << "xxx Statement print: errorType" << endl;
 						} else if ((get(node->getChildNode(2)) == ParseEnums::INTTYPE
 									&& node->getChildNode(3)->getType() == ParseEnums::NOTYPE)
 								   ||
 								   (get(node->getChildNode(2)) == ParseEnums::INTARRAYTYPE
 								    && node->getChildNode(3)->getType() == ParseEnums::ARRAYTYPE)) {
 							node->setType(ParseEnums::NOTYPE);
-							cout << "xxx Statement print: noType" << endl;
 						} else {
 							cerr << "Identifier " << node->getChildNode(2)->getToken()->getEntry()->getLexem() << " incompatible types" << endl;
 							node->setType(ParseEnums::ERRORTYPE);
-							cout << "xxx Statement print: errorType" << endl;
 						}
 
 						break;
@@ -144,7 +126,6 @@ bool ParseTree::typeCheck(Node* node) {
 					case SIGN_LEFTANGLEBRACKET:		// { statements }
 						typeCheck(node->getChildNode(1));
 						node->setType(ParseEnums::NOTYPE);
-						cout << "Statement: noType" << endl;
 						break;
 
 					case IF:		// if ( EXP ) STATEMENT else STATEMENT
@@ -153,10 +134,8 @@ bool ParseTree::typeCheck(Node* node) {
 						typeCheck(node->getChildNode(6));
 						if (node->getChildNode(2)->getType() == ParseEnums::ERRORTYPE) {
 							node->setType(ParseEnums::ERRORTYPE);
-							cout << "Statement: errorType" << endl;
 						} else {
 							node->setType(ParseEnums::NOTYPE);
-							cout << "Statement: noType" << endl;
 						}
 						break;
 
@@ -165,34 +144,28 @@ bool ParseTree::typeCheck(Node* node) {
 						typeCheck(node->getChildNode(4));
 						if (node->getChildNode(2)->getType() == ParseEnums::ERRORTYPE) {
 							node->setType(ParseEnums::ERRORTYPE);
-							cout << "Statement: errorType" << endl;
 						} else {
 							node->setType(ParseEnums::NOTYPE);
-							cout << "Statement: noType" << endl;
 						}
 						break;
 
 					default:
 						node->setType(ParseEnums::NOTYPE);
-						cout << "Statement: noType" << endl;
 						break;
 				}
 			}
 			break;
 
 		case ParseEnums::INDEX:
-			if (node->getChildNode(0) != NULL) {
+			if (node->getChildNodesCount() > 1) {
 				typeCheck(node->getChildNode(1));
 				if (node->getChildNode(1)->getType() == ParseEnums::ERRORTYPE) {
 					node->setType(ParseEnums::ERRORTYPE);
-					cout << "INDEX: errorType" << endl;
 				} else {
 					node->setType(ParseEnums::ARRAYTYPE);
-					cout << "INDEX: arrayType" << endl;
 				}
 			} else {
 				node->setType(ParseEnums::NOTYPE);
-				cout << "INDEX: noType" << endl;
 			}
 			break;
 
@@ -201,13 +174,10 @@ bool ParseTree::typeCheck(Node* node) {
 			typeCheck(node->getChildNode(1));
 			if (node->getChildNode(1)->getType() == ParseEnums::NOTYPE) {
 				node->setType(node->getChildNode(0)->getType());
-				cout << "EXP: <  >" << endl;
 			} else if (node->getChildNode(0)->getType() != node->getChildNode(1)->getType()) {
 				node->setType(ParseEnums::ERRORTYPE);
-				cout << "Statement: errorType" << endl;
 			} else {
 				node->setType(node->getChildNode(0)->getType());
-				cout << "EXP: <  >" << endl;
 			}
 			break;
 
@@ -216,7 +186,6 @@ bool ParseTree::typeCheck(Node* node) {
 				case SIGN_LEFTBRACKET:
 					typeCheck(node->getChildNode(1));
 					node->setType(node->getChildNode(1)->getType());
-					cout << "EXP2: <  >" << endl;
 					break;
 
 				case IDENTIFIER:
@@ -225,115 +194,94 @@ bool ParseTree::typeCheck(Node* node) {
 					if (get(node->getChildNode(0)) == ParseEnums::NOTYPE) {
 						cerr << "Identifier " << node->getChildNode(0)->getToken()->getEntry()->getLexem() << " not defined" << endl;
 						node->setType(ParseEnums::ERRORTYPE);
-						cout << "xxx exp2 identifier: errorType" << endl;
 					} else if (get(node->getChildNode(0)) == ParseEnums::INTTYPE
 								&& node->getChildNode(1)->getType() == ParseEnums::NOTYPE) {
 						node->setType(get(node->getChildNode(0)));
-						cout << "xxx exp2 identifier: type of indentifier" << endl;
 					} else if (get(node->getChildNode(0)) == ParseEnums::INTARRAYTYPE
 								&& node->getChildNode(1)->getType() == ParseEnums::ARRAYTYPE) {
 						node->setType(ParseEnums::INTTYPE);
-						cout << "xxx exp2 identifier: intType" << endl;
 				    }
 					else {
 						cerr << "Identifier " << node->getChildNode(0)->getToken()->getEntry()->getLexem() << " no primitive types" << endl;
 						node->setType(ParseEnums::ERRORTYPE);
-						cout << "xxx exp2 identifier: errorType" << endl;
 					}
 
 					break;
 
 				case INTEGER:
 					node->setType(ParseEnums::INTTYPE);
-					cout << "EXP2: intType" << endl;
 					break;
 
 				case SIGN_SUBTRACTION:
 					typeCheck(node->getChildNode(1));
 					node->setType(node->getChildNode(1)->getType());
-					cout << "EXP2: <  >" << endl;
 					break;
 
 				case SIGN_EXCLAMATION:
 					typeCheck(node->getChildNode(1));
 					if (node->getChildNode(1)->getType() != ParseEnums::INTTYPE) {
 						node->setType(ParseEnums::ERRORTYPE);
-						cout << "EXP2: errorType" << endl;
 					} else {
 						node->setType(ParseEnums::INTTYPE);
-						cout << "EXP2: intType" << endl;
 					}
 					break;
 
 				default:
 					node->setType(ParseEnums::ERRORTYPE);
-					cout << "EXP2: errorType" << endl;
 					break;
 			}
 			break;
 
 		case ParseEnums::OP_EXP:
-			if (node->getChildNode(0) != NULL) {
+			if (node->getChildNodesCount() > 1) {
 				typeCheck(node->getChildNode(0));
 				typeCheck(node->getChildNode(1));
 				node->setType(node->getChildNode(1)->getType());
-				cout << "OP_EXP: <  >" << endl;
 			} else {
 				node->setType(ParseEnums::NOTYPE);
-				cout << "OP_EXP: noType" << endl;
 			}
 			break;
 
 		case ParseEnums::OP:
-			switch (node->getChildNode(0)->getToken()->getType()) {
-				case SIGN_ADDITITON:
-					node->setType(ParseEnums::OPPLUS);
-					cout << "OP: opPlus" << endl;
-					break;
+			switch (node->getToken()->getType()) {
+			case SIGN_ADDITITON:
+				node->setType(ParseEnums::OPPLUS);
+				break;
 
-				case SIGN_SUBTRACTION:
-					node->setType(ParseEnums::OPMINUS);
-					cout << "OP: opMinus" << endl;
-					break;
+			case SIGN_SUBTRACTION:
+				node->setType(ParseEnums::OPMINUS);
+				break;
 
-				case SIGN_MULTIPLICATION:
-					node->setType(ParseEnums::OPMULT);
-					cout << "OP: opMult" << endl;
-					break;
+			case SIGN_MULTIPLICATION:
+				node->setType(ParseEnums::OPMULT);
+				break;
 
-				case SIGN_DIVISION:
-					node->setType(ParseEnums::OPDIV);
-					cout << "OP: opDiv" << endl;
-					break;
+			case SIGN_DIVISION:
+				node->setType(ParseEnums::OPDIV);
+				break;
 
-				case SIGN_LT:
-					node->setType(ParseEnums::OPLESS);
-					cout << "OP: opLess" << endl;
-					break;
+			case SIGN_LT:
+				node->setType(ParseEnums::OPLESS);
+				break;
 
-				case SIGN_GT:
-					node->setType(ParseEnums::OPGREATER);
-					cout << "OP: opGreater" << endl;
-					break;
+			case SIGN_GT:
+				node->setType(ParseEnums::OPGREATER);
+				break;
 
-				case SIGN_ASSIGN:
-					node->setType(ParseEnums::OPEQUAL);
-					cout << "OP: opEqual" << endl;
-					break;
+			case SIGN_ASSIGN:
+				node->setType(ParseEnums::OPEQUAL);
+				break;
 
-				case SIGN_NE:
-					node->setType(ParseEnums::OPUNEQUAL);
-					cout << "OP: opUnequal" << endl;
-					break;
+			case SIGN_NE:
+				node->setType(ParseEnums::OPUNEQUAL);
+				break;
 
-				case SIGN_AMPERSAND:
-					node->setType(ParseEnums::OPAND);
-					cout << "OP: opAnd" << endl;
-					break;
+			case SIGN_AMPERSAND:
+				node->setType(ParseEnums::OPAND);
+				break;
 
-				default:
-					node->setType(ParseEnums::ERRORTYPE);
-					cout << "OP: errorType" << endl;
+			default:
+				node->setType(ParseEnums::ERRORTYPE);
 			}
 			break;
 
@@ -350,6 +298,253 @@ void ParseTree::store(Node* node, ParseEnums::Type type) {
 
 ParseEnums::Type ParseTree::get(Node* node) {
 	return node->getToken()->getEntry()->getParseType();
+}
+
+void ParseTree::makeCode(Node* node) {
+	if (!node)
+		return;
+
+	switch (node->getRule()) {
+
+		// ROOT ::= PROG
+		case ParseEnums::ROOT:
+			makeCode(node->getChildNode(0));
+			break;
+
+		// PROG ::= DECLS STATEMENTS
+		case ParseEnums::PROG:
+			makeCode(node->getChildNode(0));
+			makeCode(node->getChildNode(1));
+			cout << "STP\r\n";
+			break;
+
+		// DECLS ::= DECL; DECLS
+		case ParseEnums::DECLS:
+			makeCode(node->getChildNode(0));
+			if (node->getChildNode(2))
+				makeCode(node->getChildNode(2));
+			break;
+
+		// DECL ::= int ARRAY identifier
+		case ParseEnums::DECL:
+			cout << "DS $"
+			     << node->getChildNode(2)->getToken()->getEntry()->getLexem()
+			     << " ";
+			makeCode(node->getChildNode(1));
+			break;
+
+		// ARRAY ::= [ integer ]
+		case ParseEnums::ARRAY:
+			if (node->getChildNodesCount() != 1)
+				cout << node->getChildNode(1)->getToken()->getValue() << "\r\n";
+			else
+				cout << "1\r\n";
+			break;
+
+		// STATEMENTS ::= STATEMENT; STATEMENTS
+		case ParseEnums::STATEMENTS:
+			makeCode(node->getChildNode(0));
+			if (node->getChildNode(2))
+				makeCode(node->getChildNode(2));
+			else
+				cout << "NOP\r\n";
+			break;
+
+		// STATEMENT
+		case ParseEnums::STATEMENT:
+			int m1, m2;
+			switch (node->getChildNode(0)->getToken()->getType()) {
+
+				// STATEMENT ::= identifier INDEX = EXP
+				case IDENTIFIER:
+					makeCode(node->getChildNode(3));
+					cout << "LA $"
+						 << node->getChildNode(0)->getToken()->getEntry()->getLexem()
+						 << "\r\n";
+					makeCode(node->getChildNode(1));
+					cout << "STR\r\n";
+					break;
+
+				// STATEMENT ::= print ( EXP )
+				case PRINT:
+					makeCode(node->getChildNode(2));
+					cout << "PRI\r\n";
+					break;
+
+				// STATEMENT ::= read ( identifier INDEX )
+				case T_READ:
+					cout << "REA\r\n"
+					     << "LA $"
+					     << node->getChildNode(2)->getToken()->getEntry()->getLexem()
+					     << "\r\n";
+					makeCode(node->getChildNode(3));
+					cout << "STR\r\n";
+					break;
+
+				// STATEMENT ::= { STATEMENTS }
+				case SIGN_LEFTANGLEBRACKET:
+					makeCode(node->getChildNode(1));
+					break;
+
+				// STATEMENT ::= if ( EXP ) STATEMENT else STATEMENT
+				case IF:
+					m1 = marker++;
+					m2 = marker++;
+					makeCode(node->getChildNode(2));
+					cout << "JIN #" << m1 << "\r\n";
+					makeCode(node->getChildNode(4));
+					cout << "JMP #" << m2 << "\r\n";
+					cout << "#" << m1 << " NOP\r\n";
+					makeCode(node->getChildNode(6));
+					cout << "#" << m2 << " NOP\r\n";
+					break;
+
+				// STATEMENT ::= while ( EXP ) STATEMENT
+				case WHILE:
+					m1 = marker++;
+					m2 = marker++;
+					cout << "#" << m1 << " NOP\r\n";
+					makeCode(node->getChildNode(2));
+					cout << "JIN #" << m2 << "\r\n";
+					makeCode(node->getChildNode(4));
+					cout << "JMP #" << m1 << "\r\n";
+					cout << "#" << m2 << " NOP\r\n";
+					break;
+
+				default:
+					break;
+			}
+			break;
+
+		// EXP ::= EXP2 OP_EXP
+		case ParseEnums::EXP:
+			if(node->getChildNode(1)->getType() == ParseEnums::NOTYPE) {
+				makeCode(node->getChildNode(0));
+			} else if (node->getChildNode(1)->getChildNode(0)->getType() == ParseEnums::OPGREATER) {
+				makeCode(node->getChildNode(1));
+				makeCode(node->getChildNode(0));
+				cout << "LES\r\n";
+			} else if (node->getChildNode(1)->getChildNode(0)->getType() == ParseEnums::OPUNEQUAL) {
+				makeCode(node->getChildNode(0));
+				makeCode(node->getChildNode(1));
+				cout << "NOT\r\n";
+			} else {
+				makeCode(node->getChildNode(0));
+				makeCode(node->getChildNode(1));
+			}
+			break;
+
+		// INDEX ::= [ EXP ] | empty
+		case ParseEnums::INDEX:
+			if (node->getChildNodesCount() > 1) {
+				makeCode(node->getChildNode(1));
+				cout << "ADD\r\n";
+			}
+			break;
+
+		// EXP2
+		case ParseEnums::EXP2:
+			switch (node->getChildNode(0)->getToken()->getType()) {
+
+				// EXP2 ::= ( EXP )
+				case SIGN_LEFTBRACKET:
+					makeCode(node->getChildNode(1));
+					break;
+
+				// EXP2 ::= identifier INDEX
+				case IDENTIFIER:
+					cout << "LA $" << node->getChildNode(0)->getToken()->getEntry()->getLexem() << "\r\n";
+					makeCode(node->getChildNode(1));
+					cout << "LV\r\n";
+					break;
+
+				// EXP2 ::= integer
+				case INTEGER:
+					cout << "LC " << node->getChildNode(0)->getToken()->getValue() << "\r\n";
+					break;
+
+				// EXP2 ::= - EXP2
+				case SIGN_SUBTRACTION:
+					cout << "LC 0\r\n";
+					makeCode(node->getChildNode(1));
+					cout << "SUB\r\n";
+					break;
+
+				// EXP2 ::= ! EXP2
+				case SIGN_EXCLAMATION:
+					makeCode(node->getChildNode(1));
+					cout << "NOT\r\n";
+					break;
+
+				default:
+					break;
+			}
+
+		// OP_EXP ::= OP EXP | empty
+		case ParseEnums::OP_EXP:
+			if (node->getChildNodesCount() > 1) {
+				makeCode(node->getChildNode(1));
+				makeCode(node->getChildNode(0));
+			}
+			break;
+
+		// OP
+		case ParseEnums::OP:
+			switch (node->getToken()->getType()) {
+
+				// OP ::= +
+				case SIGN_ADDITITON:
+					cout << "ADD\r\n";
+					break;
+
+				// OP ::= -
+				case SIGN_SUBTRACTION:
+					cout << "SUB\r\n";
+					break;
+
+				// OP ::= *
+				case SIGN_MULTIPLICATION:
+					cout << "MUL\r\n";
+					break;
+
+				// OP ::= /
+				case SIGN_DIVISION:
+					cout << "DIV\r\n";
+					break;
+
+				// OP ::= <
+				case SIGN_LT:
+					cout << "LES\r\n";
+					break;
+
+				// OP ::= >
+				case SIGN_GT:
+
+					break;
+
+				// OP ::= =
+				case SIGN_ASSIGN:
+					cout << "EQU\r\n";
+					break;
+
+				// OP ::= <=>
+				case SIGN_NE:
+					cout << "EQU\r\n";
+					break;
+
+				// OP ::= &
+				case SIGN_AMPERSAND:
+					cout << "AND\r\n";
+					break;
+
+				default:
+					break;
+			}
+			break;
+
+		default:
+			break;
+	}
 }
 
 void ParseTree::printTree(Node* node) {
@@ -378,6 +573,42 @@ void ParseTree::printTree(Node* node) {
     cout << endl;
     for (int i = 0; i < node->getChildNodesCount(); i++) {
         printTree(node->getChildNode(i));
+    }
+
+    depth--;
+}
+
+void ParseTree::printTree2(Node* node) {
+    const char* node_str[] = { "ROOT", "PROG", "DECLS", "DECL", "ARRAY", "STATEMENTS", "STATEMENT", "EXP",
+            "EXP2", "INDEX", "OP_EXP", "OP", "INTEGER", "IDENTIFIER", "KEYWORD", "SEMICOLON", "EMPTY" };
+    const char* ttype_str[] = { "NO_TYPE", "INTEGER", "IDENTIFIER", "PRINT",
+        "READ", "IF", "ELSE", "WHILE", "INT", "ADDITITON", "SUBTRACTION",
+        "DIVISION", "MULTIPLICATION", "LT", "GT", "ASSIGN", "NE",
+        "EXCLAMATION", "AMPERSAND", "SEMICOLON", "COLON", "LEFTBRACKET",
+        "RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET",
+        "LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
+    const char* type_str[] = { "INTTYPE", "INTARRAYTYPE", "ARRAYTYPE", "NOTYPE", "ERRORTYPE",
+        	            "OPPLUS", "OPMINUS", "OPMULT", "OPDIV", "OPLESS", "OPGREATER",
+        	            "OPEQUAL", "OPUNEQUAL", "OPAND" };
+
+
+    for (int i = 0; i < depth; i++) {
+        cout << "  ";
+    }
+    depth++;
+
+    cout << node_str[node->getRule()];
+    if (node->getRule() == ParseEnums::IDENTIFIER) {
+        cout << " - Lexem: " << node->getToken()->getEntry()->getLexem();
+    } else if (node->getRule() == ParseEnums::INTEGER) {
+        cout << " - Wert: " << node->getToken()->getValue();
+    } else if (node->getRule() == ParseEnums::KEYWORD) {
+        cout << " - Art: " << ttype_str[node->getToken()->getType()];
+    }
+    cout << " Type: " << type_str[node->getType()];
+    cout << endl;
+    for (int i = 0; i < node->getChildNodesCount(); i++) {
+        printTree2(node->getChildNode(i));
     }
 
     depth--;

@@ -21,7 +21,11 @@ void Parser::parse() {
     cout << ">> End Printing Tree" << endl;
     cout << ">> Start TypeCheck" << endl;
     this->parseTree->typeCheck(this->parseTree->getRootNode());
+    this->parseTree->printTree2(this->parseTree->getRootNode());
     cout << ">> End TypeCheck" << endl;
+    cout << ">> Start MakeCode" << endl;
+    this->parseTree->makeCode(this->parseTree->getRootNode());
+    cout << ">> End MakeCode" << endl;
 }
 
 Node* Parser::prog() {
@@ -217,6 +221,8 @@ Node* Parser::index() {
         // ]
         getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
         index->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+    } else {
+    	index->addChildNode(new Node(ParseEnums::EMPTY));
     }
 
     return index;
@@ -272,8 +278,10 @@ Node* Parser::op_exp() {
     Node* op_exp = new Node(ParseEnums::OP_EXP);
     if (checkNextTokenOp()) {
         getNextToken();
-        op_exp->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+        op_exp->addChildNode(new Node(ParseEnums::OP, this->currentToken));
         op_exp->addChildNode(exp());
+    } else {
+    	op_exp->addChildNode(new Node(ParseEnums::EMPTY));
     }
 
     return op_exp;

@@ -32,7 +32,6 @@ private:
     Node* childNodes[10];
     int childNodesCount;
     Token* token;
-    void init(ParseEnums::Rule rule, Token* token);
 };
 
 #endif /* NODE_HPP_ */
