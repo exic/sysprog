@@ -10,9 +10,9 @@ OUT = test-exec
 run-test: $(OUT)
 	@cp buffertestfile /tmp
 	@./$(OUT)
-	@rm -f /tmp/buffertestfile
+#	@rm -f /tmp/buffertestfile /tmp/buffertestfile2
 
-$(OUT): $(OBJS) ../Buffer.o
+$(OUT): $(OBJS)
 	@$(CXX) $(OBJS) $(CXXFLAGS) -o $(OUT) $(LIBS)
 
 include ../../Makefile.stdrules

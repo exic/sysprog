@@ -20,11 +20,11 @@
 #include <stdlib.h>
 
 #include "Constants.hpp"
-#include "Reader.hpp"
 
 class Reader {
     public:
         Reader(char* filename);
+        ~Reader();
         char* readBlock();
 
     private:

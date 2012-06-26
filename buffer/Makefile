@@ -1,6 +1,5 @@
 include ../Makefile.inc
 
-OBJS = Buffer.o Reader.o
 OUTLIB = ../libbuffer.a
 
 all: $(OBJS) test $(OUTLIB)

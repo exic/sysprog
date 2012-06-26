@@ -20,13 +20,14 @@
 
 #include "Constants.hpp"
 #include "Reader.hpp"
+#include "Writer.hpp"
 
 class Buffer {
     public:
         Buffer(char* filename, bool read);
         ~Buffer();
 
-        // Functions in read mode
+        // Functions for read mode
         char getchar();
         void ungetchar();
 
@@ -40,13 +41,13 @@ class Buffer {
         // Buffer is used for reading: if it is false, this is a write buffer.
         bool is_read;
         Reader* reader;
+        Writer* writer;
         void read();
-        void writeBlock();
+        void write();
         // Current position in block
         int current;
         int blockIndex;
         char* buffer[BLOCKS];
-        int fd;
         bool steppedBackBlock;
 };
 

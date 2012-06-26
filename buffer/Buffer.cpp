@@ -10,15 +10,7 @@ Buffer::Buffer(char* filename, bool read) {
     if (read) {
         reader = new Reader(filename);
     } else {
-        if ( (fd = open(filename,
-                    O_WRONLY | O_CREAT | O_DIRECT,
-                    00644)) < 0) {
-            perror("Opening file for write failed");
-            exit(1);
-        }
-        posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
-        // initialize it
-        buffer[blockIndex][current] = '\0';
+        writer = new Writer(filename);
     }
 
     if (read) {
@@ -29,13 +21,11 @@ Buffer::Buffer(char* filename, bool read) {
 
 
 Buffer::~Buffer() {
-    if (!is_read) {
-        memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
-        buffer[blockIndex][BUFSIZE-1] = '\n';
-        writeBlock();
-        free(buffer[blockIndex]);
+    if (is_read) {
+        delete reader;
+    } else {
+        delete writer;
     }
-    close(fd);
 }
 
 char Buffer::getchar() {
@@ -58,32 +48,13 @@ char Buffer::getchar() {
 }
 
 void Buffer::addchars(char* c) {
-
-    int string_length = strlen(c);
-    if ((current + string_length) < BUFSIZE) {
-        strcpy(buffer[blockIndex]+current, c);
-        current += string_length;
-    } else {
-        // fill the current buffer
-        int cut_at = (BUFSIZE - current);
-        memcpy (buffer[blockIndex]+current, c, cut_at);
-        // write it
-        writeBlock();
-
-        current = 0;
-        // add the rest
-        addchars(c+cut_at);
-    }
+    writer->addchars(c);
 }
-
 void Buffer::addchars(int value) {
-    char* buffer = new char[32];
-    sprintf(buffer, "%i", value);
-    addchars(buffer);
+    writer->addchars(value);
 }
-
 void Buffer::addchars(const char* c) {
-    addchars(const_cast<char*>(c));
+    writer->addchars(c);
 }
 
 
@@ -103,8 +74,6 @@ void Buffer::read() {
     buffer[blockIndex] = reader->readBlock();
 }
 
-void Buffer::writeBlock() {
-    if ( (write(fd, buffer[blockIndex], BUFSIZE)) < 0) {
-        perror("Write failed");
-    }
+void Buffer::write() {
+    writer->writeBlock();
 }

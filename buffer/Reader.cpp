@@ -7,6 +7,10 @@ Reader::Reader(char* filename) {
     }
 }
 
+Reader::~Reader() {
+    close(fd);
+}
+
 char* Reader::readBlock() {
 
     posix_memalign((void**)&buffer, ALIGNMENT, BUFSIZE);
