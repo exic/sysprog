@@ -1,19 +1,14 @@
 #include "Buffer.hpp"
 
-using namespace std;
-
 Buffer::Buffer(char* filename, bool read) {
-    this->is_read = read;
+    is_read = read;
 
     blockIndex = 0;
     current = 0;
     steppedBackBlock = false;
 
     if (read) {
-        if ( (fd = open(filename, O_DIRECT | O_RDONLY)) < 0) {
-            perror("Opening file for read failed");
-            exit(1);
-        }
+        reader = new Reader(filename);
     } else {
         if ( (fd = open(filename,
                     O_WRONLY | O_CREAT | O_DIRECT,
@@ -27,14 +22,14 @@ Buffer::Buffer(char* filename, bool read) {
     }
 
     if (read) {
-        readBlock();
+        this->read();
     }
 }
 
 
 
 Buffer::~Buffer() {
-    if (! this->is_read) {
+    if (!is_read) {
         memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
         buffer[blockIndex][BUFSIZE-1] = '\n';
         writeBlock();
@@ -50,7 +45,7 @@ char Buffer::getchar() {
         if (steppedBackBlock) {
             steppedBackBlock = false;
         } else {
-            readBlock();
+            read();
         }
     }
 
@@ -104,15 +99,8 @@ void Buffer::ungetchar() {
     }
 }
 
-void Buffer::readBlock() {
-    posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE);
-
-    int read_chars = read(fd, buffer[blockIndex], BUFSIZE);
-
-    buffer[blockIndex][read_chars] = '\0';
-    if (read_chars < BUFSIZE) {
-        buffer[blockIndex][read_chars] = -1;
-    }
+void Buffer::read() {
+    buffer[blockIndex] = reader->readBlock();
 }
 
 void Buffer::writeBlock() {

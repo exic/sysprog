@@ -29,7 +29,7 @@ TEST_F(BufferTest, Read) {
     for (int i=0; i < len * 8; i++) {
         char current_char = b->getchar();
         ASSERT_EQ(expected[i%len], current_char) << "At i: " << i;
-        //cout << c << endl;
+//        cout << current_char << endl;
     }
     //cout << endl;
 }
