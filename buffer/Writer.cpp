@@ -24,8 +24,7 @@ Writer::Writer(char* filename) {
 
 Writer::~Writer() {
     memset(buffer+current, ' ', (BUFSIZE-current));
-    buffer[BUFSIZE-2] = '\n';
-    buffer[BUFSIZE-1] = '\0';
+    buffer[BUFSIZE-1] = '\n';
     writeBlock();
     free(buffer);
     buffer = NULL;

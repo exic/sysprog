@@ -48,13 +48,8 @@ TEST_F(BufferTest, Write) {
                 if (!done_with_text) {
                     ASSERT_EQ(text[count+i], line[i]) << "At count, i: " << count << ", " << i;
                 } else {
-                    if (!inFile.good()) {
-                        ASSERT_EQ('\0', line[i]) << "At count, i: " << count << ", " << i;
-                        count--;
-                    } else {
-                        ASSERT_EQ(' ', line[i]) << "At count, i: " << count << ", " << i;
-                        empty_chars++;
-                    }
+                    ASSERT_EQ(' ', line[i]) << "At count, i: " << count << ", " << i;
+                    empty_chars++;
                 }
             }
             if (text[count+i] == '\n') {
