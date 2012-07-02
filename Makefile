@@ -11,7 +11,7 @@ EXE = sysprog
 all: run
 
 $(EXE): $(OBJS) $(LIBS)
-	@$(CXX) $(OBJS) $(CXXFLAGS) $(LIBS) -o $(EXE)
+	@$(CXX) $(OBJS) $(LIBS) $(CXXFLAGS) -o $(EXE)
 
 
 TMP_IN = /tmp/test67.txt

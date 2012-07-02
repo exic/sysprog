@@ -11,8 +11,7 @@ Reader::~Reader() {
     close(fd);
 }
 
-char* Reader::readBlock() {
-
+void Reader::readBlock() {
     posix_memalign((void**)&buffer, ALIGNMENT, BUFSIZE);
 
     int read_chars = read(fd, buffer, BUFSIZE);
@@ -21,6 +20,8 @@ char* Reader::readBlock() {
     if (read_chars < BUFSIZE) {
         buffer[read_chars] = -1;
     }
+}
 
+char* Reader::getBlock() {
     return buffer;
 }

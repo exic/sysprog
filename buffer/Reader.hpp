@@ -25,10 +25,12 @@ class Reader {
     public:
         Reader(char* filename);
         ~Reader();
-        char* readBlock();
+        void readBlock();
+        char* getBlock();
 
     private:
         int fd;
+
         char* buffer;
 };
 

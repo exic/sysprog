@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -Wall
+CXXFLAGS = -g -Wall -lpthread
 
 AR = ar
 ARFLAGS =

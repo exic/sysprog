@@ -18,6 +18,10 @@
 // strcpy(3)
 #include <string.h>
 
+// pthread
+#include <pthread.h>
+#include <semaphore.h>
+
 #include "Constants.hpp"
 #include "Reader.hpp"
 #include "Writer.hpp"
@@ -37,18 +41,28 @@ class Buffer {
         void addchars(int value);
         void addchars(const char* c);
 
+        static void* reader_thread(void *ptr);
+        pthread_mutex_t full, empty;
+
     private:
         // Buffer is used for reading: if it is false, this is a write buffer.
         bool is_read;
         Reader* reader;
         Writer* writer;
-        void read();
+        void getNextBufferPart();
         void write();
         // Current position in block
         int current;
         int blockIndex;
         char* buffer[BLOCKS];
         bool steppedBackBlock;
+
+        pthread_t *thread;
+        struct thread_args {
+            Buffer* buf;
+            thread_args(Buffer* b)
+                : buf(b) {}
+        };
 };
 
 #endif
