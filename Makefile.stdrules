@@ -8,10 +8,10 @@ clean:
 
 %.o: %.cpp
 	@echo CC $<
-	@${CXX} -c ${CXXFLAGS} $<
+	${CXX} -c ${CXXFLAGS} $<
 
 $(OUTLIB): $(OBJS)
 	@echo Linking $($?) to $(OUTLIB)
-	@$(AR) $(ARFLAGS) rs $(OUTLIB) $? >/dev/null
+	$(AR) rs $(OUTLIB) $? >/dev/null
 
 # vim: set filetype=make : #

@@ -1,8 +1,10 @@
 CXX = g++
-CXXFLAGS = -g -Wall -lpthread
+# debug
+CXXFLAGS = -O0 -g -Wall -lpthread
+# shipping
+# CXXFLAGS = -Wall -lpthread
 
 AR = ar
-ARFLAGS =
 RANLIB = ranlib
 
 OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
