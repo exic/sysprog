@@ -42,6 +42,7 @@ class Buffer {
         void addchars(const char* c);
 
         static void* reader_thread(void *ptr);
+        static void* writer_thread(void *ptr);
         pthread_mutex_t full, empty;
 
     private:
@@ -50,6 +51,7 @@ class Buffer {
         Reader* reader;
         Writer* writer;
         void getNextBufferPart();
+        void setNextBufferPart();
         void write();
         // Current position in block
         int current;

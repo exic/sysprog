@@ -13,10 +13,10 @@ Buffer::Buffer(char* filename, bool read) {
         exit(EXIT_FAILURE);
     }
 
-    if (read) {
+    // no buffer is full at this moment
+    pthread_mutex_lock(&full);
 
-        // Buffer reader block is not full at this moment
-        pthread_mutex_lock(&full);
+    if (read) {
 
         reader = new Reader(filename);
         if (pthread_create(&thread, NULL, &Buffer::reader_thread, this)
@@ -26,12 +26,42 @@ Buffer::Buffer(char* filename, bool read) {
         }
     } else {
         writer = new Writer(filename);
+        if (pthread_create(&thread, NULL, &Buffer::writer_thread, this)
+        ) {
+            perror("Creating thread failed\n");
+            exit(EXIT_FAILURE);
+        }
+        posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE * sizeof(char));
     }
 
     if (read) {
         getNextBufferPart();
     }
 }
+
+Buffer::~Buffer() {
+    if (is_read) {
+        pthread_cancel(thread);
+        delete reader;
+    } else {
+        memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
+        buffer[blockIndex][BUFSIZE-1] = '\n';
+        setNextBufferPart();
+        free(buffer[blockIndex]);
+
+        // TODO: fu?
+        pthread_mutex_lock(&empty);
+        pthread_cancel(thread);
+        pthread_mutex_unlock(&empty);
+        delete writer;
+    }
+    pthread_mutex_destroy(&full);
+    pthread_mutex_destroy(&empty);
+}
+
+
+
+// ############ Reading
 
 void* Buffer::reader_thread(void *context) {
     Buffer* buf = (Buffer*) context;
@@ -51,16 +81,6 @@ void Buffer::getNextBufferPart() {
 
 
 
-Buffer::~Buffer() {
-    if (is_read) {
-        pthread_cancel(thread);
-        pthread_mutex_destroy(&full);
-        pthread_mutex_destroy(&empty);
-        delete reader;
-    } else {
-        delete writer;
-    }
-}
 
 char Buffer::getchar() {
     if (current >= BUFSIZE) {
@@ -81,17 +101,6 @@ char Buffer::getchar() {
     return (char) buffer[blockIndex][current++];
 }
 
-void Buffer::addchars(char* c) {
-    writer->addchars(c);
-}
-void Buffer::addchars(int value) {
-    writer->addchars(value);
-}
-void Buffer::addchars(const char* c) {
-    writer->addchars(c);
-}
-
-
 void Buffer::ungetchar() {
     current--;
     if (current < 0) {
@@ -103,6 +112,58 @@ void Buffer::ungetchar() {
         steppedBackBlock = true;
     }
 }
+
+
+// ############ Writing
+
+
+void* Buffer::writer_thread(void *context) {
+    Buffer* buf = (Buffer*) context;
+    while (1) {
+        pthread_mutex_lock(&buf->full);
+        buf->writer->writeBlock();
+        pthread_mutex_unlock(&buf->empty);
+    }
+    return 0;
+}
+
+void Buffer::setNextBufferPart() {
+        pthread_mutex_lock(&empty);
+        writer->setBlock(buffer[blockIndex]);
+        blockIndex = (blockIndex + 1) % BLOCKS;
+        // when to free this again?
+        posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE * sizeof(char));
+        pthread_mutex_unlock(&full);
+}
+
+void Buffer::addchars(char* c) {
+    int string_length = strlen(c);
+    if ((current + string_length) < BUFSIZE) {
+        strcpy(buffer[blockIndex]+current, c);
+        current += string_length;
+    } else {
+        // fill the current buffer
+        int cut_at = (BUFSIZE - current);
+        memcpy (buffer[blockIndex]+current, c, cut_at);
+
+        setNextBufferPart();
+
+        current = 0;
+        // add the rest
+        addchars(c+cut_at);
+    }
+}
+
+void Buffer::addchars(int value) {
+    char* buffer = new char[32];
+    sprintf(buffer, "%i", value);
+    addchars(buffer);
+}
+
+void Buffer::addchars(const char* c) {
+    addchars(const_cast<char*>(c));
+}
+
 
 void Buffer::write() {
     writer->writeBlock();

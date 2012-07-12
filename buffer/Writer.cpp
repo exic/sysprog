@@ -23,40 +23,13 @@ Writer::Writer(char* filename) {
 }
 
 Writer::~Writer() {
-    memset(buffer+current, ' ', (BUFSIZE-current));
-    buffer[BUFSIZE-1] = '\n';
-    writeBlock();
     free(buffer);
     buffer = NULL;
     close(fd);
 }
 
-void Writer::addchars(char* c) {
-    int string_length = strlen(c);
-    if ((current + string_length) < BUFSIZE) {
-        strcpy(buffer+current, c);
-        current += string_length;
-    } else {
-        // fill the current buffer
-        int cut_at = (BUFSIZE - current);
-        memcpy (buffer+current, c, cut_at);
-        // write it
-        writeBlock();
-
-        current = 0;
-        // add the rest
-        addchars(c+cut_at);
-    }
-}
-
-void Writer::addchars(int value) {
-    char* buffer = new char[32];
-    sprintf(buffer, "%i", value);
-    addchars(buffer);
-}
-
-void Writer::addchars(const char* c) {
-    addchars(const_cast<char*>(c));
+void Writer::setBlock(char *buffer) {
+    this->buffer = buffer;
 }
 
 void Writer::writeBlock() {

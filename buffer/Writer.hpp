@@ -29,12 +29,8 @@ class Writer {
         Writer(char* filename);
         ~Writer();
 
-        void addchars(char* c);
-        // Convenience functions
-        void addchars(int value);
-        void addchars(const char* c);
-
         void writeBlock();
+        void setBlock(char *buffer);
 
     private:
         int fd;
