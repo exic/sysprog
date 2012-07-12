@@ -57,7 +57,7 @@ class Buffer {
         char* buffer[BLOCKS];
         bool steppedBackBlock;
 
-        pthread_t *thread;
+        pthread_t thread;
         struct thread_args {
             Buffer* buf;
             thread_args(Buffer* b)

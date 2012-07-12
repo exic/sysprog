@@ -7,7 +7,6 @@ Buffer::Buffer(char* filename, bool read) {
     current = 0;
     steppedBackBlock = false;
 
-    printf("hi");
 
     if (pthread_mutex_init(&full, NULL) || pthread_mutex_init(&empty, NULL)) {
         perror("mutex init failed\n");
@@ -15,15 +14,16 @@ Buffer::Buffer(char* filename, bool read) {
     }
 
     if (read) {
-        printf("starting reader");
+
+        // Buffer reader block is not full at this moment
+        pthread_mutex_lock(&full);
+
         reader = new Reader(filename);
-        printf("creating thread");
-        if (pthread_create(thread, NULL, &Buffer::reader_thread, this)
+        if (pthread_create(&thread, NULL, &Buffer::reader_thread, this)
         ) {
-            perror("Creating thread failed");
+            perror("Creating thread failed\n");
             exit(EXIT_FAILURE);
         }
-        printf("thread created");
     } else {
         writer = new Writer(filename);
     }
@@ -53,10 +53,10 @@ void Buffer::getNextBufferPart() {
 
 Buffer::~Buffer() {
     if (is_read) {
-        delete reader;
+        pthread_cancel(thread);
         pthread_mutex_destroy(&full);
         pthread_mutex_destroy(&empty);
-        pthread_exit(NULL);
+        delete reader;
     } else {
         delete writer;
     }
