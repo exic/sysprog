@@ -250,7 +250,6 @@ Token* Automat::getToken() {
         if (errno == ERANGE) {
              cerr << "Integer out of Range: "  << value_str << endl;
              newToken = 0;
-             errno = NULL;
         } else {
             newToken->setValue(value);
         }
