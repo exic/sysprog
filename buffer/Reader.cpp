@@ -12,7 +12,7 @@ Reader::~Reader() {
 }
 
 void Reader::readBlock() {
-    posix_memalign((void**)&buffer, ALIGNMENT, BUFSIZE);
+    posix_memalign((void**)&buffer, ALIGNMENT, BUFSIZE * sizeof(char));
 
     int read_chars = read(fd, buffer, BUFSIZE);
 

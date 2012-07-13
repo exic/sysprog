@@ -5,6 +5,7 @@ Buffer::Buffer(char* filename, bool read) {
 
     blockIndex = 0;
     current = 0;
+    done = 0;
     steppedBackBlock = false;
 
 
@@ -13,47 +14,56 @@ Buffer::Buffer(char* filename, bool read) {
         exit(EXIT_FAILURE);
     }
 
-    // no buffer is full at this moment
+    // buffer is not full at this moment
     pthread_mutex_lock(&full);
+    pthread_mutex_unlock(&empty);
+
 
     if (read) {
-
         reader = new Reader(filename);
-        if (pthread_create(&thread, NULL, &Buffer::reader_thread, this)
-        ) {
+        if (pthread_create(&thread, NULL, &Buffer::reader_thread, this)) {
             perror("Creating thread failed\n");
             exit(EXIT_FAILURE);
         }
     } else {
         writer = new Writer(filename);
-        if (pthread_create(&thread, NULL, &Buffer::writer_thread, this)
-        ) {
+        if (pthread_create(&thread, NULL, &Buffer::writer_thread, this)) {
             perror("Creating thread failed\n");
             exit(EXIT_FAILURE);
         }
+
         posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE * sizeof(char));
     }
 
     if (read) {
         getNextBufferPart();
     }
+
 }
 
 Buffer::~Buffer() {
+
+
+    if (!is_read) {
+        while (current < BUFSIZE-1) {
+            addchars(" ");
+        }
+        addchars("\n");
+
+        pthread_mutex_lock(&empty); // otherwise write in progress might be cancelled
+    }
+
+
+    done = 1;
+    pthread_mutex_unlock(&full);
+    pthread_mutex_unlock(&empty);
+    pthread_join(thread, NULL);
+
     if (is_read) {
-        pthread_cancel(thread);
         delete reader;
     } else {
-        memset(buffer[blockIndex]+current, ' ', (BUFSIZE-current));
-        buffer[blockIndex][BUFSIZE-1] = '\n';
-        setNextBufferPart();
-        free(buffer[blockIndex]);
-
-        // TODO: fu?
-        pthread_mutex_lock(&empty);
-        pthread_cancel(thread);
-        pthread_mutex_unlock(&empty);
         delete writer;
+        free(buffer[blockIndex]);
     }
     pthread_mutex_destroy(&full);
     pthread_mutex_destroy(&empty);
@@ -67,6 +77,9 @@ void* Buffer::reader_thread(void *context) {
     Buffer* buf = (Buffer*) context;
     while (1) {
         pthread_mutex_lock(&buf->empty);
+        if (buf->done) {
+            break;
+        }
         buf->reader->readBlock();
         pthread_mutex_unlock(&buf->full);
     }
@@ -121,6 +134,9 @@ void* Buffer::writer_thread(void *context) {
     Buffer* buf = (Buffer*) context;
     while (1) {
         pthread_mutex_lock(&buf->full);
+        if (buf->done) {
+            break;
+        }
         buf->writer->writeBlock();
         pthread_mutex_unlock(&buf->empty);
     }

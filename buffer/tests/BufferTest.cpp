@@ -8,24 +8,12 @@
 using namespace std;
 
 class BufferTest : public testing::Test {
-protected:
 
-    virtual void SetUp() {
-        char buffertestfile[] = "/tmp/buffertestfile";
-        char buffertestfile2[] = "/tmp/buffertestfile2";
-        read_buffer = new Buffer(buffertestfile, true);
-        write_buffer = new Buffer(buffertestfile2, false);
-    }
-
-    virtual void TearDown() {
-        delete read_buffer;
-    }
-
-    Buffer *read_buffer;
-    Buffer *write_buffer;
 };
 
 TEST_F(BufferTest, Write) {
+    char buffertestfile2[] = "/tmp/buffertestfile2";
+    Buffer* write_buffer = new Buffer(buffertestfile2, false);
 //    char result[256];
     string line;
     char text[] = "mal gucken, was das tut.\" und so weiter.. babaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nZ =?= ((3 +++ 4 - 6));\nÄy=X / (X - 4);\nprinto read a <=>*b;\n(* eine einfache Aufgabe !! *)\nm = n <=/ o;\n";
@@ -67,6 +55,9 @@ TEST_F(BufferTest, Write) {
 
 
 TEST_F(BufferTest, Read) {
+    char buffertestfile[] = "/tmp/buffertestfile";
+    Buffer* read_buffer = new Buffer(buffertestfile, true);
+
     char expected[] = "babaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nZ =?= ((3 +++ 4 - 6));\nÄy=X / (X - 4);\nprinto read a <=>*b;\n(* eine einfache Aufgabe !! *)\nm = n <=/ o;\n";
 
     int i;
@@ -77,4 +68,5 @@ TEST_F(BufferTest, Read) {
     }
 
     ASSERT_EQ(len*8, i) << "Number of checked characters needs to be length of text";
+    delete read_buffer;
 }

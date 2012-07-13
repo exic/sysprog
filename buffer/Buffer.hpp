@@ -43,7 +43,8 @@ class Buffer {
 
         static void* reader_thread(void *ptr);
         static void* writer_thread(void *ptr);
-        pthread_mutex_t full, empty;
+        pthread_mutex_t rfull, rempty, full, empty;
+        int done;
 
     private:
         // Buffer is used for reading: if it is false, this is a write buffer.
