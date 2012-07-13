@@ -18,8 +18,10 @@ protected:
                 continue;
             }
             Token* t = s->nextToken();
+            ASSERT_TRUE(t) << "Expecting token at line " << line << endl;
             ASSERT_EQ(line, t->getLine());
             ASSERT_EQ(expected, t->getColumn()) << "This error is at line " << line << endl;
+            delete t;
         }
     }
 };

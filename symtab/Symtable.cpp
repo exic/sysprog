@@ -1,6 +1,6 @@
 #include "Symtable.hpp"
 
-Symtable::Symtable() {  
+Symtable::Symtable() {
     stringTab = new StringTab();
     for (int i = 0; i < SYMTABLE_HASHTABLESIZE; i++) {
         hashTable[i] = 0;

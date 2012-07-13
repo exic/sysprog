@@ -10,7 +10,7 @@ OUT = test-exec
 run-test: $(OUT)
 	@rm -f /tmp/buffertestfile /tmp/buffertestfile2
 	@cp buffertestfile /tmp
-	@./$(OUT)
+	@catchsegv ./$(OUT)
 	@rm -f /tmp/buffertestfile /tmp/buffertestfile2
 
 $(OUT): $(OBJS)

@@ -30,6 +30,7 @@ class Reader {
 
     private:
         int fd;
+        int done;
 
         char* buffer;
 };

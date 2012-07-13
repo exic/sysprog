@@ -60,6 +60,7 @@ int main(int argc, char* argv[]) {
         Token* t;
         while ((t  = scanner->nextToken())) {
             if (t->getType() == NO_TYPE) {
+                delete t;
                 // skip error token for writing.
                 continue;
             }
@@ -85,6 +86,7 @@ int main(int argc, char* argv[]) {
             }
             buf_out->addchars("\n");
             cout << endl;
+            delete t;
         }
         delete buf_out;
         //=========================================================

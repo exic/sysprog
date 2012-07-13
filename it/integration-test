@@ -4,8 +4,9 @@ cd $(dirname $0)
 
 for file in testfiles/*.txt; do
     out=$(basename $file .txt)-out.txt
+    rm "$out"
     echo "#################### Running sysprog scan $file $out"
-    if ! ../sysprog scan $file $out; then
+    if ! catchsegv ../sysprog scan $file $out; then
         echo Error at file $file >&2
         exit 1
     fi

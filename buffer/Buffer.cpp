@@ -3,6 +3,9 @@
 Buffer::Buffer(char* filename, bool read) {
     is_read = read;
 
+    for (int i = 0; i < BLOCKS; i++) {
+        buffer[i] = 0;
+    }
     blockIndex = 0;
     current = 0;
     done = 0;
@@ -61,6 +64,11 @@ Buffer::~Buffer() {
 
     if (is_read) {
         delete reader;
+        for (int i = 0; i < BLOCKS; i++) {
+            if (&buffer[i]) {
+                free(buffer[i]);
+            }
+        }
     } else {
         delete writer;
         free(buffer[blockIndex]);
@@ -89,6 +97,13 @@ void* Buffer::reader_thread(void *context) {
 void Buffer::getNextBufferPart() {
     pthread_mutex_lock(&full);
     buffer[blockIndex] = reader->getBlock();
+
+    // free oldest buffer
+    int obsolete = (blockIndex + 1) % BLOCKS;
+    if (buffer[obsolete]) {
+        free(buffer[obsolete]);
+        buffer[obsolete] = 0;
+    }
     pthread_mutex_unlock(&empty);
 }
 
@@ -118,10 +133,7 @@ void Buffer::ungetchar() {
     current--;
     if (current < 0) {
         current = BUFSIZE - 1;
-        blockIndex = (blockIndex - 1) % BLOCKS;
-        if (blockIndex < 0) {
-            blockIndex *= -1;
-        }
+        blockIndex = (blockIndex + (BLOCKS - 1) ) % BLOCKS; // 1 back
         steppedBackBlock = true;
     }
 }
@@ -145,10 +157,11 @@ void* Buffer::writer_thread(void *context) {
 
 void Buffer::setNextBufferPart() {
         pthread_mutex_lock(&empty);
+
         writer->setBlock(buffer[blockIndex]);
         blockIndex = (blockIndex + 1) % BLOCKS;
-        // when to free this again?
         posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE * sizeof(char));
+
         pthread_mutex_unlock(&full);
 }
 
@@ -174,6 +187,7 @@ void Buffer::addchars(int value) {
     char* buffer = new char[32];
     sprintf(buffer, "%i", value);
     addchars(buffer);
+    delete [] buffer;
 }
 
 void Buffer::addchars(const char* c) {

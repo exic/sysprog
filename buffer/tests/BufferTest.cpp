@@ -62,7 +62,7 @@ TEST_F(BufferTest, Read) {
 
     int i;
     int len = strlen(expected);
-    for (i=0; i < len * 8; i++) {
+    for (i=0; i < len * 8; i++) { // buffertestfile contains expected string 8 times
         char current_char = read_buffer->getchar();
         ASSERT_EQ(expected[i%len], current_char) << "At i: " << i;
     }
