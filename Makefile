@@ -6,7 +6,7 @@ MODULES = buffer scan symtab pars
 LIBS = libscan.a libsymtab.a libbuffer.a libpars.a
 # CXXFLAGS += $(LIBS)
 
-EXE = parser
+EXE = scanner
 
 all: run
 

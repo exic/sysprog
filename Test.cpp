@@ -22,53 +22,53 @@ int main(int argc, char* argv[]) {
     }
 
     Scanner* scanner = new Scanner(argv[1]);
-    Parser* parser = new Parser(scanner);
+//    Parser* parser = new Parser(scanner);
     Buffer* buf_out = new Buffer(argv[2], false);
 
 //=========================================================
 // SCANNEROUTPUT
 //=========================================================
-//    const char* ttype_str[] = { "NO_TYPE", "INTEGER", "IDENTIFIER", "PRINT",
-//        "READ", "IF", "ELSE", "WHILE", "INT", "ADDITITON", "SUBTRACTION",
-//        "DIVISION", "MULTIPLICATION", "LT", "GT", "ASSIGN", "NE",
-//        "EXCLAMATION", "AMPERSAND", "SEMICOLON", "COLON", "LEFTBRACKET",
-//        "RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET",
-//        "LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
-//
-//    Token* t;
-//    while ((t  = scanner->nextToken())) {
-//        if (t->getType() == NO_TYPE) {
-//            // skip error token for writing.
-//            continue;
-//        }
-//        buf_out->addchars( "Token " );
-//        buf_out->addchars( ttype_str[t->getType()]);
-//        buf_out->addchars( " Line: " );
-//        buf_out->addchars(t->getLine());
-//        buf_out->addchars( ", Column " );
-//        buf_out->addchars(t->getColumn());
-//
+    const char* ttype_str[] = { "NO_TYPE", "INTEGER", "IDENTIFIER", "PRINT",
+        "READ", "IF", "ELSE", "WHILE", "INT", "ADDITITON", "SUBTRACTION",
+        "DIVISION", "MULTIPLICATION", "LT", "GT", "ASSIGN", "NE",
+        "EXCLAMATION", "AMPERSAND", "SEMICOLON", "COLON", "LEFTBRACKET",
+        "RIGHTBRACKET", "LEFTANGLEBRACKET", "RIGHTANGLEBRACKET",
+        "LEFTSQUAREBRACKET", "RIGHTSQUAREBRACKET" };
+
+    Token* t;
+    while ((t  = scanner->nextToken())) {
+        if (t->getType() == NO_TYPE) {
+            // skip error token for writing.
+            continue;
+        }
+        buf_out->addchars( "Token " );
+        buf_out->addchars( ttype_str[t->getType()]);
+        buf_out->addchars( " Line: " );
+        buf_out->addchars(t->getLine());
+        buf_out->addchars( ", Column " );
+        buf_out->addchars(t->getColumn());
+
 //        cout << "Token " << ttype_str[t->getType()]
 //            << " Line: " << t->getLine()
 //            << ", Column " << t->getColumn();
-//
-//        if (t->getType() == IDENTIFIER) {
-//            buf_out->addchars(", Lexem: " );
-//            buf_out->addchars( t->getEntry()->getLexem());
+
+        if (t->getType() == IDENTIFIER) {
+            buf_out->addchars(", Lexem: " );
+            buf_out->addchars( t->getEntry()->getLexem());
 //            cout << ", Lexem: " << t->getEntry()->getLexem();
-//        } else if (t->getType() == INTEGER) {
-//            buf_out->addchars(", Value: " );
-//            buf_out->addchars(t->getValue());
+        } else if (t->getType() == INTEGER) {
+            buf_out->addchars(", Value: " );
+            buf_out->addchars(t->getValue());
 //            cout << ", Value: " << t->getValue();
-//        }
-//        buf_out->addchars("\n");
+        }
+        buf_out->addchars("\n");
 //        cout << endl;
-//    }
+    }
 //=========================================================
 
-    parser->parse();
+//    parser->parse();
 
-    delete parser;
+//    delete parser;
     delete scanner;
     delete buf_out;
 
