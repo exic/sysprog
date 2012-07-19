@@ -246,9 +246,13 @@ Token* Automat::getToken() {
 
     if (status == READ_INT && newToken != NULL) {
         char* pEnd;
+        errno = 0;
         long int value = strtol(value_str, &pEnd, 10);
         if (errno == ERANGE) {
              cerr << "Integer out of Range: "  << value_str << endl;
+             newToken = 0;
+        } else if (errno != 0) {
+             cerr << "Error parsing integer "  << value_str << ", skipping" << endl;
              newToken = 0;
         } else {
             newToken->setValue(value);

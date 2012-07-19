@@ -8,7 +8,6 @@ Buffer::Buffer(char* filename, bool read) {
     }
     blockIndex = 0;
     current = 0;
-    done = 0;
     steppedBackBlock = false;
 
 
@@ -23,19 +22,19 @@ Buffer::Buffer(char* filename, bool read) {
 
 
     if (read) {
-        reader = new Reader(filename);
-        if (pthread_create(&thread, NULL, &Buffer::reader_thread, this)) {
+        reader = new Reader(filename, &full, &empty);
+        if (pthread_create(&thread, NULL, &Reader::thread, reader)) {
             perror("Creating thread failed\n");
             exit(EXIT_FAILURE);
         }
     } else {
-        writer = new Writer(filename);
-        if (pthread_create(&thread, NULL, &Buffer::writer_thread, this)) {
+        writer = new Writer(filename, &full, &empty);
+        if (pthread_create(&thread, NULL, &Writer::thread, writer)) {
             perror("Creating thread failed\n");
             exit(EXIT_FAILURE);
         }
 
-        posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE * sizeof(char));
+        buffer[blockIndex] = writer->getBuffer();
     }
 
     if (read) {
@@ -46,7 +45,6 @@ Buffer::Buffer(char* filename, bool read) {
 
 Buffer::~Buffer() {
 
-
     if (!is_read) {
         while (current < BUFSIZE-1) {
             addchars(" ");
@@ -54,10 +52,10 @@ Buffer::~Buffer() {
         addchars("\n");
 
         pthread_mutex_lock(&empty); // otherwise write in progress might be cancelled
+
+        writer->setDone();
     }
 
-
-    done = 1;
     pthread_mutex_unlock(&full);
     pthread_mutex_unlock(&empty);
     pthread_join(thread, NULL);
@@ -81,19 +79,6 @@ Buffer::~Buffer() {
 
 // ############ Reading
 
-void* Buffer::reader_thread(void *context) {
-    Buffer* buf = (Buffer*) context;
-    while (1) {
-        pthread_mutex_lock(&buf->empty);
-        if (buf->done) {
-            break;
-        }
-        buf->reader->readBlock();
-        pthread_mutex_unlock(&buf->full);
-    }
-    return 0;
-}
-
 void Buffer::getNextBufferPart() {
     pthread_mutex_lock(&full);
     buffer[blockIndex] = reader->getBlock();
@@ -107,9 +92,6 @@ void Buffer::getNextBufferPart() {
     pthread_mutex_unlock(&empty);
 }
 
-
-
-
 char Buffer::getchar() {
     if (current >= BUFSIZE) {
         blockIndex = (blockIndex + 1) % BLOCKS;
@@ -121,7 +103,7 @@ char Buffer::getchar() {
         }
     }
 
-    if (buffer[blockIndex][current] == '\0') {
+    if (buffer[blockIndex][current] == 0) {
         current++;
         return getchar();
     }
@@ -141,26 +123,12 @@ void Buffer::ungetchar() {
 
 // ############ Writing
 
-
-void* Buffer::writer_thread(void *context) {
-    Buffer* buf = (Buffer*) context;
-    while (1) {
-        pthread_mutex_lock(&buf->full);
-        if (buf->done) {
-            break;
-        }
-        buf->writer->writeBlock();
-        pthread_mutex_unlock(&buf->empty);
-    }
-    return 0;
-}
-
 void Buffer::setNextBufferPart() {
         pthread_mutex_lock(&empty);
 
         writer->setBlock(buffer[blockIndex]);
         blockIndex = (blockIndex + 1) % BLOCKS;
-        posix_memalign((void**)&buffer[blockIndex], ALIGNMENT, BUFSIZE * sizeof(char));
+        buffer[blockIndex] = writer->getBuffer();
 
         pthread_mutex_unlock(&full);
 }

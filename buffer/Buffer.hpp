@@ -41,10 +41,7 @@ class Buffer {
         void addchars(int value);
         void addchars(const char* c);
 
-        static void* reader_thread(void *ptr);
-        static void* writer_thread(void *ptr);
-        pthread_mutex_t rfull, rempty, full, empty;
-        int done;
+        pthread_mutex_t full, empty;
 
     private:
         // Buffer is used for reading: if it is false, this is a write buffer.
@@ -61,11 +58,6 @@ class Buffer {
         bool steppedBackBlock;
 
         pthread_t thread;
-        struct thread_args {
-            Buffer* buf;
-            thread_args(Buffer* b)
-                : buf(b) {}
-        };
 };
 
 #endif

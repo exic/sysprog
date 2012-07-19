@@ -12,7 +12,7 @@ class BufferTest : public testing::Test {
 };
 
 TEST_F(BufferTest, Write) {
-    char buffertestfile2[] = "/tmp/buffertestfile2";
+    char buffertestfile2[] = "buffertestfile2";
     Buffer* write_buffer = new Buffer(buffertestfile2, false);
 //    char result[256];
     string line;
@@ -20,7 +20,7 @@ TEST_F(BufferTest, Write) {
     write_buffer->addchars(text);
     delete write_buffer;
 
-    ifstream inFile("/tmp/buffertestfile2");
+    ifstream inFile("buffertestfile2");
 
     unsigned int count = 0, i;
     int done_with_text = 0;
@@ -55,7 +55,7 @@ TEST_F(BufferTest, Write) {
 
 
 TEST_F(BufferTest, Read) {
-    char buffertestfile[] = "/tmp/buffertestfile";
+    char buffertestfile[] = "buffertestfile";
     Buffer* read_buffer = new Buffer(buffertestfile, true);
 
     char expected[] = "babaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccddddddddddddddddddddddddddddddddddddddddddddddddddddddd\nZ =?= ((3 +++ 4 - 6));\nÄy=X / (X - 4);\nprinto read a <=>*b;\n(* eine einfache Aufgabe !! *)\nm = n <=/ o;\n";

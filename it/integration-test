@@ -6,7 +6,8 @@ for file in testfiles/*.txt; do
     out=$(basename $file .txt)-out.txt
     rm "$out"
     echo "#################### Running sysprog scan $file $out"
-    if ! catchsegv ../sysprog scan $file $out; then
+#    if ! valgrind --leak-check=full ../sysprog scan $file $out; then
+    if ! ../sysprog scan $file $out; then
         echo Error at file $file >&2
         exit 1
     fi

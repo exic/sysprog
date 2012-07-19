@@ -71,21 +71,21 @@ int main(int argc, char* argv[]) {
             buf_out->addchars( ", Column " );
             buf_out->addchars(t->getColumn());
 
-            cout << "Token " << ttype_str[t->getType()]
-                << " Line: " << t->getLine()
-                << ", Column " << t->getColumn();
+//            cout << "Token " << ttype_str[t->getType()]
+//                << " Line: " << t->getLine()
+//                << ", Column " << t->getColumn();
 
             if (t->getType() == IDENTIFIER) {
                 buf_out->addchars(", Lexem: " );
                 buf_out->addchars( t->getEntry()->getLexem());
-                cout << ", Lexem: " << t->getEntry()->getLexem();
+//                cout << ", Lexem: " << t->getEntry()->getLexem();
             } else if (t->getType() == INTEGER) {
                 buf_out->addchars(", Value: " );
                 buf_out->addchars(t->getValue());
-                cout << ", Value: " << t->getValue();
+//                cout << ", Value: " << t->getValue();
             }
             buf_out->addchars("\n");
-            cout << endl;
+//            cout << endl;
             delete t;
         }
         delete buf_out;

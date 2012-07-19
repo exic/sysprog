@@ -21,21 +21,32 @@
 // Errors
 #include <errno.h>
 
+// pthread
+#include <pthread.h>
+#include <semaphore.h>
+
 #include "Constants.hpp"
 
 
 class Writer {
     public:
-        Writer(char* filename);
+        Writer(char* filename, pthread_mutex_t* full, pthread_mutex_t* empty);
         ~Writer();
 
         void writeBlock();
         void setBlock(char *buffer);
+        char* getBuffer();
+        void setDone();
+        static void* thread(void *ptr);
 
     private:
         int fd;
         char* buffer;
         int current;
+        int size;
+        bool done;
+
+        pthread_mutex_t *full, *empty;
 };
 
 
