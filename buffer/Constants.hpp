@@ -3,8 +3,8 @@
 
 #include <linux/fs.h>
 
-#define BUFSIZE    512
+#define BUFSIZE    4096
 #define BLOCKS     3
-#define TOTAL_BUFSIZE BUFSIZE * BLOCKS
+#define TOTAL_BUFSIZE (BUFSIZE * 2)
 
 #endif

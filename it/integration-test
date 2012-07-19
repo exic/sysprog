@@ -1,18 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
 cd $(dirname $0)
 
 for file in testfiles/*.txt; do
     out=$(basename $file .txt)-out.txt
-    rm "$out"
+    rm -v "$out"
     echo "#################### Running sysprog scan $file $out"
 #    if ! valgrind --leak-check=full ../sysprog scan $file $out; then
     if ! ../sysprog scan $file $out; then
         echo Error at file $file >&2
         exit 1
     fi
-    if ! cmp $out expected/$out; then
+    if ! cmp <(sed '$d' $out) <(sed '$d' expected/$out); then
         echo Output not as expected scanning file $file. >&2
-        exit 1
+        echo Press enter to continue
+        read x
+#        exit 1
     fi
 done
