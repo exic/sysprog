@@ -1,0 +1,13 @@
+#ifndef RULE_HPP_
+#define RULE_HPP_
+
+class ParseEnums {
+public:
+    enum Rule { ROOT, PROG, DECLS, DECL, ARRAY,    STATEMENTS,    STATEMENT, EXP,
+                EXP2, INDEX, OP_EXP, OP, INTEGER, IDENTIFIER, KEYWORD, SEMICOLON, EMPTY };
+    enum Type { INTTYPE, INTARRAYTYPE, ARRAYTYPE, NOTYPE, ERRORTYPE,
+    	            OPPLUS, OPMINUS, OPMULT, OPDIV, OPLESS, OPGREATER,
+    	            OPEQUAL, OPUNEQUAL, OPAND };
+};
+
+#endif /* RULE_HPP_ */

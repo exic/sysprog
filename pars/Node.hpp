@@ -2,27 +2,33 @@
 #define NODE_HPP_
 
 #include "../scan/Token.hpp"
-#include "Rule.hpp"
+#include "ParseEnums.hpp"
 #include <iostream>
 
 using namespace std;
 
 class Node {
 public:
-    Node(Rule::Type rule);
+    Node(ParseEnums::Rule rule, Token* token);
+    Node(ParseEnums::Rule rule);
     virtual ~Node();
 
-    Rule::Type getRule() { return rule; };
-    void setRule(Rule::Type rule) { this->rule = rule; };
+    ParseEnums::Rule getRule() { return this->rule; };
+    void setRule(ParseEnums::Rule rule) { this->rule = rule; };
+    ParseEnums::Type getType() { return this->type; };
+    void setType(ParseEnums::Type type) { this->type = type; };
+
     Node* getChildNode(int index);
     int getChildNodesCount() { return childNodesCount; };
     Token* getToken() { return token; };
     void setToken(Token* token) { this->token = token; };
-    Node* addChildNode(Rule::Type rule);
+    Node* addChildNode(ParseEnums::Rule rule);
     void addChildNode(Node* node);
 
 private:
-    Rule::Type rule;
+    ParseEnums::Rule rule;
+    ParseEnums::Type type;
+
     Node* childNodes[10];
     int childNodesCount;
     Token* token;

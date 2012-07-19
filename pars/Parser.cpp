@@ -3,7 +3,6 @@
 
 Parser::Parser(Scanner* scanner) {
     this->scanner = scanner;
-    tmp = new Node(Rule::EMPTY);
     end = false;
     checkedNextToken = false;
 }
@@ -15,395 +14,312 @@ Parser::~Parser() {
 void Parser::parse() {
     cout << ">> Start Parsing" << endl;
     this->parseTree = new ParseTree();
-    Node* nProg = prog();
-    this->parseTree->getRootNode()->addChildNode(nProg);
+    this->parseTree->getRootNode()->addChildNode(prog());
     cout << ">> End Parsing" << endl;
     cout << ">> Start Printing Tree" << endl;
     this->parseTree->printTree(this->parseTree->getRootNode());
     cout << ">> End Printing Tree" << endl;
+    cout << ">> Start TypeCheck" << endl;
+    this->parseTree->typeCheck(this->parseTree->getRootNode());
+    this->parseTree->printTree2(this->parseTree->getRootNode());
+    cout << ">> End TypeCheck" << endl;
+    cout << ">> Start MakeCode" << endl;
+    this->parseTree->makeCode(this->parseTree->getRootNode());
+    cout << ">> End MakeCode" << endl;
 }
 
 Node* Parser::prog() {
-    getNextToken();
-    Node* prog = new Node(Rule::PROG);
-    if (this->currentToken->getType() == INT) {
-        Node* nDecls = decls();
-        prog->addChildNode(nDecls);
-    }
-    if (this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
-        this->currentToken->getType() == T_READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
-        this->currentToken->getType() == IF || this->currentToken->getType() == WHILE) {
-        Node* nStatements = statements();
-        prog->addChildNode(nStatements);
-    }
+    Node* prog = new Node(ParseEnums::PROG);
+
+    prog->addChildNode(decls());
+    prog->addChildNode(statements());
+
     return prog;
 }
 
 Node* Parser::decls() {
-    Node* decls = new Node(Rule::DECLS);
-    while (!end && (this->currentToken->getType() == INT)) {
-        Node* nDecl = decl();
-        decls->addChildNode(nDecl);
-        getNextToken();
+    Node* decls = new Node(ParseEnums::DECLS);
+
+    decls->addChildNode(decl());
+
+    // semicolon
+    getNextExpectedToken(SIGN_SEMICOLON);
+    decls->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+
+    if (!end && checkNextTokenIsType(INT)) {
+        decls->addChildNode(this->decls());
     }
     return decls;
 }
 
 Node* Parser::decl() {
-    Node* decl = new Node(Rule::DECL);
+    Node* decl = new Node(ParseEnums::DECL);
 
     // int
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    decl->addChildNode(tmp);
+    getNextExpectedToken(INT);
+    decl->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+
     // opt: [integer]
-    if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
-        checkedNextToken = false;
-        Node* nArray = array();
-        decl->addChildNode(nArray);
+    if (checkNextTokenIsType(SIGN_LEFTSQUAREBRACKET)) {
+        decl->addChildNode(array());
+    } else {
+    	decl->addChildNode(emptyArray());
     }
+
     // identifier
     getNextExpectedToken(IDENTIFIER);
-    tmp = new Node(Rule::IDENTIFIER);
-    tmp->setToken(this->currentToken);
-    decl->addChildNode(tmp);
-    // semicolon
-    getNextExpectedToken(SIGN_SEMICOLON);
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    decl->addChildNode(tmp);
+    decl->addChildNode(new Node(ParseEnums::IDENTIFIER, this->currentToken));
 
     return decl;
 }
 
 Node* Parser::statements() {
-    Node* statements = new Node(Rule::STATEMENTS);
-    while (!end) {
-        Node* nStatement = statement();
-        statements->addChildNode(nStatement);
-        getNextStatementToken(false, true);
+    Node* statements = new Node(ParseEnums::STATEMENTS);
+
+//    cout << "starting statements" << endl;
+
+    statements->addChildNode(statement());
+
+    getNextExpectedToken(SIGN_SEMICOLON);
+    statements->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+
+    if (checkNextTokenIsType(IDENTIFIER) || checkNextTokenIsType(PRINT) ||
+    checkNextTokenIsType(T_READ) || checkNextTokenIsType(SIGN_LEFTANGLEBRACKET) ||
+    checkNextTokenIsType(IF) || checkNextTokenIsType(WHILE)) {
+        statements->addChildNode(this->statements());
     }
+
+//    cout << "done with statements" << endl;
     return statements;
 }
 
 Node* Parser::statement() {
-    Node* nStatement = new Node(Rule::STATEMENT);
-    if (this->currentToken->getType() == IDENTIFIER) {
+    Node* nStatement = new Node(ParseEnums::STATEMENT);
+
+    getNextToken();
+    TType ttype = this->currentToken->getType();
+    if (ttype == IDENTIFIER) {
         // identifier
-        tmp = new Node(Rule::IDENTIFIER);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::IDENTIFIER, this->currentToken));
         // opt: INDEX
-        if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
-            checkedNextToken = false;
-            Node* nIndex = index();
-            nStatement->addChildNode(nIndex);
-        }
+        nStatement->addChildNode(index());
         // =
         getNextExpectedToken(SIGN_ASSIGN);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // exp
-        Node* nExp = exp();
-        nStatement->addChildNode(nExp);
-        // ;
-        getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
-    } else if (this->currentToken->getType() == T_READ) {
+        nStatement->addChildNode(exp());
+    } else if (ttype == T_READ) {
         // read
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // (
         getNextExpectedToken(SIGN_LEFTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // identifier
         getNextExpectedToken(IDENTIFIER);
-        tmp = new Node(Rule::IDENTIFIER);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::IDENTIFIER, this->currentToken));
         // opt: INDEX
-        if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
-            checkedNextToken = false;
-            Node* nIndex = index();
-            nStatement->addChildNode(nIndex);
-        }
+        nStatement->addChildNode(index());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
-        // ;
-        getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
-    } else if (this->currentToken->getType() == PRINT) {
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+    } else if (ttype == PRINT) {
         // print
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // (
         getNextExpectedToken(SIGN_LEFTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // exp
-        Node* nExp = exp();
-        nStatement->addChildNode(nExp);
+        nStatement->addChildNode(exp());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
-        // ;
-        getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
-    } else if (this->currentToken->getType() == SIGN_LEFTANGLEBRACKET) {
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+    } else if (ttype == SIGN_LEFTANGLEBRACKET) {
         // {
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // statements
-        Node* nStatements = new Node(Rule::STATEMENTS);
-        getNextStatementToken(true, false);
-        while (this->currentToken->getType() != SIGN_RIGHTANGLEBRACKET) {
-            Node* nStatement = statement();
-            nStatements->addChildNode(nStatement);
-            getNextStatementToken(true, false);
-        }
-        if (nStatements->getChildNodesCount() > 0)
-            nStatement->addChildNode(nStatements);
+        nStatement->addChildNode(statements());
         // }
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
-    } else if (this->currentToken->getType() == IF) {
+        getNextExpectedToken(SIGN_RIGHTANGLEBRACKET);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+    } else if (ttype == IF) {
         // if
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // (
         getNextExpectedToken(SIGN_LEFTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // exp
-        Node* nExp = exp();
-        nStatement->addChildNode(nExp);
+        nStatement->addChildNode(exp());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // statement
-        getNextStatementToken(false, false);
-        Node* nnStatement = statement();
-        nStatement->addChildNode(nnStatement);
+        nStatement->addChildNode(statement());
         // else
         getNextExpectedToken(ELSE);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // statement
-        getNextStatementToken(false, false);
-        Node* nnnStatement = statement();
-        nStatement->addChildNode(nnnStatement);
-        // ;
-        getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
-    } else if (this->currentToken->getType() == WHILE) {
+        nStatement->addChildNode(statement());
+    } else if (ttype == WHILE) {
         // while
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // (
         getNextExpectedToken(SIGN_LEFTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // exp
-        Node* nExp = exp();
-        nStatement->addChildNode(nExp);
+        nStatement->addChildNode(exp());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // statement
-        getNextStatementToken(false, false);
-        Node* nnStatement = statement();
-        nStatement->addChildNode(nnStatement);
-        // ;
-        getNextExpectedToken(SIGN_SEMICOLON);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nStatement->addChildNode(tmp);
+        nStatement->addChildNode(statement());
+    } else {
+        cerr << "ERROR: Expected: Statement, ";
+        printGotTokenInfo();
+        cerr << "Stop ..." << endl;
+        exit(1);
     }
     return nStatement;
 }
 
 Node* Parser::array() {
-    Node* array = new Node(Rule::ARRAY);
-    // [
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    array->addChildNode(tmp);
-    // integer
-    getNextExpectedToken(INTEGER);
-    tmp = new Node(Rule::INTEGER);
-    tmp->setToken(this->currentToken);
-    array->addChildNode(tmp);
-    // ]
-    getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    array->addChildNode(tmp);
+    Node* array = new Node(ParseEnums::ARRAY);
+
+    if (checkNextTokenIsType(SIGN_LEFTSQUAREBRACKET)) {
+
+        // [
+        getNextExpectedToken(SIGN_LEFTSQUAREBRACKET);
+        array->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+        // integer
+        getNextExpectedToken(INTEGER);
+        array->addChildNode(new Node(ParseEnums::INTEGER, this->currentToken));
+        // ]
+        getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
+        array->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+
+    }
+
     return array;
 }
 
+Node* Parser::emptyArray() {
+	Node* array = new Node(ParseEnums::ARRAY);
+
+	array->addChildNode(new Node(ParseEnums::EMPTY, this->currentToken));
+
+	return array;
+}
+
 Node* Parser::index() {
-    Node* index = new Node(Rule::INDEX);
-    // [
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    index->addChildNode(tmp);
-    // exp
-    Node* nExp = exp();
-    index->addChildNode(nExp);
-    // ]
-    getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    index->addChildNode(tmp);
+    Node* index = new Node(ParseEnums::INDEX);
+
+    if (checkNextTokenIsType(SIGN_LEFTSQUAREBRACKET)) {
+        // [
+        getNextExpectedToken(SIGN_LEFTSQUAREBRACKET);
+        index->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+        // exp
+        index->addChildNode(exp());
+        // ]
+        getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
+        index->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+    } else {
+    	index->addChildNode(new Node(ParseEnums::EMPTY));
+    }
+
     return index;
 }
 
 Node* Parser::exp() {
-    Node* exp = new Node(Rule::EXP);
-    // exp2
-    getNextExp2Token();
-    Node* nExp2 = exp2();
-    exp->addChildNode(nExp2);
-    // op_exp
-    if (checkNextTokenOp()) {
-        checkedNextToken = false;
-        Node* nOp_exp = op_exp();
-        exp->addChildNode(nOp_exp);
-    }
+    Node* exp = new Node(ParseEnums::EXP);
+
+    exp->addChildNode(exp2());
+    exp->addChildNode(op_exp());
+
     return exp;
 }
 
 Node* Parser::exp2() {
-    Node* nExp2 = new Node(Rule::EXP2);
+    Node* nExp2 = new Node(ParseEnums::EXP2);
+
+    getNextToken();
     if (this->currentToken->getType() == INTEGER) {
         // integer
-        tmp = new Node(Rule::INTEGER);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(ParseEnums::INTEGER, this->currentToken));
+
     } else if (this->currentToken->getType() == SIGN_SUBTRACTION
                || this->currentToken->getType() == SIGN_EXCLAMATION) {
         // - || !
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // exp2
-        getNextExp2Token();
-        Node* nnExp2 = exp2();
-        nExp2->addChildNode(nnExp2);
+        nExp2->addChildNode(exp2());
     } else if (this->currentToken->getType() == SIGN_LEFTBRACKET) {
         // (
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
         // EXP
-        Node* nExp = exp();
-        nExp2->addChildNode(nExp);
+        nExp2->addChildNode(exp());
         // )
         getNextExpectedToken(SIGN_RIGHTBRACKET);
-        tmp = new Node(Rule::KEYWORD);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
     } else if (this->currentToken->getType() == IDENTIFIER) {
         // identifier
-        tmp = new Node(Rule::IDENTIFIER);
-        tmp->setToken(this->currentToken);
-        nExp2->addChildNode(tmp);
+        nExp2->addChildNode(new Node(ParseEnums::IDENTIFIER, this->currentToken));
         // opt: [exp]
-        if (checkNextToken(SIGN_LEFTSQUAREBRACKET)) {
-            checkedNextToken = false;
-            // [
-            tmp = new Node(Rule::KEYWORD);
-            tmp->setToken(this->currentToken);
-            nExp2->addChildNode(tmp);
-            // exp
-            Node* nExp = exp();
-            nExp2->addChildNode(nExp);
-            // ]
-            getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
-            tmp = new Node(Rule::KEYWORD);
-            tmp->setToken(this->currentToken);
-            nExp2->addChildNode(tmp);
-        }
+        nExp2->addChildNode(index());
+    } else {
+        cerr << "ERROR: Expected: Exp2, ";
+        printGotTokenInfo();
+        cerr << "Stopping..." << endl;
+        exit(1);
     }
 
     return nExp2;
 }
 
 Node* Parser::op_exp() {
-    Node* op_exp = new Node(Rule::OP_EXP);
-    // op
-    tmp = new Node(Rule::KEYWORD);
-    tmp->setToken(this->currentToken);
-    op_exp->addChildNode(tmp);
-    // exp
-    Node* nExp = exp();
-    op_exp->addChildNode(nExp);
+    Node* op_exp = new Node(ParseEnums::OP_EXP);
+    if (checkNextTokenOp()) {
+        getNextToken();
+        op_exp->addChildNode(new Node(ParseEnums::OP, this->currentToken));
+        op_exp->addChildNode(exp());
+    } else {
+    	op_exp->addChildNode(new Node(ParseEnums::EMPTY));
+    }
 
     return op_exp;
 }
 
-bool Parser::checkNextToken(TType ttype) {
+
+bool Parser::checkNextTokenExists() {
     if (!checkedNextToken) {
-        this->currentToken = scanner->nextToken();
+        getNextToken();
     }
+
     checkedNextToken = true;
     if (!this->currentToken) {
         return false;
-    } else if (this->currentToken->getType() == ttype) {
-        writeScannerOutput();
-        return true;
-    } else {
-        return false;
     }
+    return true;
 }
 
 bool Parser::checkNextTokenOp() {
-    if (!checkedNextToken) {
-        this->currentToken = scanner->nextToken();
+    if (checkNextTokenExists()) {
+        return isOp(this->currentToken->getType());
     }
-    checkedNextToken = true;
-    if (!this->currentToken) {
-        return false;
-    } else if (this->currentToken->getType() == SIGN_ADDITITON || this->currentToken->getType() == SIGN_SUBTRACTION
-               || this->currentToken->getType() == SIGN_MULTIPLICATION || this->currentToken->getType() == SIGN_DIVISION
-               || this->currentToken->getType() == SIGN_LT || this->currentToken->getType() == SIGN_GT
-               || this->currentToken->getType() == SIGN_ASSIGN || this->currentToken->getType() == SIGN_NE
-               || this->currentToken->getType() == SIGN_AMPERSAND) {
-        writeScannerOutput();
-        return true;
-    } else {
-        return false;
+    return false;
+}
+
+bool Parser::checkNextTokenIsType(TType ttype) {
+    if (checkNextTokenExists()) {
+        return this->currentToken->getType() == ttype;
     }
+    return false;
+}
+
+bool Parser::isOp(TType type) {
+    return type == SIGN_ADDITITON || type == SIGN_SUBTRACTION
+           || type == SIGN_MULTIPLICATION || type == SIGN_DIVISION
+           || type == SIGN_LT || type == SIGN_GT
+           || type == SIGN_ASSIGN || type == SIGN_NE
+           || type == SIGN_AMPERSAND;
 }
 
 void Parser::scannerNextToken() {
@@ -414,71 +330,43 @@ void Parser::scannerNextToken() {
     }
 }
 
-void Parser::getNextToken() {
+bool Parser::getNextToken() {
     scannerNextToken();
     if (!this->currentToken) {
         end = true;
-        return;
+        return false;
     }
 
     writeScannerOutput();
-}
 
-void Parser::getNextStatementToken(bool inner, bool optional) {
-    scannerNextToken();
-    if (!this->currentToken && optional) {
-        end = true;
-        return;
-    } else if (!this->currentToken && !optional) {
-        cout << "ERROR: Expected: Statement, Got: EOF" << endl;
-        cout << "Stop ..." << endl;
-        exit(0);
-    } else if (!(inner && this->currentToken->getType() == SIGN_RIGHTANGLEBRACKET) &&
-               !(this->currentToken->getType() == IDENTIFIER || this->currentToken->getType() == PRINT ||
-               this->currentToken->getType() == T_READ || this->currentToken->getType() == SIGN_LEFTANGLEBRACKET ||
-               this->currentToken->getType() == IF || this->currentToken->getType() == WHILE)) {
-        cout << "ERROR: Expected: Statement, Got: " << getTokenString(this->currentToken->getType())
-             << " in Line " << this->currentToken->getLine() << ", Column " << this->currentToken->getColumn() << endl;
-        cout << "Stop ..." << endl;
-        exit(0);
+    if (this->currentToken->getType() == NO_TYPE) {
+        cerr << "Ignoring NO_TYPE token." << endl;
+        return getNextToken();
     }
 
-    writeScannerOutput();
+    return true;
 }
 
-void Parser::getNextExp2Token() {
-    scannerNextToken();
-    if (!this->currentToken) {
-        cout << "ERROR: Expected: Exp2, Got: EOF" << endl;
-        cout << "Stop ..." << endl;
-        exit(0);
-    } else if (!(this->currentToken->getType() == SIGN_LEFTBRACKET || this->currentToken->getType() == IDENTIFIER ||
-           this->currentToken->getType() == INTEGER || this->currentToken->getType() == SIGN_SUBTRACTION ||
-           this->currentToken->getType() == SIGN_EXCLAMATION)) {
-        cout << "ERROR: Expected: Exp2, Got: " << getTokenString(this->currentToken->getType())
-                     << " in Line " << this->currentToken->getLine() << ", Column " << this->currentToken->getColumn() << endl;
-        cout << "Stop ..." << endl;
-        exit(0);
-    }
-
-    writeScannerOutput();
-}
 
 void Parser::getNextExpectedToken(TType ttype) {
     scannerNextToken();
     if (!this->currentToken) {
-        cout << "ERROR: Expected: " << getTokenString(ttype) << ", Got: EOF" << endl;
-        cout << "Stop ..." << endl;
-        exit(0);
+        cerr << "ERROR: Expected: " << getTokenString(ttype) << ", Got: EOF" << endl;
+        cerr << "Stopping..." << endl;
+        exit(1);
     } else if (this->currentToken->getType() != ttype) {
-        cout << "ERROR: Expected: " << getTokenString(ttype) << ", Got: "
-             << getTokenString(this->currentToken->getType())
-             << " in Line " << this->currentToken->getLine() << ", Column " << this->currentToken->getColumn() << endl;
-        cout << "Stop ..." << endl;
-        exit(0);
+        cerr << "ERROR: Expected: " << getTokenString(ttype) << ", ";
+        printGotTokenInfo();
+        cerr << "Stopping..." << endl;
+        exit(1);
     }
 
     writeScannerOutput();
+}
+
+void Parser::printGotTokenInfo() {
+    cerr << "Got: " << getTokenString(this->currentToken->getType())
+         << " in Line " << this->currentToken->getLine() << ", Column " << this->currentToken->getColumn() << endl;
 }
 
 char* Parser::getTokenString(TType ttype) {

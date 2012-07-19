@@ -2,6 +2,7 @@
 #define    SYMTABENTRY_HPP
 
 #include "../scan/TType.hpp"
+#include "../pars/ParseEnums.hpp"
 
 class SymtabEntry {
 public:
@@ -11,9 +12,13 @@ public:
     void setNext(SymtabEntry* next) { this->next = next; };
     char* getLexem() { return lexem; };
     void setLexem(char* lexem) { this->lexem = lexem; };
+    ParseEnums::Type getParseType() { return parseType; };
+    void setParseType(ParseEnums::Type parseType) { this->parseType = parseType; };
+
 private:
     char* lexem;
-    TType type;
+    TType type;  // TODO: Wird des benötigt?
+    ParseEnums::Type parseType;
     SymtabEntry* next;
 };
 

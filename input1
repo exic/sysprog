@@ -1,3 +1,4 @@
-int adas;
-if (aaa) print(aaa); else print(bbb);;
-while (bbb) print(b);;
+int[10] a;
+int b;
+int c;
+print( a[3] );
