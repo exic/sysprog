@@ -21,6 +21,10 @@ char* StringTab::insert(char* lexem, int size) {
 //        std::cout << "Freespace nach dem Einfuegen von '" << lexem << "': " << freeSpace << std::endl;
         return tmp;
     } else {
+        if (size >= STRINGTABNODE_VECTORSIZE) {
+            fprintf(stderr, "Size of lexem (%d) is bigger than STRINGTABNODE_VECTORSIZE (%d), aborting.", size, STRINGTABNODE_VECTORSIZE);
+            exit(EXIT_FAILURE);
+        }
         addStringTabNode();
         return insert(lexem, size);
     }

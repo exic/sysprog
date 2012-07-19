@@ -4,8 +4,9 @@
 #include "StringTabNode.hpp"
 #include "Constants.hpp"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#include <iostream>
 
 class StringTab {
 public:
