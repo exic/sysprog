@@ -20,27 +20,12 @@ Token* Scanner::nextToken() {
     while (!(token = automat->getToken()) && !automat->isEof()) {
 
         int unget = automat->getUnget();
-        while (unget-- > 0) {
+        while (unget > 0) {
             buffer->ungetchar();
+            unget--;
         }
 
-        char c = buffer->getchar();
-//        cerr << "Lese Zeichen \"" << c << "\"" << endl;
-        automat->readChar(c);
-
-
-//    const char* status_str[] = { "NONE", "FINAL",
-//        "FINAL_COMMENT_NOT_CLOSED_ERROR", "ERROR", "READING_COMMENT",
-//        "READING_IDENTIFIER", "READING_INT", "READING_SIGN", "READ_IDENTIFIER",
-//        "READ_INT", "READ_SIGN", "NEWLINE" };
-        if (automat->getStatus() == FINAL_COMMENT_NOT_CLOSED_ERROR) {
-            cerr << "Comment was not closed!" << endl;
-        }
-//        cout << "Automat-Status: " << status_str[automat->getStatus()] << endl;
-    }
-
-    if (token && (token->getType() == NO_TYPE) ) {
-        cerr << "Unknown character at line " << token->getLine() << ", column " << token->getColumn() << ", symbol: \"" << automat->getLexem() << "\"\n";
+        automat->readChar(buffer->getchar());
     }
 
     if (token && (token->getType() == IDENTIFIER || token->getType() == NO_TYPE) ) {

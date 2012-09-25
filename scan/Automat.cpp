@@ -10,10 +10,6 @@ Automat::Automat() {
     status = NONE;
 }
 
-Automat::~Automat() {
-}
-
-
 void Automat::readChar(char c) {
     column++;
     unget = 0;
@@ -56,6 +52,7 @@ Status Automat::statusCOMMENT(char c) {
     if (c == '\n') {
         newline();
     } else if (c == -1) {
+        cerr << "Comment was not closed!" << endl;
         return FINAL_COMMENT_NOT_CLOSED_ERROR;
     }
     return READING_COMMENT;
@@ -171,9 +168,10 @@ Token* Automat::getToken() {
     }
     if (isError()) {
         lexem[lexem_index] = '\0';
-//        cerr << " got error symbol: " << lexem << ", index: " << lexem_index << endl;
         lexem_index = 0;
         status = NONE;
+        cerr << "Unknown character at line " << line << ", column " << column
+            << ", symbol: \"" << lexem << "\"\n";
         return new Token(NO_TYPE, line, column);
     }
     if (!isTokenRead() || isEof()) {

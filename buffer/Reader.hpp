@@ -31,17 +31,41 @@
 
 class Reader {
     public:
-        Reader(char* filename, pthread_mutex_t*, pthread_mutex_t*);
+        /**
+         * Constructs a new reader.
+         *
+         * @param char* filename to be read from.
+         * @param *pthread_mutex_t full indicating if the reader buffer is full.
+         * @param *pthread_mutex_t empty indicating if the reader buffer was
+         *              read and can be filled again.
+         */
+        Reader(char* filename, pthread_mutex_t* full, pthread_mutex_t* empty);
+
+        /**
+         * Deletes this reader. Closes the file handle.
+         */
         ~Reader();
-        void readBlock();
+
+        /**
+         * Returns the block that was read.
+         * Should only be called if the full mutex was unlocked by the reader.
+         *
+         * It's the applications responsibility to free this space after usage.
+         *
+         * @return the current read block.
+         */
         char* getBlock();
 
+        /**
+         * This reader's thread. To be created and joined/stopped by some caller.
+         */
         static void* thread(void *ptr);
 
     private:
         int fd;
         int done;
         pthread_mutex_t *full, *empty;
+        void readBlock();
 
         char* buffer;
         int size;

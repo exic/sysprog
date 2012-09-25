@@ -10,8 +10,14 @@
 #ifndef CONSTANTS
 #define CONSTANTS
 
+/**
+ * Maximum length of some lexem.
+ */
 #define MAX_LEXEM_LENGTH            TOTAL_BUFSIZE
-#define MAX_SIGN_LENGTH             4
 
+/**
+ * Maximum size that a sign may have.
+ */
+#define MAX_SIGN_LENGTH             4
 
 #endif /* CONSTANTS */

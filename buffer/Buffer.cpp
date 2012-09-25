@@ -161,8 +161,3 @@ void Buffer::addchars(int value) {
 void Buffer::addchars(const char* c) {
     addchars(const_cast<char*>(c));
 }
-
-
-void Buffer::write() {
-    writer->writeBlock();
-}

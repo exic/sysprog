@@ -28,20 +28,51 @@
 
 class Buffer {
     public:
+        /**
+         * Construct a new buffer.
+         *
+         * @param char* filename that is to be read or written.
+         * @param bool read true if this is a buffer for reading from a file,
+         *                  false if it is a buffer for writing to a file.
+         */
         Buffer(char* filename, bool read);
         ~Buffer();
 
+
         // Functions for read mode
+        /**
+         * @return char the next char in the buffer.
+         */
         char getchar();
+
+        /**
+         * Makes the buffer index go back by one so that a character that has
+         * already been returned by getchar() will be returned by getchar()
+         * again.
+         */
         void ungetchar();
 
-        // Functions for write mode
-        void addchars(char* c);
-        // Convenience functions
-        void addchars(int value);
-        void addchars(const char* c);
 
-        pthread_mutex_t full, empty;
+        // Functions for write mode
+        /**
+         * Adds the string to the output buffer.
+         *
+         * @param char* string to be written.
+         */
+        void addchars(char* c);
+
+        // (Convenience functions)
+        /**
+         * Converts the int value to string and adds it to the output buffer.
+         * @param int value that will be appended.
+         */
+        void addchars(int value);
+        /**
+         * Adds the string to the output buffer.
+         *
+         * @param const char* string to be written.
+         */
+        void addchars(const char* c);
 
     private:
         // Buffer is used for reading: if it is false, this is a write buffer.
@@ -50,7 +81,6 @@ class Buffer {
         Writer* writer;
         void getNextBufferPart();
         void setNextBufferPart();
-        void write();
         // Current position in block
         int current;
         int blockIndex;
@@ -58,6 +88,7 @@ class Buffer {
         bool steppedBackBlock;
 
         pthread_t thread;
+        pthread_mutex_t full, empty;
 };
 
 #endif
