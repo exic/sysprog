@@ -35,6 +35,7 @@ modules:
 		echo "#" $$module ;\
 		echo "###############";\
 		cd $$module && make --no-print-directory all && cd - 2>&1 >/dev/null || exit 1;\
+		echo "###############";\
 		echo "# $$module done";\
 	done );
 	@echo "###############"; echo
