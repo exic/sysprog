@@ -42,13 +42,12 @@ int main(int argc, char* argv[]) {
 
 
     Scanner* scanner = new Scanner(argv[2]);
+    Buffer* buf_out = new Buffer(argv[3], false);
 
     if (!parse) {
         //=========================================================
         // SCANNEROUTPUT
         //=========================================================
-
-        Buffer* buf_out = new Buffer(argv[3], false);
 
         const char* ttype_str[] = { "NO_TYPE", "INTEGER", "IDENTIFIER", "PRINT",
             "READ", "IF", "ELSE", "WHILE", "INT", "ADDITITON", "SUBTRACTION",
@@ -88,13 +87,14 @@ int main(int argc, char* argv[]) {
 //            cout << endl;
             delete t;
         }
-        delete buf_out;
         //=========================================================
     } else {
-        Parser* parser = new Parser(scanner);
+        Parser* parser = new Parser(scanner, buf_out);
         parser->parse();
         delete parser;
     }
+
+    delete buf_out;
 
     delete scanner;
 

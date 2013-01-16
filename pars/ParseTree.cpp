@@ -1,7 +1,8 @@
 #include "ParseTree.hpp"
 
-ParseTree::ParseTree() {
+ParseTree::ParseTree(Buffer* buffer) {
     this->root = new Node(ParseEnums::ROOT);
+    this->buffer = buffer;
 
     depth = 0;
     marker = 0;
@@ -315,7 +316,7 @@ void ParseTree::makeCode(Node* node) {
         case ParseEnums::PROG:
             makeCode(node->getChildNode(0));
             makeCode(node->getChildNode(1));
-            cout << "STP\r\n";
+            buffer->addchars("STP\r\n");
             break;
 
         // DECLS ::= DECL; DECLS
@@ -327,18 +328,20 @@ void ParseTree::makeCode(Node* node) {
 
         // DECL ::= int ARRAY identifier
         case ParseEnums::DECL:
-            cout << "DS $"
-                 << node->getChildNode(2)->getToken()->getEntry()->getLexem()
-                 << " ";
+            buffer->addchars("DS $");
+                 buffer->addchars(node->getChildNode(2)->getToken()->getEntry()->getLexem());
+                 buffer->addchars(" ");
             makeCode(node->getChildNode(1));
             break;
 
         // ARRAY ::= [ integer ]
         case ParseEnums::ARRAY:
-            if (node->getChildNodesCount() != 1)
-                cout << node->getChildNode(1)->getToken()->getValue() << "\r\n";
-            else
-                cout << "1\r\n";
+            if (node->getChildNodesCount() != 1) {
+                buffer->addchars(node->getChildNode(1)->getToken()->getValue());
+                buffer->addchars("\r\n");
+            } else {
+                buffer->addchars("1\r\n");
+            }
             break;
 
         // STATEMENTS ::= STATEMENT; STATEMENTS
@@ -347,7 +350,7 @@ void ParseTree::makeCode(Node* node) {
             if (node->getChildNode(2))
                 makeCode(node->getChildNode(2));
             else
-                cout << "NOP\r\n";
+                buffer->addchars("NOP\r\n");
             break;
 
         // STATEMENT
@@ -358,27 +361,27 @@ void ParseTree::makeCode(Node* node) {
                 // STATEMENT ::= identifier INDEX = EXP
                 case IDENTIFIER:
                     makeCode(node->getChildNode(3));
-                    cout << "LA $"
-                         << node->getChildNode(0)->getToken()->getEntry()->getLexem()
-                         << "\r\n";
+                    buffer->addchars("LA $");
+                    buffer->addchars(node->getChildNode(0)->getToken()->getEntry()->getLexem());
+                    buffer->addchars("\r\n");
                     makeCode(node->getChildNode(1));
-                    cout << "STR\r\n";
+                    buffer->addchars("STR\r\n");
                     break;
 
                 // STATEMENT ::= print ( EXP )
                 case PRINT:
                     makeCode(node->getChildNode(2));
-                    cout << "PRI\r\n";
+                    buffer->addchars("PRI\r\n");
                     break;
 
                 // STATEMENT ::= read ( identifier INDEX )
                 case T_READ:
-                    cout << "REA\r\n"
-                         << "LA $"
-                         << node->getChildNode(2)->getToken()->getEntry()->getLexem()
-                         << "\r\n";
+                    buffer->addchars("REA\r\n");
+                    buffer->addchars("LA $");
+                    buffer->addchars(node->getChildNode(2)->getToken()->getEntry()->getLexem());
+                    buffer->addchars("\r\n");
                     makeCode(node->getChildNode(3));
-                    cout << "STR\r\n";
+                    buffer->addchars("STR\r\n");
                     break;
 
                 // STATEMENT ::= { STATEMENTS }
@@ -391,24 +394,40 @@ void ParseTree::makeCode(Node* node) {
                     m1 = marker++;
                     m2 = marker++;
                     makeCode(node->getChildNode(2));
-                    cout << "JIN #" << m1 << "\r\n";
+                    buffer->addchars("JIN #");
+                    buffer->addchars(m1);
+                    buffer->addchars("\r\n");
                     makeCode(node->getChildNode(4));
-                    cout << "JMP #" << m2 << "\r\n";
-                    cout << "#" << m1 << " NOP\r\n";
+                    buffer->addchars("JMP #");
+                    buffer->addchars(m2);
+                    buffer->addchars("\r\n");
+                    buffer->addchars("#");
+                    buffer->addchars(m1);
+                    buffer->addchars(" NOP\r\n");
                     makeCode(node->getChildNode(6));
-                    cout << "#" << m2 << " NOP\r\n";
+                    buffer->addchars("#");
+                    buffer->addchars(m2);
+                    buffer->addchars(" NOP\r\n");
                     break;
 
                 // STATEMENT ::= while ( EXP ) STATEMENT
                 case WHILE:
                     m1 = marker++;
                     m2 = marker++;
-                    cout << "#" << m1 << " NOP\r\n";
+                    buffer->addchars("#");
+                    buffer->addchars(m1);
+                    buffer->addchars(" NOP\r\n");
                     makeCode(node->getChildNode(2));
-                    cout << "JIN #" << m2 << "\r\n";
+                    buffer->addchars("JIN #");
+                    buffer->addchars(m2);
+                    buffer->addchars("\r\n");
                     makeCode(node->getChildNode(4));
-                    cout << "JMP #" << m1 << "\r\n";
-                    cout << "#" << m2 << " NOP\r\n";
+                    buffer->addchars("JMP #");
+                    buffer->addchars(m1);
+                    buffer->addchars("\r\n");
+                    buffer->addchars("#");
+                    buffer->addchars(m2);
+                    buffer->addchars(" NOP\r\n");
                     break;
 
                 default:
@@ -423,11 +442,11 @@ void ParseTree::makeCode(Node* node) {
             } else if (node->getChildNode(1)->getChildNode(0)->getType() == ParseEnums::OPGREATER) {
                 makeCode(node->getChildNode(1));
                 makeCode(node->getChildNode(0));
-                cout << "LES\r\n";
+                buffer->addchars("LES\r\n");
             } else if (node->getChildNode(1)->getChildNode(0)->getType() == ParseEnums::OPUNEQUAL) {
                 makeCode(node->getChildNode(0));
                 makeCode(node->getChildNode(1));
-                cout << "NOT\r\n";
+                buffer->addchars("NOT\r\n");
             } else {
                 makeCode(node->getChildNode(0));
                 makeCode(node->getChildNode(1));
@@ -438,7 +457,7 @@ void ParseTree::makeCode(Node* node) {
         case ParseEnums::INDEX:
             if (node->getChildNodesCount() > 1) {
                 makeCode(node->getChildNode(1));
-                cout << "ADD\r\n";
+                buffer->addchars("ADD\r\n");
             }
             break;
 
@@ -453,27 +472,31 @@ void ParseTree::makeCode(Node* node) {
 
                 // EXP2 ::= identifier INDEX
                 case IDENTIFIER:
-                    cout << "LA $" << node->getChildNode(0)->getToken()->getEntry()->getLexem() << "\r\n";
+                    buffer->addchars("LA $");
+                    buffer->addchars(node->getChildNode(0)->getToken()->getEntry()->getLexem());
+                    buffer->addchars("\r\n");
                     makeCode(node->getChildNode(1));
-                    cout << "LV\r\n";
+                    buffer->addchars("LV\r\n");
                     break;
 
                 // EXP2 ::= integer
                 case INTEGER:
-                    cout << "LC " << node->getChildNode(0)->getToken()->getValue() << "\r\n";
+                    buffer->addchars("LC ");
+                    buffer->addchars(node->getChildNode(0)->getToken()->getValue());
+                    buffer->addchars("\r\n");
                     break;
 
                 // EXP2 ::= - EXP2
                 case SIGN_SUBTRACTION:
-                    cout << "LC 0\r\n";
+                    buffer->addchars("LC 0\r\n");
                     makeCode(node->getChildNode(1));
-                    cout << "SUB\r\n";
+                    buffer->addchars("SUB\r\n");
                     break;
 
                 // EXP2 ::= ! EXP2
                 case SIGN_EXCLAMATION:
                     makeCode(node->getChildNode(1));
-                    cout << "NOT\r\n";
+                    buffer->addchars("NOT\r\n");
                     break;
 
                 default:
@@ -494,27 +517,27 @@ void ParseTree::makeCode(Node* node) {
 
                 // OP ::= +
                 case SIGN_ADDITITON:
-                    cout << "ADD\r\n";
+                    buffer->addchars("ADD\r\n");
                     break;
 
                 // OP ::= -
                 case SIGN_SUBTRACTION:
-                    cout << "SUB\r\n";
+                    buffer->addchars("SUB\r\n");
                     break;
 
                 // OP ::= *
                 case SIGN_MULTIPLICATION:
-                    cout << "MUL\r\n";
+                    buffer->addchars("MUL\r\n");
                     break;
 
                 // OP ::= /
                 case SIGN_DIVISION:
-                    cout << "DIV\r\n";
+                    buffer->addchars("DIV\r\n");
                     break;
 
                 // OP ::= <
                 case SIGN_LT:
-                    cout << "LES\r\n";
+                    buffer->addchars("LES\r\n");
                     break;
 
                 // OP ::= >
@@ -524,17 +547,17 @@ void ParseTree::makeCode(Node* node) {
 
                 // OP ::= =
                 case SIGN_ASSIGN:
-                    cout << "EQU\r\n";
+                    buffer->addchars("EQU\r\n");
                     break;
 
                 // OP ::= <=>
                 case SIGN_NE:
-                    cout << "EQU\r\n";
+                    buffer->addchars("EQU\r\n");
                     break;
 
                 // OP ::= &
                 case SIGN_AMPERSAND:
-                    cout << "AND\r\n";
+                    buffer->addchars("AND\r\n");
                     break;
 
                 default:
