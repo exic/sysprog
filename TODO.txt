@@ -1,0 +1,16 @@
+Doku Teil 2?
+
+
+
+Möglichkeiten:
+
+Keine Doku für Teil 2/3
+    und Parser, Input und Output parallelisieren
+
+Nur Doku für Teil 2
+    und Input und Output parallelisieren
+
+Doku für Teil 2 und 3
+    und Input _oder_ Output parallelisieren
+
+
