@@ -13,8 +13,10 @@ for file in testfiles/*.txt; do
     fi
     if ! cmp <(sed '$d' $out) <(sed '$d' expected/$out); then
         echo Output not as expected scanning file $file. >&2
-        echo Press enter to continue
+        echo Press enter to continue >&2
         read x
 #        exit 1
+    else
+        echo "File $file is ok!" >&2
     fi
 done
