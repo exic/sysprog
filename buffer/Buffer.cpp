@@ -151,6 +151,20 @@ void Buffer::addchars(char* c) {
     }
 }
 
+void Buffer::addchars(char value) {
+    char* buffer = new char[1];
+    buffer[0] = value;
+    addchars(buffer);
+    delete[] buffer;
+}
+
+void Buffer::addchars(long int value) {
+    char* buffer = new char[32];
+    sprintf(buffer, "%li", value);
+    addchars(buffer);
+    delete [] buffer;
+}
+
 void Buffer::addchars(int value) {
     char* buffer = new char[32];
     sprintf(buffer, "%i", value);

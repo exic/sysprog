@@ -5,7 +5,7 @@ ParseTree::ParseTree(Buffer* buffer) {
     this->buffer = buffer;
 
     depth = 0;
-    marker = 0;
+    marker = 97;
 }
 
 ParseTree::~ParseTree() {
@@ -355,7 +355,7 @@ void ParseTree::makeCode(Node* node) {
 
         // STATEMENT
         case ParseEnums::STATEMENT:
-            int m1, m2;
+            char m1, m2;
             switch (node->getChildNode(0)->getToken()->getType()) {
 
                 // STATEMENT ::= identifier INDEX = EXP

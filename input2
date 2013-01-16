@@ -1,4 +1,4 @@
-(* berechnet a^b % c *)
+(* berechnet a^b % c ..... wirklich? funktioniert nicht mit interpreter ..*)
 
 int a;
 int b;
@@ -6,6 +6,8 @@ int c;
 
 int x;
 int y;
+
+int nothing;
 
 int mod;?
 int div;
@@ -25,15 +27,16 @@ while(0 < b) {
         div = (x*y)/c;
         mod = (x*y) - (div * c);
         x = mod;
-    } else { print(nothing); };
+    } else { print(nothing);
         (* (y*y)%c *)
         div = (y*y)/c;
         mod = (y*y) - (div * c);
         y = mod; (* squaring the base*)
-        b = b / 2;
+        b = b / 2; };
 };
  (* x % c *)
   div = x/c;
   mod = x - (div * c);
 
 print(mod);
+
