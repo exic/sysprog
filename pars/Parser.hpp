@@ -3,6 +3,7 @@
 
 #include "../scan/Scanner.hpp"
 #include "../scan/TType.hpp"
+#include "../buffer/Buffer.hpp"
 #include "ParseTree.hpp"
 #include "Node.hpp"
 #include "ParseEnums.hpp"
@@ -12,13 +13,15 @@ using namespace std;
 
 class Parser {
 public:
-    Parser(Scanner* scanner);
+    Parser(Scanner* scanner, Buffer* buffer);
     virtual ~Parser();
     void parse();
 private:
     Scanner* scanner;
     ParseTree* parseTree;
     Token* currentToken;
+
+    Buffer* buffer;
 
     bool end;
     bool checkedNextToken;

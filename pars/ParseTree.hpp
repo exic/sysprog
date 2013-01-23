@@ -2,13 +2,14 @@
 #define PARSETREE_HPP_
 
 #include "Node.hpp"
+#include "../buffer/Buffer.hpp"
 #include <iostream>
 
 using namespace std;
 
 class ParseTree {
 public:
-    ParseTree();
+    ParseTree(Buffer* bl);
     virtual ~ParseTree();
     Node* getRootNode() { return root; };
     void setRootNode(Node* root) { this->root = root; };
@@ -17,6 +18,7 @@ public:
     bool typeCheck(Node* node);
     void makeCode(Node* node);
 private:
+    Buffer* buffer;
     Node* root;
     int depth;
     int marker;

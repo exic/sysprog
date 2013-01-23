@@ -1,8 +1,9 @@
 #include "Parser.hpp"
 
 
-Parser::Parser(Scanner* scanner) {
+Parser::Parser(Scanner* scanner, Buffer* buffer) {
     this->scanner = scanner;
+    this->buffer = buffer;
     end = false;
     checkedNextToken = false;
 }
@@ -13,7 +14,7 @@ Parser::~Parser() {
 
 void Parser::parse() {
     cout << ">> Start Parsing" << endl;
-    this->parseTree = new ParseTree();
+    this->parseTree = new ParseTree(buffer);
     this->parseTree->getRootNode()->addChildNode(prog());
     cout << ">> End Parsing" << endl;
     cout << ">> Start Printing Tree" << endl;

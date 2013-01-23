@@ -22,7 +22,7 @@ run: modules test $(EXE)
 	@rm -f $(TMP_OUT)
 	@echo Running...; echo
 	@./$(EXE) parse $(TMP_IN) $(TMP_OUT)
-	@mv $(TMP_OUT) out.txt 2>/dev/null || true
+	@mv $(TMP_OUT) out.code 2>/dev/null || true
 	@rm $(TMP_IN)
 	@echo; echo ...done.; echo
 

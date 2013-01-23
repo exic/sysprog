@@ -63,10 +63,17 @@ class Buffer {
 
         // (Convenience functions)
         /**
-         * Converts the int value to string and adds it to the output buffer.
-         * @param int value that will be appended.
+         * Converts the (std/long) int value to string and adds it to the output buffer.
+         * @param (std/long) int value that will be appended.
          */
         void addchars(int value);
+        void addchars(long int value);
+
+        /**
+         * Converts the char value to string and adds it to the output buffer.
+         * @param char value that will be appended.
+         */
+        void addchars(char value);
         /**
          * Adds the string to the output buffer.
          *
