@@ -17,7 +17,7 @@ $(EXE): $(OBJS) $(LIBS)
 TMP_IN = /tmp/test67.txt
 TMP_OUT = /tmp/out67.txt
 
-run: modules test $(EXE)
+run: modules $(EXE)
 	@cp input1 $(TMP_IN)
 	@rm -f $(TMP_OUT)
 	@echo Running...; echo
