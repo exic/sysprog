@@ -18,13 +18,15 @@ TMP_IN = /tmp/test67.txt
 TMP_OUT = /tmp/out67.txt
 
 run: modules $(EXE)
-	@cp input1 $(TMP_IN)
-	@rm -f $(TMP_OUT)
-	@echo Running...; echo
-	@./$(EXE) parse $(TMP_IN) $(TMP_OUT)
-	@mv $(TMP_OUT) out.code 2>/dev/null || true
-	@rm $(TMP_IN)
-	@echo; echo ...done.; echo
+
+
+#	@cp input1 $(TMP_IN)
+#	@rm -f $(TMP_OUT)
+#	@echo Running...; echo
+#	@./$(EXE) parse $(TMP_IN) $(TMP_OUT)
+#	@mv $(TMP_OUT) out.code 2>/dev/null || true
+#	@rm $(TMP_IN)
+#	@echo; echo ...done.; echo
 
 integration-test:
 	it/integration-test

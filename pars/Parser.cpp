@@ -20,13 +20,13 @@ void Parser::parse() {
     cout << ">> Start Printing Tree" << endl;
     this->parseTree->printTree(this->parseTree->getRootNode());
     cout << ">> End Printing Tree" << endl;
-    cout << ">> Start TypeCheck" << endl;
-    this->parseTree->typeCheck(this->parseTree->getRootNode());
-    this->parseTree->printTree2(this->parseTree->getRootNode());
-    cout << ">> End TypeCheck" << endl;
-    cout << ">> Start MakeCode" << endl;
-    this->parseTree->makeCode(this->parseTree->getRootNode());
-    cout << ">> End MakeCode" << endl;
+    //cout << ">> Start TypeCheck" << endl;
+    //this->parseTree->typeCheck(this->parseTree->getRootNode());
+   // this->parseTree->printTree2(this->parseTree->getRootNode());
+   // cout << ">> End TypeCheck" << endl;
+    //cout << ">> Start MakeCode" << endl;
+    //this->parseTree->makeCode(this->parseTree->getRootNode());
+    //cout << ">> End MakeCode" << endl;
 }
 
 Node* Parser::prog() {
@@ -41,15 +41,19 @@ Node* Parser::prog() {
 Node* Parser::decls() {
     Node* decls = new Node(ParseEnums::DECLS);
 
-    decls->addChildNode(decl());
-
-    // semicolon
-    getNextExpectedToken(SIGN_SEMICOLON);
-    decls->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
-
-    if (!end && checkNextTokenIsType(INT)) {
+    if (checkNextTokenIsType(INT)) {
+    	// DECL
+        decls->addChildNode(decl());
+        // SEMICOLON
+        getNextExpectedToken(SIGN_SEMICOLON);
+        decls->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+        // DECLS
         decls->addChildNode(this->decls());
+    } else {
+    	// EMPTY
+    	decls->addChildNode(new Node(ParseEnums::EMPTY));
     }
+
     return decls;
 }
 
@@ -59,14 +63,8 @@ Node* Parser::decl() {
     // int
     getNextExpectedToken(INT);
     decl->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
-
-    // opt: [integer]
-    if (checkNextTokenIsType(SIGN_LEFTSQUAREBRACKET)) {
-        decl->addChildNode(array());
-    } else {
-    	decl->addChildNode(emptyArray());
-    }
-
+    // ARRAY
+    decl->addChildNode(array());
     // identifier
     getNextExpectedToken(IDENTIFIER);
     decl->addChildNode(new Node(ParseEnums::IDENTIFIER, this->currentToken));
@@ -77,20 +75,21 @@ Node* Parser::decl() {
 Node* Parser::statements() {
     Node* statements = new Node(ParseEnums::STATEMENTS);
 
-//    cout << "starting statements" << endl;
-
-    statements->addChildNode(statement());
-
-    getNextExpectedToken(SIGN_SEMICOLON);
-    statements->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
-
     if (checkNextTokenIsType(IDENTIFIER) || checkNextTokenIsType(PRINT) ||
     checkNextTokenIsType(T_READ) || checkNextTokenIsType(SIGN_LEFTANGLEBRACKET) ||
     checkNextTokenIsType(IF) || checkNextTokenIsType(WHILE)) {
-        statements->addChildNode(this->statements());
+       	// STATEMENT
+    	statements->addChildNode(statement());
+    	// SEMICOLON
+    	getNextExpectedToken(SIGN_SEMICOLON);
+    	statements->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+    	// STATEMENTS
+    	statements->addChildNode(this->statements());
+    } else {
+    	// EMPTY
+    	statements->addChildNode(new Node(ParseEnums::EMPTY));
     }
 
-//    cout << "done with statements" << endl;
     return statements;
 }
 
@@ -186,7 +185,6 @@ Node* Parser::array() {
     Node* array = new Node(ParseEnums::ARRAY);
 
     if (checkNextTokenIsType(SIGN_LEFTSQUAREBRACKET)) {
-
         // [
         getNextExpectedToken(SIGN_LEFTSQUAREBRACKET);
         array->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
@@ -196,18 +194,12 @@ Node* Parser::array() {
         // ]
         getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
         array->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
-
+    } else {
+    	// EMPTY
+    	array->addChildNode(new Node(ParseEnums::EMPTY));
     }
 
     return array;
-}
-
-Node* Parser::emptyArray() {
-	Node* array = new Node(ParseEnums::ARRAY);
-
-	array->addChildNode(new Node(ParseEnums::EMPTY, this->currentToken));
-
-	return array;
 }
 
 Node* Parser::index() {
@@ -223,6 +215,7 @@ Node* Parser::index() {
         getNextExpectedToken(SIGN_RIGHTSQUAREBRACKET);
         index->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
     } else {
+    	// EMPTY
     	index->addChildNode(new Node(ParseEnums::EMPTY));
     }
 
@@ -245,7 +238,6 @@ Node* Parser::exp2() {
     if (this->currentToken->getType() == INTEGER) {
         // integer
         nExp2->addChildNode(new Node(ParseEnums::INTEGER, this->currentToken));
-
     } else if (this->currentToken->getType() == SIGN_SUBTRACTION
                || this->currentToken->getType() == SIGN_EXCLAMATION) {
         // - || !
@@ -277,15 +269,26 @@ Node* Parser::exp2() {
 
 Node* Parser::op_exp() {
     Node* op_exp = new Node(ParseEnums::OP_EXP);
+
     if (checkNextTokenOp()) {
         getNextToken();
-        op_exp->addChildNode(new Node(ParseEnums::OP, this->currentToken));
+        // OP
+        op_exp->addChildNode(this->op());
+        // EXP
         op_exp->addChildNode(exp());
     } else {
     	op_exp->addChildNode(new Node(ParseEnums::EMPTY));
     }
 
     return op_exp;
+}
+
+Node* Parser::op() {
+    Node* op = new Node(ParseEnums::OP);
+
+    op->addChildNode(new Node(ParseEnums::KEYWORD, this->currentToken));
+
+    return op;
 }
 
 

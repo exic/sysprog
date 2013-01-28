@@ -51,6 +51,7 @@ private:
     Node* exp();
     Node* exp2();
     Node* op_exp();
+    Node* op();
 };
 
 #endif /* PARSER_H_ */
