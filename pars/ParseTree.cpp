@@ -244,7 +244,7 @@ bool ParseTree::typeCheck(Node* node) {
             break;
 
         case ParseEnums::OP:
-            switch (node->getToken()->getType()) {
+        	switch (node->getChildNode(0)->getToken()->getType()) {
             case SIGN_ADDITITON:
                 node->setType(ParseEnums::OPPLUS);
                 break;
@@ -283,6 +283,7 @@ bool ParseTree::typeCheck(Node* node) {
 
             default:
                 node->setType(ParseEnums::ERRORTYPE);
+                break;
             }
             break;
 
@@ -502,6 +503,7 @@ void ParseTree::makeCode(Node* node) {
                 default:
                     break;
             }
+            break;
 
         // OP_EXP ::= OP EXP | empty
         case ParseEnums::OP_EXP:
@@ -513,7 +515,7 @@ void ParseTree::makeCode(Node* node) {
 
         // OP
         case ParseEnums::OP:
-            switch (node->getToken()->getType()) {
+            switch (node->getChildNode(0)->getToken()->getType()) {
 
                 // OP ::= +
                 case SIGN_ADDITITON:
