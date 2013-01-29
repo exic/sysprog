@@ -5,7 +5,7 @@ ParseTree::ParseTree(Buffer* buffer) {
     this->buffer = buffer;
 
     depth = 0;
-    marker = 97;
+    marker = 0;
 }
 
 ParseTree::~ParseTree() {
@@ -356,7 +356,7 @@ void ParseTree::makeCode(Node* node) {
 
         // STATEMENT
         case ParseEnums::STATEMENT:
-            char m1, m2;
+            int m1, m2;
             switch (node->getChildNode(0)->getToken()->getType()) {
 
                 // STATEMENT ::= identifier INDEX = EXP
@@ -395,18 +395,18 @@ void ParseTree::makeCode(Node* node) {
                     m1 = marker++;
                     m2 = marker++;
                     makeCode(node->getChildNode(2));
-                    buffer->addchars("JIN #");
+                    buffer->addchars("JIN #m");
                     buffer->addchars(m1);
                     buffer->addchars("\r\n");
                     makeCode(node->getChildNode(4));
-                    buffer->addchars("JMP #");
+                    buffer->addchars("JMP #m");
                     buffer->addchars(m2);
                     buffer->addchars("\r\n");
-                    buffer->addchars("#");
+                    buffer->addchars("#m");
                     buffer->addchars(m1);
                     buffer->addchars(" NOP\r\n");
                     makeCode(node->getChildNode(6));
-                    buffer->addchars("#");
+                    buffer->addchars("#m");
                     buffer->addchars(m2);
                     buffer->addchars(" NOP\r\n");
                     break;
@@ -415,18 +415,18 @@ void ParseTree::makeCode(Node* node) {
                 case WHILE:
                     m1 = marker++;
                     m2 = marker++;
-                    buffer->addchars("#");
+                    buffer->addchars("#m");
                     buffer->addchars(m1);
                     buffer->addchars(" NOP\r\n");
                     makeCode(node->getChildNode(2));
-                    buffer->addchars("JIN #");
+                    buffer->addchars("JIN #m");
                     buffer->addchars(m2);
                     buffer->addchars("\r\n");
                     makeCode(node->getChildNode(4));
-                    buffer->addchars("JMP #");
+                    buffer->addchars("JMP #m");
                     buffer->addchars(m1);
                     buffer->addchars("\r\n");
-                    buffer->addchars("#");
+                    buffer->addchars("#m");
                     buffer->addchars(m2);
                     buffer->addchars(" NOP\r\n");
                     break;
