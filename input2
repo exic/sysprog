@@ -27,12 +27,11 @@ while(0 < b) {
         div = (x*y)/c;
         mod = (x*y) - (div * c);
         x = mod;
-    } else { print(nothing);
-        (* (y*y)%c *)
-        div = (y*y)/c;
-        mod = (y*y) - (div * c);
-        y = mod; (* squaring the base*)
-        b = b / 2; };
+    } else {};
+    div = (y*y)/c;
+    mod = (y*y) - (div * c);
+    y = mod; (* squaring the base*)
+    b = b / 2;
 };
  (* x % c *)
   div = x/c;
