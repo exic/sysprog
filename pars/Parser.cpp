@@ -20,13 +20,13 @@ void Parser::parse() {
     cout << ">> Start Printing Tree" << endl;
     this->parseTree->printTree(this->parseTree->getRootNode());
     cout << ">> End Printing Tree" << endl;
-    //cout << ">> Start TypeCheck" << endl;
-    //this->parseTree->typeCheck(this->parseTree->getRootNode());
-   // this->parseTree->printTree2(this->parseTree->getRootNode());
-   // cout << ">> End TypeCheck" << endl;
-    //cout << ">> Start MakeCode" << endl;
-    //this->parseTree->makeCode(this->parseTree->getRootNode());
-    //cout << ">> End MakeCode" << endl;
+    cout << ">> Start TypeCheck" << endl;
+    this->parseTree->typeCheck(this->parseTree->getRootNode());
+    this->parseTree->printTree2(this->parseTree->getRootNode());
+    cout << ">> End TypeCheck" << endl;
+    cout << ">> Start MakeCode" << endl;
+    this->parseTree->makeCode(this->parseTree->getRootNode());
+    cout << ">> End MakeCode" << endl;
 }
 
 Node* Parser::prog() {
