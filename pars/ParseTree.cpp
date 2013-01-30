@@ -38,9 +38,8 @@ bool ParseTree::typeCheck(Node* node) {
 
         case ParseEnums::DECL:
             typeCheck(node->getChildNode(1));   // ARRAY
-            if (node->getType() != ParseEnums::NOTYPE) {
-                cerr << "identifier " << node->getToken()->getEntry()->getLexem() <<
-                        " already used" << endl;
+            if (get(node->getChildNode(2)) != ParseEnums::NOTYPE) {
+                cerr << "identifier already defined" << endl;
                 node->setType(ParseEnums::ERRORTYPE);
             } else if (node->getChildNode(1)->getType() == ParseEnums::ERRORTYPE) {
                 node->setType(ParseEnums::ERRORTYPE);
