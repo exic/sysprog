@@ -128,6 +128,7 @@ Status Automat::statusNONE(char c) {
             case -1: // eof
                 return FINAL;
             case ' ':
+            case '\r':
                 return NONE;
         }
     }
