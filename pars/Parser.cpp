@@ -17,12 +17,12 @@ void Parser::parse() {
     this->parseTree = new ParseTree(buffer);
     this->parseTree->getRootNode()->addChildNode(prog());
     cout << ">> End Parsing" << endl;
-    cout << ">> Start Printing Tree" << endl;
-    this->parseTree->printTree(this->parseTree->getRootNode());
-    cout << ">> End Printing Tree" << endl;
+    //cout << ">> Start Printing Tree" << endl;
+    //this->parseTree->printTree(this->parseTree->getRootNode());
+    //cout << ">> End Printing Tree" << endl;
     cout << ">> Start TypeCheck" << endl;
     this->parseTree->typeCheck(this->parseTree->getRootNode());
-    this->parseTree->printTree2(this->parseTree->getRootNode());
+    //this->parseTree->printTree2(this->parseTree->getRootNode());
     cout << ">> End TypeCheck" << endl;
     cout << ">> Start MakeCode" << endl;
     this->parseTree->makeCode(this->parseTree->getRootNode());
@@ -384,6 +384,7 @@ char* Parser::getTokenString(TType ttype) {
 }
 
 void Parser::writeScannerOutput() {
+    return;
     //=========================================================
     // SCANNEROUTPUT
     //=========================================================
